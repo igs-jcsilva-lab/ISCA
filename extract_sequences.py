@@ -93,13 +93,13 @@ def extract_sequences(file,genes,buffer,outfile):
         source = vals[0]
         id = vals[4]
         strand = vals[3]
-        start = (int(vals[1]) - buffer)
-        stop = (int(vals[2]) + buffer + 1) # account for final value in range being exclusive in python
+        start = (int(vals[1]) - buffer - 1) # correct for 0-base indexing
+        stop = (int(vals[2]) + buffer) 
 
         # know that start can't be less than 1 due to buffer alteration, 
         # need to handle stop similarly using the sequence length.
         if start < 1:
-            start = 1
+            start = 0
         if stop > lengths[source]:
             stop = lengths[source]
 
