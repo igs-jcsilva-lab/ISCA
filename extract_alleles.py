@@ -9,7 +9,7 @@
 # scripts so formatting this file like this allows for this single file 
 # to be used as input for all subsequent scripts. 
 #
-# The input should look like this (it MUST start with whichever you want to be the reference): 
+# The input should look like this (MUST start with whichever you want to be the reference): 
 # reference     /path/to/ref.gff3   /path/to/ref.fasta  name_of_ref
 # isolate       /path/to/iso1.gff3   /path/to/iso1.fasta    name_of_iso1
 # isolate       /path/to/iso2.gff3   /path/to/iso2.fasta    name_of_iso2
@@ -33,11 +33,11 @@ import sys,re,argparse
 def main():
 
     parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
-    parser.add_argument('-i', type=str, required=True, help='Path to a TSV list for references and isolates.')
+    parser.add_argument('-l', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('-o', type=str, required=True, help='Path to where the output TSV should go.')
     args = parser.parse_args()
 
-    i = open(args.i,'r')
+    i = open(args.l,'r')
     o = open(args.o,'w')
 
     # dictionary where the key is the ID and the value is a list for ref/loc/coords 
@@ -60,6 +60,10 @@ def main():
         line = "{0}\t{1}\n".format(key,vals)
         o.write(line)
 
+# Arguments:
+# file = GFF3 file
+# allele_map = a dictionary with the reference ID/Name as the key and the values an allele tied to it
+# name = prefix/name of isolate
 def parse_gff3(file,allele_map,name):
 
     regex_for_name = r'.*Name=([a-zA-Z0-9_\.\-]+)'
