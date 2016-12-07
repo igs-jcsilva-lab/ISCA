@@ -47,12 +47,13 @@ def main():
     for entry in i:
         entry = entry.rstrip()
         vals = entry.split('\t')
+        type = vals[0]
         gff3 = vals[1]
         name = vals[3]
 
         # Regardless of reference or isolate, all should be mapping to the same name
         # designated by the reference. vi 
-        allele_map = parse_gff3(gff3,allele_map,name)
+        allele_map = parse_gff3(gff3,allele_map,type,name)
 
     # Iterate over the final hash of lists and print out a TSV
     for key,value in allele_map.items():
@@ -63,10 +64,12 @@ def main():
 # Arguments:
 # file = GFF3 file
 # allele_map = a dictionary with the reference ID/Name as the key and the values an allele tied to it
+# ref_or_iso = is this a reference or an isolate? This will potentially change the ID
 # name = prefix/name of isolate
-def parse_gff3(file,allele_map,name):
+def parse_gff3(file,allele_map,ref_or_iso,name):
 
     regex_for_name = r'.*Name=([a-zA-Z0-9_\.\-]+)'
+    regex_for_gmap_name = r'.*ID=([a-zA-Z0-9_\.\-]+)'
 
     gff3 = open(file,'r') 
 
@@ -82,8 +85,15 @@ def parse_gff3(file,allele_map,name):
                 start = ele[3]
                 stop = ele[4]
                 strand = ele[6]
+
                 attr_name = re.search(regex_for_name,ele[8]).group(1) # extract the name from attr that links via GMAP
-                id = "{0}.{1}".format(name,attr_name) # need to make a unique ID for each group/isolate that ties back to attr name
+
+                id = ""
+                if ref_or_iso == "reference":
+                    id = "{0}.{1}".format(name,attr_name) # need to make a unique ID for each group/isolate that ties back to attr name
+                else: # working with an isolate and need to use the GMAP name
+                    id = "{0}.{1}".format(name,re.search(regex_for_gmap_name,ele[8]).group(1))
+
                 combined_vals = "{0}|{1}|{2}|{3}|{4}".format(source,start,stop,strand,id)
                 
                 if attr_name not in allele_map: # initialize if not seen before
