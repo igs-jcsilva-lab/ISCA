@@ -59,7 +59,7 @@ def main():
     if args.threshold: # user specificying threshold
         threshold = float(args.threshold)
 
-    for read in i: # iterate over all reads in the [S|B]AM file.
+    for read in i.fetch(until_eof=True): # iterate over all reads in the [S|B]AM file.
         que,ref = ("" for i in range(2))
 
         cigar = read.cigartuples # extract a tuple for the CIGAR string
