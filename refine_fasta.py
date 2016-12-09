@@ -28,7 +28,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTA reads.')
     parser.add_argument('-i', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
     parser.add_argument('-f', type=str, required=True, help='Path to the original FASTQ file of paired-end reads.')
-    parser.add_argument('-filter', type=str, required=True, help='Either yes or no for removing discrepancies + multi-locus mapping reads.')
+    parser.add_argument('-filter', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
     parser.add_argument('-o', type=str, required=True, help='Path to where the output FASTA should go.')
     args = parser.parse_args()
 
@@ -92,7 +92,7 @@ def main():
         ids_to_keep = checked_ids
 
     for k,v in counts: # give the user some idea of how much they are potentially filtering out
-        print("{0} read-pairs have a {1}.".format(k,v))
+        print("{0} read-pairs have a {1}.\n".format(k,v))
 
 # Function to compare where the two mates in a pair mapped to. Returns 
 # 'single_map' if both only map to a single locus, 'multi_map' if one
