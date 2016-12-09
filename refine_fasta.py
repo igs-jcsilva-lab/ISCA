@@ -8,12 +8,12 @@
 # This script aims to accomplish two things:
 #
 # 1) Generate some statistics on the alignments like how many reads mapped 
-# to multiple loci, how many reads mapped to only aligned to one allele, and
+# to multiple loci, how many reads mapped to only aligned to one locus, and
 # how many reads have a discrepancy where the two mates in a pair map to 
 # different loci. All these stats will be written to STDOUT.
 #
 # 2) Using the alignment information, potentially refine a FASTA file of reads
-# to either those pairs found aligning to just one allele, or no filtering at all.
+# to either those pairs found aligning to just one locus, or no filtering at all.
 #
 # Run the script using a command like this:
 # python3 analyze_bam.py -i /path/to/analyze_bam.out -f /path/to/reads.fsa -filter (yes|no) -o /path/to/out.fsa
@@ -28,7 +28,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTA reads.')
     parser.add_argument('-i', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
     parser.add_argument('-f', type=str, required=True, help='Path to the original FASTQ file of paired-end reads.')
-    parser.add_argument('-filter', type=str, required=True, help='Either yes or no for removing discrepancies + multi-allele mapping reads.')
+    parser.add_argument('-filter', type=str, required=True, help='Either yes or no for removing discrepancies + multi-locus mapping reads.')
     parser.add_argument('-o', type=str, required=True, help='Path to where the output FASTA should go.')
     args = parser.parse_args()
 
@@ -37,8 +37,7 @@ def main():
     filter = args.filter
     o = open(args.o,'w')
 
-    counts = {'single_map','multi_map','discrepancy'} # count these stats as they are processed. 
-    {count: 0 for count in counts}
+    counts = {'single_map':0,'multi_map':0,'discrepancy':0} # count these stats as they are processed. 
 
     r1,r2 = (defaultdict(list) for i in range(2)) # establish each mate dict as an empty list
     # Establish two sets...
@@ -128,7 +127,7 @@ def isolate_loci(alignment_list):
 
     for ref in alignment_list:
         
-        ele = alignment_list.split('\t')
+        ele = ref.split('|')
         align_info = ele[2].split('.') # grab just the reference portion
         id = align_info[1] # second element is the reference without pre/suf-fixes
 
