@@ -5,4 +5,4 @@ A new pipeline to perform targeted assembly given WGS reads, reference genome as
 1. extract_alleles.py
 2. extract_sequences.py
 3. analyze_bam.py
-4. refine_fasta.py
+4. refine_fastq.py

@@ -4,7 +4,8 @@
 # script in addition to the same list used as input for that script. The 
 # output of this script will be a FASTA file. The final argument of this script,
 # -b, is optional. This parameter sets a "buffer" region to extend the gene
-# positions noted in the GFF3 file a bit. 
+# positions noted in the GFF3 file a bit. The output of this is meant to build
+# a reference o be used in Bowtie2. 
 # 
 # Run the script using a command like this:
 # python3 extract_sequences.py -l /path/to/list_input.tsv -i /path/to/out_from_extract_alleles.tsv -o /path/to/out.fsa -b 20
@@ -22,9 +23,6 @@ def main():
     parser.add_argument('-o', type=str, required=True, help='Path to where the output TSV should go.')
     args = parser.parse_args()
 
-    l = open(args.l,'r')
-    i = open(args.i,'r')
-    o = open(args.o,'w')
     b = 0 # buffer region defaults to 0
     if args.b:
         b = args.b
@@ -33,6 +31,8 @@ def main():
 
     # Iterate over the output from extract_alleles.py and build a dict of lists
     # for all the regions from each FASTA file that need to be extracted. 
+    i = open(args.i,'r')
+
     for allele in i: 
         allele = allele.rstrip()
         indv_allele = allele.split('\t')
@@ -46,14 +46,23 @@ def main():
 
             extract_us[name].append(indv_allele[j])
 
+    i.close()
+
     # Iterate over the input list and extract sequences per FASTA file.
+    l = open(args.l,'r')
+    o = open(args.o,'w')
+
     for entry in l:
         entry = entry.rstrip()
         vals = entry.split('\t')
         fasta_file = vals[2]
         gene_list = extract_us[vals[3]]
 
+        
         extract_sequences(fasta_file,gene_list,b,o)
+        
+    l.close()
+    o.close()
 
 # Arguments:
 # file = FASTA file

@@ -2,8 +2,8 @@
 
 # This follows analyze_bam.py and accepts the *_read_map.tsv generated from that,
 # NOT the *_ref_map.tsv. Remember that this dataset must consist of PAIRED-END 
-# reads. This script expects the reads to match in their name except for the final
-# number value, e.g. ABC.123.1 + ABC.123.2 are a properly formatted pair.
+# FASTQ reads. This script expects the reads to match in their name except for 
+# the final number value, e.g. ABC.123.1 + ABC.123.2 are a properly formatted pair.
 #
 # This script aims to accomplish two things:
 #
@@ -12,7 +12,7 @@
 # how many reads have a discrepancy where the two mates in a pair map to 
 # different loci. All these stats will be written to STDOUT.
 #
-# 2) Using the alignment information, potentially refine a FASTA file of reads
+# 2) Using the alignment information, potentially refine a FASTQ file of reads
 # to either those pairs found aligning to just one locus, or no filtering at all.
 #
 # Run the script using a command like this:
@@ -20,22 +20,19 @@
 #
 # Author: James Matsumura
 
-import sys,re,argparse
+import sys,re,argparse,gzip
 from collections import defaultdict
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTA reads.')
+    parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTQ reads.')
     parser.add_argument('-i', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
     parser.add_argument('-f', type=str, required=True, help='Path to the original FASTQ file of paired-end reads.')
     parser.add_argument('-filter', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
-    parser.add_argument('-o', type=str, required=True, help='Path to where the output FASTA should go.')
+    parser.add_argument('-o', type=str, required=True, help='Path to where the output FASTQ should go.')
     args = parser.parse_args()
 
-    i = open(args.i,'r')
-    f = open(args.f,'r')
     filter = args.filter
-    o = open(args.o,'w')
 
     counts = {'single_map':0,'multi_map':0,'discrepancy':0} # count these stats as they are processed. 
 
@@ -46,6 +43,8 @@ def main():
     checked_ids,ids_to_keep = (set() for i in range(2)) 
 
     # This first iteration only cares about grabbing all mates and their reference alignment stats
+    i = open(args.i,'r')
+
     for line in i: 
         
         line = line.rstrip()
@@ -57,6 +56,8 @@ def main():
         else: # read mate 2
             for x in range(1,len(ele)):
                 r2[ele[0]].append(ele[x])
+
+    i.close()
 
     shared_id = "" # id in the format of ABC.123 for pairs ABC.123.1 + ABC.123.2
 
@@ -87,12 +88,32 @@ def main():
                     ids_to_keep.add(shared_id)
 
             checked_ids.add(shared_id)
+    
+    r1,r2 = (None for i in range(2)) # try free up a bit of memory
 
-    if filter == "no": # if no filtering occurred, establish ids_to_keep as equivalent to all checked
+    # give the user some idea of how much they are potentially filtering out
+    for k,v in counts: 
+        print("{0} read-pairs have a {1}.\n".format(k,v))
+
+    # if no filtering occurred, establish ids_to_keep as equivalent to all checked
+    if filter == "no": 
         ids_to_keep = checked_ids
 
-    for k,v in counts: # give the user some idea of how much they are potentially filtering out
-        print("{0} read-pairs have a {1}.\n".format(k,v))
+    # Regardless of filtering based on alignment single/multiple/discrepancies or not, still
+    # need to filter all the FASTQ reads to just those that aligned to a gene region.
+    filename = args.f 
+    if filename.endswith('.gz'): # allow for gz or non-gz files
+        f = gzip.open(filename,'rt')
+    else:
+        f = open(filename,'r')
+
+    o = open(args.o,'w')
+
+    filter_fastq(ids_to_keep,f,o) 
+
+    f.close()
+    o.close()
+
 
 # Function to compare where the two mates in a pair mapped to. Returns 
 # 'single_map' if both only map to a single locus, 'multi_map' if one
@@ -106,15 +127,19 @@ def verify_alignment(list1,list2):
     set1 = isolate_loci(list1)
     set2 = isolate_loci(list2)
     
-    if len(set1) == 1 and set1 == set2: # only one locus, and the same one in both mates
+    # only one locus, and the same one in both mates
+    if len(set1) == 1 and set1 == set2: 
         return "single_map"
-    elif (len(set1) == 1 and set2 is None): # this and the next account for where one read maps and the other doesn't
+    # this and the next account for where one read maps and the other doesn't
+    elif (len(set1) == 1 and set2 is None): 
         return "single_map"
     elif (len(set2) == 1 and set1 is None):
         return "single_map"
-    elif set1 != set2: # not sharing the same loci, discrepancy!
+    # not sharing the same loci, discrepancy!
+    elif set1 != set2: 
         return "discrepancy"
-    elif (len(set1) > 1 or len(set2 > 1)) and set1 == set2: # both reads mapping to more than one locus
+    # both reads mapping to more than one locus
+    elif (len(set1) > 1 or len(set2 > 1)) and set1 == set2: 
         return "multi_map" 
 
 # Function which will return a set of all unique loci found given a list of
@@ -134,6 +159,36 @@ def isolate_loci(alignment_list):
         loci.add(id)
 
     return loci
+
+# Function to parse through a FASTQ file and generate a new one that only consists
+# of IDs found to be valid by the alignment and this script.
+# Arguments:
+# ids = set of IDs to be checked against while parsing the FASTQ file.
+# fastq = handle for the input FASTQ file. 
+# outfile = handle for the output FASTQ file. 
+def filter_fastq(ids,fastq,outfile):
+
+    lineno = 0 # iterate through each FASTQ entry, 4 lines at a time
+    entry = []
+    
+    for line in fastq:
+
+        entry.append(line)
+        lineno += 1
+        
+        if lineno == 4: # got an entry, check if it's a relevant one
+            header = entry[0]
+            elements = header.split('\s')
+            id = elements[1:] # drop the @
+            id = id[:-2] # drop the last two characters which designate which mate
+
+            # Finally, check whether or not ID is in set. Output if so.
+            if id in ids:
+                for l in entry:
+                    outfile.write(l)
+
+            entry = []
+            lineno = 0
 
 
 if __name__ == '__main__':

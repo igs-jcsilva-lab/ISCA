@@ -37,13 +37,12 @@ def main():
     parser.add_argument('-o', type=str, required=True, help='Path to where the output TSV should go.')
     args = parser.parse_args()
 
-    i = open(args.l,'r')
-    o = open(args.o,'w')
-
     # dictionary where the key is the ID and the value is a list for ref/loc/coords 
     allele_map = {} 
 
     # Iterate over each reference/isolate
+    i = open(args.l,'r')
+
     for entry in i:
         entry = entry.rstrip()
         vals = entry.split('\t')
@@ -55,11 +54,17 @@ def main():
         # designated by the reference. vi 
         allele_map = parse_gff3(gff3,allele_map,type,name)
 
+    i.close()
+
     # Iterate over the final hash of lists and print out a TSV
+    o = open(args.o,'w')
+
     for key,value in allele_map.items():
         vals = ('\t').join(value)
         line = "{0}\t{1}\n".format(key,vals)
         o.write(line)
+        
+    o.close()
 
 # Arguments:
 # file = GFF3 file

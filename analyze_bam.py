@@ -48,11 +48,6 @@ def main():
     if args.bam is not None:
         i = pysam.AlignmentFile(args.bam,'rb')
 
-    read_map = args.o + "_read_map.tsv"
-    ref_map = args.o + "_ref_map.tsv"
-    o1 = open(read_map,'w')
-    o2 = open(ref_map,'w')
-
     rd_map,rf_map = (defaultdict(list) for i in range(2)) # establish these dicts as holding lists
 
     threshold = 80  # minimum cutoff to include a read
@@ -74,8 +69,19 @@ def main():
                 rd_map[rea].append("{0}|{1}|{2}".format(percent_id,length,ref))
                 rf_map[ref].append("{0}|{1}|{2}".format(percent_id,length,rea))
 
+    i.close()
+
+    # Time to generate the output
+    read_map = args.o + "_read_map.tsv"
+    ref_map = args.o + "_ref_map.tsv"
+
+    o1 = open(read_map,'w')
     write_tsv(rd_map,o1)
+    o1.close()
+
+    o2 = open(ref_map,'w')
     write_tsv(rf_map,o2)
+    o2.close()
 
 # Calculates % identity given info from a CIGAR string
 # Expects a tuple based on the pysam documentation (http://pysam.readthedocs.io/en/latest/api.html) where...
