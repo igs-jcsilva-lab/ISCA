@@ -27,9 +27,9 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTQ reads.')
     parser.add_argument('-i', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
-    parser.add_argument('-f', type=str, required=True, help='Path to the original FASTQ file of paired-end reads.')
+    parser.add_argument('-f', type=str, required=True, help='Path to the original FASTQ file prefix of paired-end reads (e.g., enter ABC.123 for pairs ABC.123.1+ABC.123.2). MUST be gunzipped.')
     parser.add_argument('-filter', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
-    parser.add_argument('-o', type=str, required=True, help='Path to where the output FASTQ should go.')
+    parser.add_argument('-o', type=str, required=True, help='Path to where the output FASTQs should go.')
     args = parser.parse_args()
 
     filter = args.filter
@@ -102,17 +102,29 @@ def main():
     # Regardless of filtering based on alignment single/multiple/discrepancies or not, still
     # need to filter all the FASTQ reads to just those that aligned to a gene region.
     filename = args.f 
-    if filename.endswith('.gz'): # allow for gz or non-gz files
-        f = gzip.open(filename,'rt')
-    else:
-        f = open(filename,'r')
+    output = args.o
 
-    o = open(args.o,'w')
+    # First, do mate 1
+    file1 = filename + ".1.gz" 
+    out1 = output + "/R1.fastq.gz"
+    f1 = gzip.open(file1,'rt')
+    o1 = open(out1,'wb')
 
-    filter_fastq(ids_to_keep,f,o) 
+    filter_fastq(ids_to_keep,f1,o1) 
 
-    f.close()
-    o.close()
+    f1.close
+    o1.close
+
+    # Now mate 2
+    file2 = filename + ".2.gz" 
+    out2 = output + "/R2.fastq.gz"
+    f2 = gzip.open(file2,'rt')
+    o2 = open(out2,'wb')
+
+    filter_fastq(ids_to_keep,f2,o2) 
+
+    f2.close
+    o2.close
 
 
 # Function to compare where the two mates in a pair mapped to. Returns 
@@ -175,7 +187,7 @@ def filter_fastq(ids,fastq,outfile):
 
         entry.append(line)
         lineno += 1
-        
+
         if lineno == 4: # got an entry, check if it's a relevant one
             header = entry[0]
             elements = header.split('\s')
