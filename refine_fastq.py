@@ -33,6 +33,7 @@ def main():
     args = parser.parse_args()
 
     filter = args.filter
+    output = args.o
 
     counts = {'single_map':0,'multi_map':0,'discrepancy':0} # count these stats as they are processed. 
 
@@ -92,8 +93,11 @@ def main():
     r1,r2 = (None for i in range(2)) # try free up a bit of memory
 
     # give the user some idea of how much they are potentially filtering out
-    for k,v in counts: 
-        print("{0} read-pairs have a {1}.\n".format(k,v))
+    out_stats = output + ".stats"
+    out = open(out_stats,'w')
+    for k,v in counts.items():
+        out.write("{0} read-pairs have a {1}.\n".format(v,k))
+    out.close
 
     # if no filtering occurred, establish ids_to_keep as equivalent to all checked
     if filter == "no": 
@@ -102,13 +106,12 @@ def main():
     # Regardless of filtering based on alignment single/multiple/discrepancies or not, still
     # need to filter all the FASTQ reads to just those that aligned to a gene region.
     filename = args.f 
-    output = args.o
 
     # First, do mate 1
-    file1 = filename + ".1.gz" 
-    out1 = output + "/R1.fastq.gz"
+    file1 = filename + "1.fastq.gz" 
+    out1 = output + "1.fastq.gz"
     f1 = gzip.open(file1,'rt')
-    o1 = open(out1,'wb')
+    o1 = gzip.open(out1,'wb')
 
     filter_fastq(ids_to_keep,f1,o1) 
 
@@ -116,10 +119,10 @@ def main():
     o1.close
 
     # Now mate 2
-    file2 = filename + ".2.gz" 
-    out2 = output + "/R2.fastq.gz"
+    file2 = filename + "2.fastq.gz" 
+    out2 = output + "2.fastq.gz"
     f2 = gzip.open(file2,'rt')
-    o2 = open(out2,'wb')
+    o2 = gzip.open(out2,'wb')
 
     filter_fastq(ids_to_keep,f2,o2) 
 
@@ -147,12 +150,12 @@ def verify_alignment(list1,list2):
         return "single_map"
     elif (len(set2) == 1 and set1 is None):
         return "single_map"
-    # not sharing the same loci, discrepancy!
+    # some reads are mapping to more than one locus
+    elif ((len(set1) > 1) or (len(set2) > 1)): 
+        return "multi_map" 
+    # simmply not sharing the same loci, discrepancy!
     elif set1 != set2: 
         return "discrepancy"
-    # both reads mapping to more than one locus
-    elif (len(set1) > 1 or len(set2 > 1)) and set1 == set2: 
-        return "multi_map" 
 
 # Function which will return a set of all unique loci found given a list of
 # alignment info.
@@ -190,14 +193,14 @@ def filter_fastq(ids,fastq,outfile):
 
         if lineno == 4: # got an entry, check if it's a relevant one
             header = entry[0]
-            elements = header.split('\s')
-            id = elements[1:] # drop the @
+            elements = header.split(' ')
+            id = elements[0][1:] # drop the @
             id = id[:-2] # drop the last two characters which designate which mate
 
             # Finally, check whether or not ID is in set. Output if so.
             if id in ids:
                 for l in entry:
-                    outfile.write(l)
+                    outfile.write(l.encode())
 
             entry = []
             lineno = 0
