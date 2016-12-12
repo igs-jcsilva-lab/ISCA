@@ -213,6 +213,8 @@ def filter_fastq(ids,fastq,outfile):
 
     lineno = 0 # iterate through each FASTQ entry, 4 lines at a time
     entry = []
+    seen = 0 # keep count to potentially leave FASTQ early if seen all IDs
+    num_of_reads = len(ids)
     
     for line in fastq:
 
@@ -227,11 +229,15 @@ def filter_fastq(ids,fastq,outfile):
 
             # Finally, check whether or not ID is in set. Output if so.
             if id in ids:
+                seen += 1
                 for l in entry:
                     outfile.write(l.encode())
 
             entry = []
             lineno = 0
+
+        if seen == num_of_reads: # leave early if got all the reads needed
+            break
 
 
 if __name__ == '__main__':
