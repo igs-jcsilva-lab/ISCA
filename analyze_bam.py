@@ -67,6 +67,11 @@ def main():
                 rea = read.query_name # grab read ID
                 ref = read.reference_name # grab ID of what the ID aligned to
                 rd_map[rea].append("{0}|{1}|{2}".format(percent_id,length,ref))
+
+                # For the reference map, consolidate all GMAP values to a single locus,
+                # e.g. make NF54.1.1 and 3D7.1.1 just 1.1
+                ele = ref.split('.')
+                ref = ele[1]
                 rf_map[ref].append("{0}|{1}|{2}".format(percent_id,length,rea))
 
     i.close()

@@ -1,7 +1,7 @@
 
 
-# This follows analyze_bam.py and accepts the *_read_map.tsv generated from that,
-# NOT the *_ref_map.tsv. Remember that this dataset must consist of PAIRED-END 
+# This follows analyze_bam.py and accepts the *_read_map.tsv and the *_ref_map.tsv
+# generated from that script. Remember that this dataset must consist of PAIRED-END 
 # FASTQ reads. This script expects the reads to match in their name except for 
 # the final number value, e.g. ABC.123.1 + ABC.123.2 are a properly formatted pair.
 #
@@ -15,25 +15,30 @@
 # 2) Using the alignment information, potentially refine a FASTQ file of reads
 # to either those pairs found aligning to just one locus, or no filtering at all.
 #
+# The output will be a set of directories, one for each locus identified in the 
+# *_ref_map.tsv file and containing the set of paired reads that aligned to it 
+# in one of the reference allele sequences. 
+#
 # Run the script using a command like this:
 # python3 analyze_bam.py -i /path/to/analyze_bam.out -f /path/to/reads.fsa -filter (yes|no) -o /path/to/out.fsa
 #
 # Author: James Matsumura
 
-import sys,re,argparse,gzip
+import sys,re,argparse,gzip,os
 from collections import defaultdict
 
 def main():
 
     parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTQ reads.')
-    parser.add_argument('-i', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
-    parser.add_argument('-f', type=str, required=True, help='Path to the original FASTQ file prefix of paired-end reads (e.g., enter ABC.123 for pairs ABC.123.1+ABC.123.2). MUST be gunzipped.')
+    parser.add_argument('-reads', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
+    parser.add_argument('-refs', type=str, required=True, help='Path to *_ref_map.tsv output from analyze_bam.py.')
+    parser.add_argument('-fastq', type=str, required=True, help='Path to the original FASTQ file prefix of paired-end reads (e.g., enter ABC.123 for pairs ABC.123.1+ABC.123.2). MUST be gunzipped.')
     parser.add_argument('-filter', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
-    parser.add_argument('-o', type=str, required=True, help='Path to where the output FASTQs should go.')
+    parser.add_argument('-out', type=str, required=True, help='Path to where the output directory for the FASTQs to go.')
     args = parser.parse_args()
 
     filter = args.filter
-    output = args.o
+    output = args.out
 
     counts = {'single_map':0,'multi_map':0,'discrepancy':0} # count these stats as they are processed. 
 
@@ -43,10 +48,10 @@ def main():
     # One to keep track of the shared ID across mates for filtering the FASTQ input
     checked_ids,ids_to_keep = (set() for i in range(2)) 
 
-    # This first iteration only cares about grabbing all mates and their reference alignment stats
-    i = open(args.i,'r')
+    # This first iteration only cares about grabbing all mates and their reference alignment info
+    reads = open(args.reads,'r')
 
-    for line in i: 
+    for line in reads: 
         
         line = line.rstrip()
         ele = line.split('\t')
@@ -58,7 +63,7 @@ def main():
             for x in range(1,len(ele)):
                 r2[ele[0]].append(ele[x])
 
-    i.close()
+    reads.close()
 
     shared_id = "" # id in the format of ABC.123 for pairs ABC.123.1 + ABC.123.2
 
@@ -94,10 +99,10 @@ def main():
 
     # give the user some idea of how much they are potentially filtering out
     out_stats = output + ".stats"
-    out = open(out_stats,'w')
+    stats_file = open(out_stats,'w')
     for k,v in counts.items():
-        out.write("{0} read-pairs have a {1}.\n".format(v,k))
-    out.close
+        stats_file.write("{0} read-pairs have a {1}.\n".format(v,k))
+    stats_file.close
 
     # if no filtering occurred, establish ids_to_keep as equivalent to all checked
     if filter == "no": 
@@ -105,29 +110,52 @@ def main():
 
     # Regardless of filtering based on alignment single/multiple/discrepancies or not, still
     # need to filter all the FASTQ reads to just those that aligned to a gene region.
-    filename = args.f 
+    filename = args.fastq 
 
-    # First, do mate 1
-    file1 = filename + "1.fastq.gz" 
-    out1 = output + "1.fastq.gz"
-    f1 = gzip.open(file1,'rt')
-    o1 = gzip.open(out1,'wb')
+    # Iterate over the reference map, for each locus isolate the set that is shared between
+    # those aligned and within the ids_to_keep set.
+    refs = open(args.refs,'r')
 
-    filter_fastq(ids_to_keep,f1,o1) 
+    for ref in refs:
 
-    f1.close
-    o1.close
+        loc_reads = set() # Initialize a new set of reads to keep for each reference
 
-    # Now mate 2
-    file2 = filename + "2.fastq.gz" 
-    out2 = output + "2.fastq.gz"
-    f2 = gzip.open(file2,'rt')
-    o2 = gzip.open(out2,'wb')
+        ele = ref.split('\t')
 
-    filter_fastq(ids_to_keep,f2,o2) 
+        # Make a new directory for the locus
+        new_directory = "{0}/{1}".format(output,ele[0])
+        os.makedirs(new_directory)
 
-    f2.close
-    o2.close
+        # Iterate over all the reads, for this locus, and check if they're in ids_to_keep
+        for i in range(1,len(ele)):
+            alignment = ele[i].split('|')
+            
+            if alignment[2] in ids_to_keep: # if present, get this read for this locus assembly
+                loc_reads.add(alignment[2])
+
+        # First, do mate 1
+        file1 = filename + "1.fastq.gz" 
+        out1 = new_directory + "/R1.fastq.gz"
+        f1 = gzip.open(file1,'rt')
+        o1 = gzip.open(out1,'wb')
+
+        filter_fastq(loc_reads,f1,o1) 
+
+        f1.close
+        o1.close
+
+        # Now mate 2
+        file2 = filename + "2.fastq.gz" 
+        out2 = new_directory + "/R2.fastq.gz"
+        f2 = gzip.open(file2,'rt')
+        o2 = gzip.open(out2,'wb')
+
+        filter_fastq(loc_reads,f2,o2) 
+
+        f2.close
+        o2.close
+
+    refs.close()
 
 
 # Function to compare where the two mates in a pair mapped to. Returns 
