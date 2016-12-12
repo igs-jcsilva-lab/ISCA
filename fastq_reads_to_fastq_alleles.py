@@ -129,9 +129,10 @@ def main():
         # Iterate over all the reads, for this locus, and check if they're in ids_to_keep
         for i in range(1,len(ele)):
             alignment = ele[i].split('|')
+            id = alignment[2][:-2]
             
-            if alignment[2] in ids_to_keep: # if present, get this read for this locus assembly
-                loc_reads.add(alignment[2])
+            if id in ids_to_keep: # if present, get this read for this locus assembly
+                loc_reads.add(id)
 
         # First, do mate 1
         file1 = filename + "1.fastq.gz" 
