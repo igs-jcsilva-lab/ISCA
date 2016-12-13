@@ -1,0 +1,54 @@
+
+
+# This script aims to reformat all directories created by fastq_reads_to_fastq_alleles.py
+# into something that SGE grid can use for a job array submission. This script
+# is meant to be run both before and after the grid job to run SPAdes is compelted.
+#
+# If run BEFORE SPAdes, this script uses input generated from analyze_bam.py 
+# (*_ref_map.tsv) and generates a more basic map file with two columns, ref and 
+# grid ID. The grid IDs will be arbitrary and start at 1 climbing until it hits 
+# the number of directories made.
+#
+# Run the script using a command like this:
+# python3 analyze_bam.py -i /path/to/ref_map.tsv -path /path/to/ref_dirs -out /path/to/out_map.tsv
+#
+# Author: James Matsumura
+
+import sys,re,argparse,os,errno
+
+def main():
+
+    parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTQ reads.')
+    parser.add_argument('-refs', type=str, required=True, help='Path to *_ref_map.tsv output from analyze_bam.py.')
+    parser.add_argument('-path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('-out', type=str, required=True, help='Path to output map (maps the ref to the SGE ID)).')
+    args = parser.parse_args()
+
+    ref_map = {} # dict to hold the ref and its arbitrary ID starting at 1
+    id = 1
+
+    # First, rename the directories
+    with open(args.refs,'r') as infile:
+        for line in infile:
+            ref = line.split('\t') # really just want the first column which is the ref ID
+
+            old_dir = "{0}/{1}".format(args.path,ref[0])
+            new_dir = "{0}/{1}".format(args.path,id)
+
+            try:
+                os.rename(old_dir,new_dir)
+            except OSError as exception:
+                if exception.errno != errno.EEXIST:
+                    raise
+            else:
+                ref_map[id] = id
+                id += 1 # if no exception, it was renamed and need a new ID
+
+    # Now generate a map to know which directories correlate to what IDs
+    with open(args.out,'w') as outfile:
+        for k,v in ref_map.items():
+            outfile.write("{0}\t{1}\n".format(k,v))
+
+
+if __name__ == '__main__':
+    main()
