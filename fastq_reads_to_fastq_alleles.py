@@ -225,10 +225,10 @@ def filter_fastq(ids,fastq,outdir):
                             # SPAdes, more specifically BWA, complains if the read
                             # IDs are not exactly the same. Thus, trim the .1 and 
                             # .2 suffixes from each of the header lines. 
-                            entry1[0].replace('.1 ',' ')
-                            entry1[2].replace('.1 ',' ')
-                            entry2[0].replace('.2 ',' ')
-                            entry2[2].replace('.2 ',' ')
+                            entry1[0] = entry1[0].replace('.1 ',' ')
+                            entry1[2] = entry1[2].replace('.1 ',' ')
+                            entry2[0] = entry2[0].replace('.2 ',' ')
+                            entry2[2] = entry2[2].replace('.2 ',' ')
 
                             # add to whatever FASTQ file is already there
                             with gzip.open(out1,'ab') as o1:
