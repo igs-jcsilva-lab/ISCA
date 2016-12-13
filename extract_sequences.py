@@ -31,38 +31,31 @@ def main():
 
     # Iterate over the output from extract_alleles.py and build a dict of lists
     # for all the regions from each FASTA file that need to be extracted. 
-    i = open(args.i,'r')
+    with open(args.i,'r') as i:
+        for allele in i: 
+            allele = allele.rstrip()
+            indv_allele = allele.split('\t')
 
-    for allele in i: 
-        allele = allele.rstrip()
-        indv_allele = allele.split('\t')
+            for j in range(1,len(indv_allele)): # iterate over all alleles identified
+                vals = indv_allele[j].split('|')
+                name = vals[4].split('.')[0] 
 
-        for j in range(1,len(indv_allele)): # iterate over all alleles identified
-            vals = indv_allele[j].split('|')
-            name = vals[4].split('.')[0] 
+                if name not in extract_us: # assign this entry to the proper list via key
+                    extract_us[name] = []
 
-            if name not in extract_us: # assign this entry to the proper list via key
-                extract_us[name] = []
-
-            extract_us[name].append(indv_allele[j])
-
-    i.close()
+                extract_us[name].append(indv_allele[j])
 
     # Iterate over the input list and extract sequences per FASTA file.
-    l = open(args.l,'r')
-    o = open(args.o,'w')
+    with open(args.l,'r') as l:
+        for entry in l:
+            entry = entry.rstrip()
+            vals = entry.split('\t')
+            fasta_file = vals[2]
+            gene_list = extract_us[vals[3]]
 
-    for entry in l:
-        entry = entry.rstrip()
-        vals = entry.split('\t')
-        fasta_file = vals[2]
-        gene_list = extract_us[vals[3]]
+            with open(args.o,'w') as o:
+                extract_sequences(fasta_file,gene_list,b,o)
 
-        
-        extract_sequences(fasta_file,gene_list,b,o)
-        
-    l.close()
-    o.close()
 
 # Arguments:
 # file = FASTA file
@@ -72,8 +65,6 @@ def main():
 # outfile = output file to write to. 
 def extract_sequences(file,genes,buffer,outfile):
 
-    fasta = open(file,'r') 
-
     regex_for_contig_id = ">([a-zA-Z0-9_]+)"
 
     # Since PF is fairly small, can be greedy about how the FASTA entries are being
@@ -81,15 +72,16 @@ def extract_sequences(file,genes,buffer,outfile):
     contigs = {}
     current_id = "" # store the previous key for the bases to be assigned to
 
-    for line in fasta: # iterate over the FASTA file and extract the entirety of each sequence
-        
-        line = line.rstrip()
+    with open(file,'r') as fasta:
+        for line in fasta: # iterate over the FASTA file and extract the entirety of each sequence
+            
+            line = line.rstrip()
 
-        if line.startswith('>'):
-            current_id = re.search(regex_for_contig_id,line).group(1)
-            contigs[current_id] = ""
-        else:
-            contigs[current_id] += line # add all the bases
+            if line.startswith('>'):
+                current_id = re.search(regex_for_contig_id,line).group(1)
+                contigs[current_id] = ""
+            else:
+                contigs[current_id] += line # add all the bases
 
     # Calculate the lengths of each contig just once to make sure that the
     # buffer does not exceed the max length.
@@ -127,8 +119,8 @@ def extract_sequences(file,genes,buffer,outfile):
 
         # Print out in standard FASTA format
         outfile.write(">{0}\n".format(id))
-        for i in range(0, len(sequence), 60):
-            outfile.write(sequence[i:i+60] + "\n")
+        for j in range(0, len(sequence), 60):
+            outfile.write(sequence[j:j+60] + "\n")
 
 if __name__ == '__main__':
     main()

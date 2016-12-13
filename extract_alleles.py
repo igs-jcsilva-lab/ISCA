@@ -41,30 +41,25 @@ def main():
     allele_map = {} 
 
     # Iterate over each reference/isolate
-    i = open(args.l,'r')
+    with open(args.l,'r') as i:
+        for entry in i:
+            entry = entry.rstrip()
+            vals = entry.split('\t')
+            type = vals[0]
+            gff3 = vals[1]
+            name = vals[3]
 
-    for entry in i:
-        entry = entry.rstrip()
-        vals = entry.split('\t')
-        type = vals[0]
-        gff3 = vals[1]
-        name = vals[3]
-
-        # Regardless of reference or isolate, all should be mapping to the same name
-        # designated by the reference. vi 
-        allele_map = parse_gff3(gff3,allele_map,type,name)
-
-    i.close()
+            # Regardless of reference or isolate, all should be mapping to the same name
+            # designated by the reference. vi 
+            allele_map = parse_gff3(gff3,allele_map,type,name)
 
     # Iterate over the final hash of lists and print out a TSV
-    o = open(args.o,'w')
+    with open(args.o,'w') as o:
+        for key,value in allele_map.items():
+            vals = ('\t').join(value)
+            line = "{0}\t{1}\n".format(key,vals)
+            o.write(line)
 
-    for key,value in allele_map.items():
-        vals = ('\t').join(value)
-        line = "{0}\t{1}\n".format(key,vals)
-        o.write(line)
-        
-    o.close()
 
 # Arguments:
 # file = GFF3 file
@@ -76,35 +71,34 @@ def parse_gff3(file,allele_map,ref_or_iso,name):
     regex_for_name = r'.*Name=([a-zA-Z0-9_\.\-]+)'
     regex_for_gmap_name = r'.*ID=([a-zA-Z0-9_\.\-]+)'
 
-    gff3 = open(file,'r') 
+    with open(file,'r') as gff3:
+        for line in gff3:
+            if line.startswith('##FASTA'): # don't care about sequences
+                break
+            elif line.startswith('#'): # don't care about comments or header data
+                pass
+            else: # within the GFF3 9-column section
+                ele = line.split('\t')
+                if ele[2] == 'gene': # only process if it is a gene
+                    source = ele[0]
+                    start = ele[3]
+                    stop = ele[4]
+                    strand = ele[6]
 
-    for line in gff3:
-        if line.startswith('##FASTA'): # don't care about sequences
-            break
-        elif line.startswith('#'): # don't care about comments or header data
-            pass
-        else: # within the GFF3 9-column section
-            ele = line.split('\t')
-            if ele[2] == 'gene': # only process if it is a gene
-                source = ele[0]
-                start = ele[3]
-                stop = ele[4]
-                strand = ele[6]
+                    attr_name = re.search(regex_for_name,ele[8]).group(1) # extract the name from attr that links via GMAP
 
-                attr_name = re.search(regex_for_name,ele[8]).group(1) # extract the name from attr that links via GMAP
+                    id = ""
+                    if ref_or_iso == "reference":
+                        id = "{0}.{1}".format(name,attr_name) # need to make a unique ID for each group/isolate that ties back to attr name
+                    else: # working with an isolate and need to use the GMAP name
+                        id = "{0}.{1}".format(name,re.search(regex_for_gmap_name,ele[8]).group(1))
 
-                id = ""
-                if ref_or_iso == "reference":
-                    id = "{0}.{1}".format(name,attr_name) # need to make a unique ID for each group/isolate that ties back to attr name
-                else: # working with an isolate and need to use the GMAP name
-                    id = "{0}.{1}".format(name,re.search(regex_for_gmap_name,ele[8]).group(1))
+                    combined_vals = "{0}|{1}|{2}|{3}|{4}".format(source,start,stop,strand,id)
+                    
+                    if attr_name not in allele_map: # initialize if not seen before
+                        allele_map[attr_name] = []
 
-                combined_vals = "{0}|{1}|{2}|{3}|{4}".format(source,start,stop,strand,id)
-                
-                if attr_name not in allele_map: # initialize if not seen before
-                    allele_map[attr_name] = []
-
-                allele_map[attr_name].append(combined_vals)
+                    allele_map[attr_name].append(combined_vals)
 
     return allele_map
 

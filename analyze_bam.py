@@ -48,14 +48,14 @@ def main():
     if args.bam is not None:
         i = pysam.AlignmentFile(args.bam,'rb')
 
-    rd_map,rf_map = (defaultdict(list) for i in range(2)) # establish these dicts as holding lists
+    rd_map,rf_map = (defaultdict(list) for j in range(2)) # establish these dicts as holding lists
 
     threshold = 80  # minimum cutoff to include a read
     if args.threshold: # user specificying threshold
         threshold = float(args.threshold)
 
     for read in i.fetch(until_eof=True): # iterate over all reads in the [S|B]AM file.
-        que,ref = ("" for i in range(2))
+        que,ref = ("" for j in range(2))
 
         cigar = read.cigartuples # extract a tuple for the CIGAR string
 
@@ -80,13 +80,12 @@ def main():
     read_map = args.o + "_read_map.tsv"
     ref_map = args.o + "_ref_map.tsv"
 
-    o1 = open(read_map,'w')
-    write_tsv(rd_map,o1)
-    o1.close()
+    with open(read_map,'w') as o1:
+        write_tsv(rd_map,o1)
 
-    o2 = open(ref_map,'w')
-    write_tsv(rf_map,o2)
-    o2.close()
+    with open(ref_map,'w') as o2:
+        write_tsv(rf_map,o2)
+
 
 # Calculates % identity given info from a CIGAR string
 # Expects a tuple based on the pysam documentation (http://pysam.readthedocs.io/en/latest/api.html) where...
@@ -105,7 +104,7 @@ def main():
 # length = length of the alignment (needed to calculate %ID)
 def calculate_percent_id(cigar,length):
     
-    matches,percent_id = (0 for i in range(2))
+    matches,percent_id = (0 for j in range(2))
     
     for x in cigar: # iterate over each tuple found
         if x[0] == 0:
