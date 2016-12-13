@@ -146,8 +146,10 @@ def main():
 # list2 = list of alignments from the second mate
 def verify_alignment(list1,list2):
 
-    set1 = isolate_loci(list1)
-    set2 = isolate_loci(list2)
+    for ref in list1: # establish unique reference sets per read
+        set1.add(ref)
+    for ref in list2:
+        set2.add(ref)
     
     # only one locus, and the same one in both mates
     if len(set1) == 1 and set1 == set2: 
@@ -163,24 +165,6 @@ def verify_alignment(list1,list2):
     # simmply not sharing the same loci, discrepancy!
     elif set1 != set2: 
         return "discrepancy"
-
-# Function which will return a set of all unique loci found given a list of
-# alignment info.
-# Arguments:
-# alignment_list = expects the following data in each element: %ID|length|reference
-def isolate_loci(alignment_list):
-
-    loci = set() # set of reference IDs
-
-    for ref in alignment_list:
-        
-        ele = ref.split('|')
-        align_info = ele[2].split('.') # grab just the reference portion
-        id = align_info[1] # second element is the reference without pre/suf-fixes
-
-        loci.add(id)
-
-    return loci
 
 # Function to parse through a FASTQ file and generate new ones that only consist
 # of IDs, per locus, found to be valid by the alignment and this script.
