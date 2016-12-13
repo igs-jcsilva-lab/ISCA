@@ -56,17 +56,17 @@ def main():
             ele = line.split('\t')
             
             if ele[0][-1] == "1": # read mate 1
-                for alignment in range(1,len(ele)):
-                    align_parts = alignment.split('|') # split the alignment data
-                    ref = align_parts[2].split('.') # split the reference name
+                for j in range(1,len(ele)):
+                    alignment = ele[j].split('|') # split the alignment data
+                    ref = alignment[2].split('.') # split the reference name
                     ref_loc = ref[1] # grab just the base reference locus
                     # don't double up on references (possible if mapping to same locus from different samples)
                     if ref_loc not in r1[ele[0]]: 
                         r1[ele[0]].append(ref_loc)
             else: # read mate 2
-                for alignment in range(1,len(ele)):
-                    align_parts = alignment.split('|')
-                    ref = align_parts[2].split('.')
+                for j in range(1,len(ele)):
+                    alignment = ele[j].split('|')
+                    ref = alignment[2].split('.')
                     ref_loc = ref[1]
                     if ref_loc not in r2[ele[0]]:
                         r2[ele[0]].append(ref_loc)
