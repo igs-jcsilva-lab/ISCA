@@ -25,7 +25,7 @@
 #
 # Author: James Matsumura
 
-import sys,re,argparse,gzip,os,itertools
+import sys,re,argparse,gzip,os,itertools,errno
 from collections import defaultdict
 
 def main():
@@ -72,7 +72,7 @@ def main():
                         r2[ele[0]].append(ref_loc)
 
     shared_id = "" # id in the format of ABC.123 for pairs ABC.123.1 + ABC.123.2
-    checked_ids = set() # set to speed up processing of R2 if already covered by R1
+    checked_ids,ref_dirs = (set() for j in range(2)) # set to speed up processing of R2 if already covered by R1
 
     # Now, iterate over each dict of mates and filter if required
     for read in r1: # mate 1
@@ -87,11 +87,11 @@ def main():
             
             # If a single map value, know that both reads share the same locus
             if not r1[read]: # if R1 didn't map, means R2 did
-                ids_to_keep[shared_id].append(r2[mate_id])
+                ids_to_keep[shared_id].append(r2[mate_id][0])
             elif not r2[mate_id]: # same as above, if R2 didn't map, means R1 did
-                ids_to_keep[shared_id].append(r1[read])
+                ids_to_keep[shared_id].append(r1[read][0])
             else: # else, they both mapped to the same locus and can use either value
-                ids_to_keep[shared_id].append(r1[read])
+                ids_to_keep[shared_id].append(r1[read][0])
 
         else: # no filter needed, add all distinct loci found per read
 
@@ -114,7 +114,7 @@ def main():
 
             # If we are here, the read was not found in R1. Thus, get loci strictly from R2.
             if filter == "yes" and count_val == "single_map": 
-                ids_to_keep[shared_id].append(r2[read])
+                ids_to_keep[shared_id].append(r2[read][0])
 
             else: # Again, was not found in R1 so we know all loci are from R2. 
                 for ref in r2[read]:
@@ -137,6 +137,18 @@ def main():
     filter_fastq(ids_to_keep,filename,output)
 
 
+# Function to ensure that a directory is only created if it does not
+# exist. Eliminates the race condition of a simple call for whether
+# the directory exists.
+# Argument:
+# path = path to a directory to check its existence 
+def make_directory(path):
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
+
 # Function to compare where the two mates in a pair mapped to. Returns 
 # 'single_map' if both only map to a single locus, 'multi_map' if one
 # or both of the reads map to more than one locus, and 'discrep'  if 
@@ -146,6 +158,7 @@ def main():
 # list2 = list of alignments from the second mate
 def verify_alignment(list1,list2):
 
+    set1,set2 = (set() for j in range(2))
     for ref in list1: # establish unique reference sets per read
         set1.add(ref)
     for ref in list2:
@@ -202,12 +215,20 @@ def filter_fastq(ids,fastq,outdir):
 
                         # Establish all loci mapped to, could be many if not filtering
                         for ref in ids[id]:
+                            
                             dir = "{0}/{1}".format(outdir,ref)
-                            if not os.path.exists(dir): # create dir if not present already
-                                os.makedirs(dir)
+                            make_directory(dir)
 
                             out1 = dir + "/R1.fastq.gz"
                             out2 = dir + "/R2.fastq.gz"
+
+                            # SPAdes, more specifically BWA, complains if the read
+                            # IDs are not exactly the same. Thus, trim the .1 and 
+                            # .2 suffixes from each of the header lines. 
+                            entry1[0].replace('.1 ',' ')
+                            entry1[2].replace('.1 ',' ')
+                            entry2[0].replace('.2 ',' ')
+                            entry2[2].replace('.2 ',' ')
 
                             # add to whatever FASTQ file is already there
                             with gzip.open(out1,'ab') as o1:
@@ -216,7 +237,6 @@ def filter_fastq(ids,fastq,outdir):
                             with gzip.open(out2,'ab') as o2:
                                 for l in entry2:
                                     o2.write(l.encode())
-
 
                     entry1,entry2 = ([] for j in range(2)) # reset for next entry
                     lineno = 0
