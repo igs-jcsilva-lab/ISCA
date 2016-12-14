@@ -3,11 +3,8 @@
 # This script aims to reformat all directories created by fastq_reads_to_fastq_alleles.py
 # into something that SGE grid can use for a job array submission. This script
 # is meant to be run both before and after the grid job to run SPAdes is compelted.
-#
-# If run BEFORE SPAdes, this script uses input generated from analyze_bam.py 
-# (*_ref_map.tsv) and generates a more basic map file with two columns, ref and 
-# grid ID. The grid IDs will be arbitrary and start at 1 climbing until it hits 
-# the number of directories made.
+# The output is a basic map file with two columns, ref and grid ID. The grid IDs will
+# be arbitrary and start at 1 climbing until it hits the number of directories made.
 #
 # Run the script using a command like this:
 # python3 analyze_bam.py -i /path/to/ref_map.tsv -path /path/to/ref_dirs -out /path/to/out_map.tsv
