@@ -5,7 +5,7 @@
 # FASTA set used to build the Bowtie2 reference.  
 #
 # Run the script using a command like this:
-# python3 global_alignment.py -i /path/to/spades_map.tsv -f /path/to/ref.fasta -out /path/to/alignment_out
+# python3 global_alignment.py -ea_map /path/to/extract_alleles_map.tsv -ffs_map /path/to/format_for_spades.tsv -ref_genome /path/to/ref_genome.fsa -assmb_path -/path/to/spades_out -out /path/to/alignment_out
 #
 # Author: James Matsumura
 
@@ -53,15 +53,19 @@ def main():
         for line in dir_map:
             line = line.rstrip()
             ele = line.split('\t')
-            locus = ele[0]
-            loc_dir = ele[1]
+            locus = ele[0] # reference/locus that maps to directory number
+            loc_dir = ele[1] # the directory number from SPAdes for grid submission
             bseq_file = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
             out_dir = "{0}/{1}".format(args.out,locus)
             os.makedirs(out_dir)
 
+            # Iterate over each distinct ref sequence (or allele) associated
+            # with this particular locus. 
             for ref_seq in ref_dict[locus]:
                 seq = seq_dict[ref_seq]
                 aseq_file = "{0}/{1}.fsa".format(out_dir,ref_seq)
+
+                # Make an individual FASTA file for each allele
                 with open(aseq_file,'w') as fsa:
                     SeqIO.write(seq,fsa,"fasta")
 
