@@ -27,6 +27,8 @@ def main():
     # First, rename the directories
     with open(args.refs,'r') as infile:
         for line in infile:
+            
+            line = line.rstrip()
             ref = line.split('\t') # really just want the first column which is the ref ID
 
             old_dir = "{0}/{1}".format(args.path,ref[0])

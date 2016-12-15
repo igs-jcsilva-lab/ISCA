@@ -18,7 +18,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
     parser.add_argument('-l', type=str, required=True, help='Path to a TSV list for references and isolates.')
-    parser.add_argument('-i', type=str, required=True, help='Path to the output from extract_alleles.py.')
+    parser.add_argument('-ea_map', type=str, required=True, help='Path to the output from extract_alleles.py.')
     parser.add_argument('-b', type=str, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
     parser.add_argument('-o', type=str, required=True, help='Path to where the output TSV should go.')
     args = parser.parse_args()

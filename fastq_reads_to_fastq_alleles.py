@@ -31,7 +31,7 @@ from collections import defaultdict
 def main():
 
     parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTQ reads.')
-    parser.add_argument('-reads', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
+    parser.add_argument('-ab_map', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
     parser.add_argument('-fastq', type=str, required=True, help='Path to the original FASTQ file prefix of paired-end reads (e.g., enter ABC.123 for pairs ABC.123.1+ABC.123.2). MUST be gunzipped.')
     parser.add_argument('-filter', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
     parser.add_argument('-out', type=str, required=True, help='Path to where the output directory for the FASTQs to go.')
