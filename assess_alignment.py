@@ -9,7 +9,7 @@
 #
 # Author: James Matsumura
 
-import sys,re,argparse,os
+import re,argparse,os
 
 def main():
 

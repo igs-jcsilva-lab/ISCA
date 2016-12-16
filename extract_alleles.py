@@ -28,7 +28,7 @@
 #
 # Author: James Matsumura
 
-import sys,re,argparse
+import re,argparse
 
 def main():
 

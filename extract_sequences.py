@@ -12,7 +12,8 @@
 #
 # Author: James Matsumura
 
-import sys,re,argparse
+import re,argparse
+from shared_fxns import write_fasta
 
 def main():
 
@@ -53,8 +54,7 @@ def main():
             fasta_file = vals[2]
             gene_list = extract_us[vals[3]]
 
-            with open(args.o,'w') as o:
-                extract_sequences(fasta_file,gene_list,b,o)
+            extract_sequences(fasta_file,gene_list,b,o)
 
 
 # Arguments:
@@ -118,9 +118,8 @@ def extract_sequences(file,genes,buffer,outfile):
                     mod_seq += base
 
         # Print out in standard FASTA format
-        outfile.write(">{0}\n".format(id))
-        for j in range(0, len(sequence), 60):
-            outfile.write(sequence[j:j+60] + "\n")
+        write_fasta(outfile,id,sequence)
+
 
 if __name__ == '__main__':
     main()

@@ -25,8 +25,9 @@
 #
 # Author: James Matsumura
 
-import sys,re,argparse,gzip,os,itertools,errno
+import argparse,gzip,itertools
 from collections import defaultdict
+from shared_fxns import make_directory
 
 def main():
 
@@ -136,18 +137,6 @@ def main():
     # need to filter all the FASTQ reads to just those that aligned to a gene region.
     filter_fastq(ids_to_keep,filename,output)
 
-
-# Function to ensure that a directory is only created if it does not
-# exist. Eliminates the race condition of a simple call for whether
-# the directory exists.
-# Argument:
-# path = path to a directory to check its existence 
-def make_directory(path):
-    try:
-        os.makedirs(path)
-    except OSError as exception:
-        if exception.errno != errno.EEXIST:
-            raise
 
 # Function to compare where the two mates in a pair mapped to. Returns 
 # 'single_map' if both only map to a single locus, 'multi_map' if one

@@ -26,7 +26,7 @@
 #
 # Author: James Matsumura
 
-import sys,re,argparse,pysam
+import argparse,pysam
 from collections import defaultdict
 
 def main():

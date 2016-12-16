@@ -9,11 +9,12 @@
 #
 # Author: James Matsumura
 
-import sys,re,argparse,os
+import argparse
 from collections import defaultdict
 from Bio.Emboss.Applications import NeedleCommandline
 from Bio import AlignIO
 from Bio import SeqIO
+from shared_fxns import make_directory,write_fasta
 
 def main():
 
@@ -57,7 +58,7 @@ def main():
             loc_dir = ele[1] # the directory number from SPAdes for grid submission
             bseq_file = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
             out_dir = "{0}/{1}".format(args.out,locus)
-            os.makedirs(out_dir)
+            make_directory(out_dir)
 
             # Iterate over each distinct ref sequence (or allele) associated
             # with this particular locus. 
@@ -142,17 +143,6 @@ def trim_extensions(a,b):
     b = b[l_trim:r_trim]
     a = a.replace('-','') # remove embedded gaps, let Needle re-add
     return {'a':a , 'b':b}
-
-# Function to generate new FASTA files after trimming extensions.
-# Arguments:
-# file: name/path of file to be written
-# header: header ID
-# seq: sequence to be written
-def write_fasta(file,header,seq):
-    with open(file,'w') as out:
-        out.write(">{0}\n".format(header))
-        for j in range(0, len(seq), 60):
-            out.write(seq[j:j+60] + "\n")
 
 
 if __name__ == '__main__':

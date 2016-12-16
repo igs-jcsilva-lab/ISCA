@@ -11,14 +11,16 @@
 #
 # Author: James Matsumura
 
-import sys,re,argparse,os,errno
+import argparse,os,errno
+from shared_fxns import make_directory
 
 def main():
 
     parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTQ reads.')
     parser.add_argument('-refs', type=str, required=True, help='Path to *_ref_map.tsv output from analyze_bam.py.')
     parser.add_argument('-path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
-    parser.add_argument('-out', type=str, required=True, help='Path to output map (maps the ref to the SGE ID)).')
+    parser.add_argument('-spades_path', type=str, required=True, help='Path to the the directory to initialize directories for all the SPAdes output.')
+    parser.add_argument('-outfile', type=str, required=True, help='Path to output map (maps the ref to the SGE ID)).')
     args = parser.parse_args()
 
     ref_map = {} # dict to hold the ref and its arbitrary ID starting at 1
@@ -31,6 +33,12 @@ def main():
             line = line.rstrip()
             ref = line.split('\t') # really just want the first column which is the ref ID
 
+            # First make a new output directory for all the SPAdes assembly files
+            spades_out_dir = "{0}/{1}".format(args.spades_path,ref[0])
+            make_directory(spades_out_dir)
+
+            # Now rename the original directory so that it can be iterated over in a grid
+            # job. 
             old_dir = "{0}/{1}".format(args.path,ref[0])
             new_dir = "{0}/{1}".format(args.path,id)
 
@@ -40,7 +48,7 @@ def main():
                 if exception.errno != errno.EEXIST:
                     raise
             else:
-                ref_map[id] = id
+                ref_map[ref[0]] = id
                 id += 1 # if no exception, it was renamed and need a new ID
 
     # Now generate a map to know which directories correlate to what IDs
