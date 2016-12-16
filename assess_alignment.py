@@ -96,7 +96,7 @@ def main():
 def parse_alignment(infile):
 
     regex_for_score = r'#\sScore:\s(.*)$'
-    regex_for_id = r'#\sIdentity:\s+\d+/\d+\s\((\d+)\.\d+%\)$'
+    regex_for_id = r'#\sIdentity:\s+\d+/\d+\s\(\s?(\d+)\.\d+%\)$'
     stats = {'score':0,'id':0}
 
     with open(infile,'r') as alignment:

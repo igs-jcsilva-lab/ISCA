@@ -124,8 +124,8 @@ def align(out,allele,contig,aseq,bseq):
                 refined_align = "{0}/{1}.WITH.{2}.trimmed_align.txt".format(out,allele,contig)
                 a_fsa = "{0}/{1}.WITH.{2}.a.fsa".format(out,allele,contig) # filename
                 b_fsa = "{0}/{1}.WITH.{2}.b.fsa".format(out,allele,contig)
-                a_trim = "{0}.WITH.{1}.a.trimmed".format(allele,contig) # sequence header
-                b_trim = "{0}.WITH.{1}.b.trimmed".format(allele,contig)
+                a_trim = "a.trimmed".format(allele,contig) # sequence header, file name makes distinction
+                b_trim = "b.trimmed".format(allele,contig)
 
                 seqs = trim_extensions(a,b)
                 write_fasta(a_fsa,a_trim,seqs['a'])
@@ -150,12 +150,28 @@ def trim_extensions(a,b):
     a = str(a)
     b = str(b)
 
-    # Leave early if the assembled sequence is smaller than the reference
-    # And they don't happen to be the same length due to gap extensions.
-    if '-' not in a and len(a) >= len(b):
-        b = b.replace('-','')
-        return {'a':a,'b':b}
+    # check the length of the actual sequence, no gaps!
+    aseq = a.replace('-','')
+    bseq = b.replace('-','')
 
+    # Leave early if the assembled sequence is smaller than the reference
+    # and do not trim.                      ref:      ========
+    #                                       assembled:   ===
+    if len(aseq) > len(bseq):
+        return {'a':aseq,'b':bseq}
+
+    # If the sequences overlap like this:   ref:      =========
+    #                                       assembled:      ==========
+    # it's a bit harder to trim. Seems inappropriate to just chop off the 
+    # regions that overextend beyond the alignment. Do not modify these
+    # cases for now. 
+    if (a[0] == "-" and b[0] != "-") or (b[0] == "-" and a[0] != "-"):
+        return {'a':aseq,'b':bseq}
+
+    # If we've made it here, know that the reference falls entirely within
+    # the assembly. Trim the overextensions from the assembled contig. 
+    #                                       ref:         ===
+    #                                       assembled: =======
     curr_length = len(a) # length before trimming left
     a = a.lstrip('-')
     l_trim = curr_length - len(a)
