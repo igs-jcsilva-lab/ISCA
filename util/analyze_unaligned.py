@@ -57,7 +57,10 @@ def main():
 
             aligned.add(locus)
 
-    seen = set() # some loci have multiple paths like ABC.1/ABC.2/etc.
+    # Build an output dict of list values where the first element is the GC
+    # content and the second element is the 
+    out_dict = defaultdict(list)
+    total = 0 # keep a total so we can average GC content
 
     # At this point we know all the names of the reference sequences for a 
     # given locus ID and we know all the locus IDs that recruited at least 
@@ -75,7 +78,14 @@ def main():
             if k not in aligned:
                 for ref in v:
                     gc = calc_gc_content(seq_dict[ref].seq)
-                    outfile.write("{0}\t{1}\n".format(ref,gc))
+                    out_dict[ref].append(gc)
+                    total += gc
+
+        avg = float("{0:.2f}".format(total/(len(out_dict))))
+        outfile.write("Average GC content for the {0} references that could not recruit is: {1}%\n".format(len(out_dict),avg))
+        outfile.write("Reference_ID\tGC_content\tGFF3_description\n")
+        for k,v in out_dict.items():
+            outfile.write("{0}\t{1}\n".format(k,v[0]))
 
 
 # Function to calculate GC percentage given a sequence.
