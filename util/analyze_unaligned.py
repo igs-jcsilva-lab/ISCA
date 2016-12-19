@@ -10,7 +10,7 @@
 #
 # Author: James Matsumura
 
-import argparse,os
+import argparse,os,re,urllib
 from collections import defaultdict
 from Bio import SeqIO
 
@@ -47,6 +47,34 @@ def main():
                 allele = allele_info[4]
                 ref_dict[locus].append(allele)
 
+    # Extract from the GFF3 file the description for each ID. 
+    gff3_map = {}
+    with open(args.ref_gff3,'r') as gff3:
+
+        regex_for_id = r'ID=([a-zA-Z0-9_\-]+)'
+        regex_for_desc = r'description=(.*)'
+
+        for line in gff3:
+
+            id,desc = ("" for i in range(2))
+
+            if line.startswith('##FASTA'):
+                break
+            elif line.startswith('#'):
+                continue
+            else:
+                line = line.rstrip()
+                ele = line.split('\t')
+                if ele[2] == 'gene': # where we want to be, extract ID and description
+                    attr = ele[8].split(';')
+                    for tag in attr:
+                        if tag.startswith('ID'):
+                            id = re.search(regex_for_id,tag).group(1)
+                        elif tag.startswith('description'):
+                            desc = re.search(regex_for_desc,tag).group(1)
+
+                    gff3_map[id] = urllib.parse.unquote_plus(desc)
+
     # Using the file that notes which loci recruited at least one read,
     # extract all those that did not recruit a read. 
     with open(args.ref_map,'r') as aligned_set:
@@ -78,14 +106,15 @@ def main():
             if k not in aligned:
                 for ref in v:
                     gc = calc_gc_content(seq_dict[ref].seq)
-                    out_dict[ref].append(gc)
+                    out_dict[ref].append(gc) # add GC content
+                    out_dict[ref].append(gff3_map[k]) # add description
                     total += gc
 
         avg = float("{0:.2f}".format(total/(len(out_dict))))
-        outfile.write("Average GC content for the {0} references that could not recruit is: {1}%\n".format(len(out_dict),avg))
+        outfile.write("Average GC content for the {0} references that could not recruit is: {1}%\n\n".format(len(out_dict),avg))
         outfile.write("Reference_ID\tGC_content\tGFF3_description\n")
         for k,v in out_dict.items():
-            outfile.write("{0}\t{1}\n".format(k,v[0]))
+            outfile.write("{0}\t{1}\t{2}\n".format(k,v[0],v[1]))
 
 
 # Function to calculate GC percentage given a sequence.
