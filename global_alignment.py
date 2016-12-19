@@ -9,7 +9,7 @@
 #
 # Author: James Matsumura
 
-import argparse,os
+import argparse,os,sys
 from collections import defaultdict
 from Bio.Emboss.Applications import NeedleCommandline
 from Bio import AlignIO
@@ -62,6 +62,12 @@ def main():
             # Split out the contigs if more than one is present and have to do
             # alignment of all refs to all contigs.
             contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
+
+            # SPAdes is not able to assemble all the reads, often this seems 
+            # to be due to low coverage. Output this to STDOUT. 
+            if os.path.isfile(contigs):
+                print("{0}\tcould not assemble.".format(locus))
+                sys.exit(0)
 
             # Iterate over each contig assembled by SPAdes
             for record in SeqIO.parse(contigs,"fasta"):
