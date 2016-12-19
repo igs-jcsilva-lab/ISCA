@@ -56,7 +56,7 @@ def main():
             ele = line.split('\t')
             locus = ele[0] # reference/locus that maps to directory number
             loc_dir = ele[1] # the directory number from SPAdes for grid submission
-            out_dir = "{0}/{1}".format(args.out,locus)
+            out_dir = "{0}/{1}".format(args.out,locus) # alignment output goes here
             make_directory(out_dir)
 
             # Split out the contigs if more than one is present and have to do

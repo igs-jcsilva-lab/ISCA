@@ -14,7 +14,7 @@ import re,argparse,os
 def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
-    parser.add_argument('-ffs_map', type=str, required=True, help='Path to map.tsv output from format_for_spades.py.')
+    parser.add_argument('-ga_map', type=str, required=True, help='Path to map.tsv output from global_alignment.py.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
     args = parser.parse_args()
@@ -30,15 +30,24 @@ def main():
                     "50<=x<60","40<=x<50","30<=x<40","20<=x<30","0<=x<10",
                     "10<=x<20"]
 
-    # Need to iterate over the map generated from SPAdes step, these refs are
-    # guaranteed to have been aligned. 
-    with open(args.ffs_map,'r') as loc_map:
+    # Need to iterate over the map generated from the global alignment step. The
+    # stats we care about are those belonging to the reference loci that have
+    # complete coverage. 
+    with open(args.ga_map,'r') as loc_map:
         for line in loc_map:
             line = line.rstrip()
             ele = line.split('\t')
             locus = ele[0]
+            algn_type = ele[1]
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
             isos,scores,ids = ([] for i in range(3)) # reinitialize for every locus
+
+            # global_alignment.py will subset into three types of alignments: 
+            # 'ref', 'staggered', or 'assmb'. The only one we care about for
+            # generating stats are those with complete coverage, meaning it
+            # has the 'assmb' tag. 
+            if algn_type != "assmb":
+                continue
 
             # Found the alignment directory for this locus, now iterate over 
             # the final alignments and pull the best score.
