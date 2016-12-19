@@ -1,1 +1,0 @@
-/usr/local/packages/bowtie2/bowtie2-build /local/scratch/matsu_pf_work/ref_genome/custom.ref.fa /local/scratch/matsu_pf_work/bowtie2index/custom_ref

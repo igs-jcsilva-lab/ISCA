@@ -1,1 +1,0 @@
-/usr/local/packages/bowtie2/bowtie2-build /local/scratch/matsu_pf_work/ref_genome/Plasmodium_falciparum.ASM276v1.dna.toplevel.fa /local/scratch/matsu_pf_work/bowtie2index/3d7
