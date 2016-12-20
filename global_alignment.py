@@ -65,9 +65,9 @@ def main():
 
             # SPAdes is not able to assemble all the reads, often this seems 
             # to be due to low coverage. Output this to STDOUT. 
-            if os.path.isfile(contigs):
+            if not os.path.isfile(contigs):
                 print("{0}\tcould not assemble.".format(locus))
-                sys.exit(0)
+                continue
 
             # Iterate over each contig assembled by SPAdes
             for record in SeqIO.parse(contigs,"fasta"):
@@ -93,13 +93,13 @@ def main():
                     # Now have the reference FASTA file, perform alignment
                     # with the assembled contig.
                     alignment = align(out_dir,ref_seq,record.id,aseq_file,bseq_file)
-                    align_id = "{0}/{1}.WITH.{2}.trimmed_align.txt".format(out,ref_seq,record.id)
+                    align_id = "{0}/{1}.WITH.{2}.trimmed_align.txt".format(out_dir,ref_seq,record.id)
                     type_map[align_id] = alignment['type']
 
                 # For each contig, note the type of alignment so that when the
                 # best score is extracted we know whether this could be 
                 # re-aligned and potentially better optimized. 
-                type_file = "{0}/ga_map.tsv".format(out_dir)
+                type_file = "{0}/ga_map.tsv".format(args.out)
                 with open(type_file,'a') as type_out:
                     for k,v in type_map.items():
                         type_out.write("{0}\t{1}\n".format(k,v))
@@ -189,10 +189,13 @@ def trim_extensions(a,b):
     if (a[0] == "-" and b[0] != "-") or (b[0] == "-" and a[0] != "-"):
         return {'a':aseq,'b':bseq,'type':'staggered'}
 
-    # If we've made it here, know that the reference falls entirely within
-    # the assembly. Trim the overextensions from the assembled contig. 
-    # While unlikely, this may also hold the case where the two are 
-    # the exact same length. 
+    # If we've made it here, know that the reference likely falls 
+    # entirely within the assembly. Trim the overextensions from 
+    # the assembled contig. Another case that his point is when 
+    # the assembled sequence covers a great deal of the internal 
+    # region. Thus, while there is no outside to trim, the assembly
+    # is indeed longer than the reference. While unlikely, it may 
+    # also be the case where the two are the exact same length. 
     #                                       ref:         ===
     #                                       assembled: =======
     curr_length = len(a) # length before trimming left
@@ -203,7 +206,12 @@ def trim_extensions(a,b):
     a = a.rstrip('-')
     r_trim = (curr_length - len(a)) * -1
 
-    b = b[l_trim:r_trim]
+    # If it's the case where the assembly fills in the internal regions,
+    # make sure not to do an subset of [0:0] for b. 
+    if l_trim == 0 and r_trim == 0:
+        pass
+    else:
+        b = b[l_trim:r_trim]
     a = a.replace('-','') # remove embedded gaps, let Needle re-add
     return {'a':a ,'b':b,'type':'assmb'}
 
