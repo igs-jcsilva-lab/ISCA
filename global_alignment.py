@@ -93,15 +93,16 @@ def main():
                     # Now have the reference FASTA file, perform alignment
                     # with the assembled contig.
                     alignment = align(out_dir,ref_seq,record.id,aseq_file,bseq_file)
-                    type_map[record.id] = alignment['type']
+                    align_id = "{0}/{1}.WITH.{2}.trimmed_align.txt".format(out,ref_seq,record.id)
+                    type_map[align_id] = alignment['type']
 
                 # For each contig, note the type of alignment so that when the
                 # best score is extracted we know whether this could be 
                 # re-aligned and potentially better optimized. 
-                type_file = "{0}/{1}.map"
-                with open(type_file,'w') as type_map:
+                type_file = "{0}/ga_map.tsv".format(out_dir)
+                with open(type_file,'a') as type_out:
                     for k,v in type_map.items():
-                        type_map.write("{0}\t{1}\n".format(k,v))
+                        type_out.write("{0}\t{1}\n".format(k,v))
 
 
 # Function to perform an alignment between the reference FASTA sequence and
@@ -190,6 +191,8 @@ def trim_extensions(a,b):
 
     # If we've made it here, know that the reference falls entirely within
     # the assembly. Trim the overextensions from the assembled contig. 
+    # While unlikely, this may also hold the case where the two are 
+    # the exact same length. 
     #                                       ref:         ===
     #                                       assembled: =======
     curr_length = len(a) # length before trimming left

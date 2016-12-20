@@ -5,7 +5,7 @@
 # assembled reads that best mapped to which reference isolates. 
 #
 # Run the script using a command like this:
-# python3 global_alignment.py -ffs_map /path/to/format_for_spades.tsv -assmb_path -/path/to/spades_out -out /path/to/stats.txt
+# python3 assess_alignment.py -ffs_map /path/to/format_for_spades.tsv -assmb_path -/path/to/spades_out -out /path/to/stats.txt
 #
 # Author: James Matsumura
 
@@ -14,7 +14,8 @@ import re,argparse,os
 def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
-    parser.add_argument('-ga_map', type=str, required=True, help='Path to map.tsv output from global_alignment.py.')
+    parser.add_argument('-ffs_map', type=str, required=True, help='Path to map.tsv output from format_for_spades.py.')
+    parser.add_argument('-ga_map', type=str, required=False, help='Optional path to map.tsv output from global_alignment.py. If provided, this will filter only by those best alignments where the reference length is entirely captured by the assembly.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
     args = parser.parse_args()
@@ -30,24 +31,29 @@ def main():
                     "50<=x<60","40<=x<50","30<=x<40","20<=x<30","0<=x<10",
                     "10<=x<20"]
 
-    # Need to iterate over the map generated from the global alignment step. The
-    # stats we care about are those belonging to the reference loci that have
-    # complete coverage. 
-    with open(args.ga_map,'r') as loc_map:
+    # A set that, if ga_map is provided, will filter the best alignments where
+    # the length of the locus is entirely captured by the asesmbly. 
+    locus_assembled = set()
+
+    # First build a set for all the alignments where the locus was entirely
+    # captured by the assembly. 
+    if args.ga_map:
+        with open(args.ga_map,'r') as align_map:
+            for line in align_map:
+                line = line.rstrip()
+                ele = line.split('\t')
+                if ele[1] == 'assmb':
+                    locus_assembled.add(ele[0])
+
+    # Need to iterate over the map generated from SPAdes step, these refs are
+    # guaranteed to have been aligned. 
+    with open(args.ffs_map,'r') as loc_map:
         for line in loc_map:
             line = line.rstrip()
             ele = line.split('\t')
             locus = ele[0]
-            algn_type = ele[1]
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
-            isos,scores,ids = ([] for i in range(3)) # reinitialize for every locus
-
-            # global_alignment.py will subset into three types of alignments: 
-            # 'ref', 'staggered', or 'assmb'. The only one we care about for
-            # generating stats are those with complete coverage, meaning it
-            # has the 'assmb' tag. 
-            if algn_type != "assmb":
-                continue
+            isos,scores,ids,filenames = ([] for i in range(3)) # reinitialize for every locus
 
             # Found the alignment directory for this locus, now iterate over 
             # the final alignments and pull the best score.
@@ -63,10 +69,18 @@ def main():
                     isos.append(isolate) 
                     scores.append(float(stats['score']))
                     ids.append(stats['id'])
+                    filenames.append(file)
 
             best = scores.index(max(scores))
             best_iso = isos[best]
             best_id = ids[best]
+            best_file = filenames[best]
+
+            # If filtering is necessary, check if this file contains an alignment
+            # where the reference was entirely re-assembled by the assembler. 
+            if args.ga_map:
+                if best_file not in locus_assembled:
+                    continue # go to the next set of alignments if not the case
 
             if best_iso in isolate_counts:
                 isolate_counts[best_iso] += 1
