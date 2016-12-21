@@ -33,27 +33,30 @@ def main():
 
     # A set that, if ga_map is provided, will filter the best alignments where
     # the length of the locus is entirely captured by the asesmbly. 
-    locus_assembled = set()
+    unassembled = set()
 
-    # First build a set for all the alignments where the locus was entirely
-    # captured by the assembly. 
+    # First identify which assemblies could not align. This is captured by the 
+    # STDOUT of global_alignment.py
     if args.ga_map:
         with open(args.ga_map,'r') as align_map:
             for line in align_map:
                 line = line.rstrip()
                 ele = line.split('\t')
-                if ele[1] == 'assmb':
-                    locus_assembled.add(ele[0])
+                unassembled.add(ele[0])
 
-    # Need to iterate over the map generated from SPAdes step, these refs are
-    # guaranteed to have been aligned. 
+    # Need to iterate over the map generated from SPAdes step.
     with open(args.ffs_map,'r') as loc_map:
         for line in loc_map:
             line = line.rstrip()
             ele = line.split('\t')
             locus = ele[0]
+
+            # Leave early if we know this was unable to be assembled.
+            if locus in unassembled:
+                continue
+
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
-            isos,scores,ids,filenames = ([] for i in range(3)) # reinitialize for every locus
+            isos,scores,ids = ([] for i in range(3)) # reinitialize for every locus
 
             # Found the alignment directory for this locus, now iterate over 
             # the final alignments and pull the best score.
@@ -69,18 +72,10 @@ def main():
                     isos.append(isolate) 
                     scores.append(float(stats['score']))
                     ids.append(stats['id'])
-                    filenames.append(file)
 
             best = scores.index(max(scores))
             best_iso = isos[best]
             best_id = ids[best]
-            best_file = filenames[best]
-
-            # If filtering is necessary, check if this file contains an alignment
-            # where the reference was entirely re-assembled by the assembler. 
-            if args.ga_map:
-                if best_file not in locus_assembled:
-                    continue # go to the next set of alignments if not the case
 
             if best_iso in isolate_counts:
                 isolate_counts[best_iso] += 1
@@ -150,7 +145,7 @@ def bin_percent_id(id_dict,percent):
     elif percent >= 80:
         id_dict['80<=x<90'] += 1
     elif percent >= 70:
-        id_dict['70<=x<80"'] += 1
+        id_dict['70<=x<80'] += 1
     elif percent >= 60:
         id_dict['60<=x<70'] += 1
     elif percent >= 50:

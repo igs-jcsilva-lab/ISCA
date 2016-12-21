@@ -16,7 +16,7 @@ from Bio import SeqIO
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Script to generate EMBOSS Needle alignments given output from format_for_spades.py.')
+    parser = argparse.ArgumentParser(description='Script to assess stats of those sequences that are unaligned.')
     parser.add_argument('-ea_map', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('-ref_map', type=str, required=True, help='Path to *_ref_map.tsv output from analyze_bam.py.')
     parser.add_argument('-ref_genome', type=str, required=True, help='Path to the reference genome file used to build Bowtie2 index.')
@@ -41,6 +41,10 @@ def main():
             line = line.rstrip()
             ele = line.split('\t')
             locus = ele[0]
+
+            if '.' in locus:
+                split_locus = locus.split('.')
+                locus = split_locus[0]
 
             for j in range(1,len(ele)):
                 allele_info = ele[j].split('|')
