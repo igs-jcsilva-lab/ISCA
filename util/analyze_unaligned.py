@@ -6,7 +6,7 @@
 # a percentage, and the gene name. 
 #
 # Run the script using a command like this:
-# python3 global_alignment.py -ea_map /path/to/extract_alleles.out.tsv -ref_genome /path/to/ref_genome.fsa -ref_gff3 /path/to/ref.gff3 -out /path/to/alignment_out
+# python3 analyze_unaligned.py -ea_map /path/to/extract_alleles.out.tsv -ref_map /path/to/ref_map.tsv -ref_genome /path/to/ref_genome.fsa -ref_gff3 /path/to/ref.gff3 -out /path/to/alignment_out
 #
 # Author: James Matsumura
 
