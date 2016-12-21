@@ -42,6 +42,12 @@ def main():
             ele = line.split('\t')
             locus = ele[0]
 
+            # Need to handle the case where the reference locus is 
+            # split into multiple like ABC123.1,ABC123.2,etc.
+            if '.' in locus:
+                split_locus = locus.split('.')
+                locus = split_locus[0]
+
             for j in range(1,len(ele)):
                 allele_info = ele[j].split('|')
                 allele = allele_info[4]
