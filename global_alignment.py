@@ -199,20 +199,30 @@ def trim_extensions(a,b):
 
     # If we've made it here, know that the reference likely falls 
     # entirely within the assembly. Trim the overextensions from 
-    # the assembled contig. Another case that his point is when 
+    # the assembled contig. Another case covered here is when 
     # the assembled sequence covers a great deal of the internal 
     # region. Thus, while there is no outside to trim, the assembly
     # is indeed longer than the reference. While unlikely, it may 
     # also be the case where the two are the exact same length. 
     #                                       ref:         ===
     #                                       assembled: =======
+    
+    l_trim,r_trim = (0 for i in range(2))
+
     curr_length = len(a) # length before trimming left
+    # Only trim the left side if gaps were present there
     a = a.lstrip('-')
-    l_trim = curr_length - len(a)
+    if curr_length != len(a):
+        l_trim = curr_length - len(a)
 
     curr_length = len(a) # length before trimming right    
+    # If the right side needs trimming, do so. Otherwise
+    # make sure it doesn't lose any data.
     a = a.rstrip('-')
-    r_trim = (curr_length - len(a)) * -1
+    if curr_length != len(a):
+        r_trim = (curr_length - len(a)) * -1
+    else: # don't trim! go all the way to the end of the seq
+        r_trim = len(b)
 
     # If it's the case where the assembly fills in the internal regions,
     # make sure not to do an subset of [0:0] for b. 
