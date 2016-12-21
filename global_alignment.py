@@ -192,7 +192,9 @@ def trim_extensions(a,b):
     # it's a bit harder to trim. Seems inappropriate to just chop off the 
     # regions that overextend beyond the alignment. Do not modify these
     # cases for now. 
-    if (a[0] == "-" and b[0] != "-") or (b[0] == "-" and a[0] != "-"):
+    if ((a[0] == "-" and b[0] != "-") and (a[-1] != "-" and b[-1] == "-")):
+        return {'a':aseq,'b':bseq,'type':'staggered'}
+    elif ((b[0] == "-" and a[0] != "-") and (b[-1] != "-" and a[-1] == "-")):
         return {'a':aseq,'b':bseq,'type':'staggered'}
 
     # If we've made it here, know that the reference likely falls 
