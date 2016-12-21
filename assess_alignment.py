@@ -15,13 +15,18 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
     parser.add_argument('-ffs_map', type=str, required=True, help='Path to map.tsv output from format_for_spades.py.')
-    parser.add_argument('-ga_map', type=str, required=False, help='Optional path to map.tsv output from global_alignment.py. If provided, this will filter only by those best alignments where the reference length is entirely captured by the assembly.')
+    parser.add_argument('-ga_map', type=str, required=True, help='Optional path to map.tsv output from global_alignment.py. If provided, this will filter only by those best alignments where the reference length is entirely captured by the assembly.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
     args = parser.parse_args()
 
     # dict for counting which isolates have the best alignments
     isolate_counts = {} 
+    
+    # list for mapping percent ID match + gaps to a given read,
+    # used to generate an outfile where this data can be plotted.
+    id_v_gap = []
+
     # dict for counting how strong the %ID is for the best alignment
     percent_id = {"0<=x<10":0,"10<=x<20":0,"20<=x<30":0,"30<=x<40":0,
                 "40<=x<50":0,"50<=x<60":0,"60<=x<70":0,"70<=x<80":0,
@@ -31,8 +36,7 @@ def main():
                     "50<=x<60","40<=x<50","30<=x<40","20<=x<30","0<=x<10",
                     "10<=x<20"]
 
-    # A set that, if ga_map is provided, will filter the best alignments where
-    # the length of the locus is entirely captured by the asesmbly. 
+    # A set that will specify which directories of alignments to skip over.
     unassembled = set()
 
     # First identify which assemblies could not align. This is captured by the 
@@ -56,7 +60,7 @@ def main():
                 continue
 
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
-            isos,scores,ids = ([] for i in range(3)) # reinitialize for every locus
+            isos,scores,ids,gaps = ([] for i in range(4)) # reinitialize for every locus
 
             # Found the alignment directory for this locus, now iterate over 
             # the final alignments and pull the best score.
@@ -72,18 +76,24 @@ def main():
                     isos.append(isolate) 
                     scores.append(float(stats['score']))
                     ids.append(stats['id'])
+                    gaps.append(stats['gap'])
 
             best = scores.index(max(scores))
             best_iso = isos[best]
             best_id = ids[best]
+            best_gap = gaps[best]
 
+            # extract the %ID match + %gap for plotting
+            id_v_gap.append("{0}:{1}".format(best_id,best_gap))
+
+            # Now assess overall stats for which reference aligned and bin the % ID. 
             if best_iso in isolate_counts:
                 isolate_counts[best_iso] += 1
             else:
-                isolate_counts[best_iso] = 1
-
+                isolate_counts[best_iso] = 1 
             percent_id = bin_percent_id(percent_id,best_id)
 
+    # Write out the overall alignment stats here. 
     outfile = "{0}/alignment_stats.txt".format(args.out)
     with open(outfile,'w') as out:
 
@@ -106,6 +116,16 @@ def main():
             else:
                 out.write("{0}\t\t\t{1} ({2}%)\n".format(bin,percent_id[bin],rel))
 
+    # Write out a file that can generate a plot of %ID v %gaps here.
+    outfile = "{0}/ids_v_gaps.tsv".format(args.out)
+    with open(outfile,'w') as out:
+
+        out.write("Best_%_ID\tBest_%_gap\n")
+
+        for pair in id_v_gap:
+            ele = pair.split(':')
+            out.write("{0}\t{1}\n".format(ele[0],ele[1]))
+
 
 # Function to parse over the output of EMBOSS's Needle program and extract the
 # score of the alignment.
@@ -113,16 +133,16 @@ def main():
 # infile = *.trimmed_align.txt file generated from a Needle alignment. 
 def parse_alignment(infile):
 
-    regex_for_score = r'#\sScore:\s(.*)$'
-    regex_for_id = r'#\sIdentity:\s+\d+/\d+\s\(\s?(\d+)\.\d+%\)$'
-    stats = {'score':0,'id':0}
+    stats = {'score':0,'id':0,'gap':0}
 
     with open(infile,'r') as alignment:
         for line in alignment:
             if line.startswith('# Score:'):
-                stats['score'] = re.search(regex_for_score,line).group(1) 
+                stats['score'] = re.search(r'#\sScore:\s(.*)$',line).group(1) 
             elif line.startswith('# Identity:'):
-                stats['id'] = re.search(regex_for_id,line).group(1)
+                stats['id'] = re.search(r'#\sIdentity:\s+\d+/\d+\s\(\s?(\d+\.\d+)%\)$',line).group(1)
+            elif line.startswith('# Gaps:'):
+                stats['gap'] = re.search(r'#\sGaps:\s+\d+/\d+\s\(\s?(\d+\.\d+)%\)$',line).group(1)
             elif line.startswith('a.trimmed'): # reached actual alignment, no need
                 break
 
