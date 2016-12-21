@@ -5,11 +5,12 @@
 # assembled reads that best mapped to which reference isolates. 
 #
 # Run the script using a command like this:
-# python3 assess_alignment.py -ffs_map /path/to/format_for_spades.tsv -assmb_path -/path/to/spades_out -out /path/to/stats.txt
+# python3 assess_alignment.py -ffs_map /path/to/format_for_spades.tsv -ga_map ga_out.tsv -algn_path -/path/to/alignments_out -out /path/to/stats.txt
 #
 # Author: James Matsumura
 
 import re,argparse,os
+from Bio import AlignIO
 
 def main():
 
@@ -23,9 +24,9 @@ def main():
     # dict for counting which isolates have the best alignments
     isolate_counts = {} 
     
-    # list for mapping percent ID match + gaps to a given read,
-    # used to generate an outfile where this data can be plotted.
-    id_v_gap = []
+    # list for mapping percent ID match + potential coverage for
+    # a given read, used to generate an outfile for plotting.
+    id_v_cov = []
 
     # dict for counting how strong the %ID is for the best alignment
     percent_id = {"0<=x<10":0,"10<=x<20":0,"20<=x<30":0,"30<=x<40":0,
@@ -60,31 +61,48 @@ def main():
                 continue
 
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
-            isos,scores,ids,gaps = ([] for i in range(4)) # reinitialize for every locus
+            isos,scores,ids,cov = ([] for i in range(4)) # reinitialize for every locus
 
             # Found the alignment directory for this locus, now iterate over 
             # the final alignments and pull the best score.
             for file in os.listdir(algn_dir):
+                a,b = ("" for i in range(2)) # store lengths of the trimmed alignments
                 if file.endswith(".trimmed_align.txt"):
+
+                    isolate = file.split('.')[0] # grab the isolate name
 
                     full_path = "{0}/{1}".format(algn_dir,file)
 
-                    isolate = file.split('.')[0] # grab the isolate name
+                    # Extract the sequence lengths to establish a ratio of
+                    # potential coverage. >1 means reference is longer than
+                    # assembled seq and <1 means the assembled seq is longer.
+                    alignment = AlignIO.read(full_path,'emboss'):
+                        for sequence in alignment:
+
+                            if a == "":
+                                a = sequence.seq
+                            else:
+                                b = sequence.seq
+
+                            if a != "" and b != "":
+                                a = a.replace('-','')
+                                b = b.replace('-','')
+
                     stats = parse_alignment(full_path)
 
                     # Seems getting max from a list is faster than dict
                     isos.append(isolate) 
                     scores.append(float(stats['score']))
                     ids.append(stats['id'])
-                    gaps.append(stats['gap'])
+                    cov.append(len(a)/len(b))
 
             best = scores.index(max(scores))
             best_iso = isos[best]
             best_id = ids[best]
-            best_gap = gaps[best]
+            best_cov = cov[best]
 
-            # extract the %ID match + %gap for plotting
-            id_v_gap.append("{0}:{1}".format(best_id,best_gap))
+            # extract the %ID match + coverage for plotting
+            id_v_cov.append("{0}:{1}".format(best_id,best_cov))
 
             # Now assess overall stats for which reference aligned and bin the % ID. 
             if best_iso in isolate_counts:
@@ -116,13 +134,10 @@ def main():
             else:
                 out.write("{0}\t\t\t{1} ({2}%)\n".format(bin,percent_id[bin],rel))
 
-    # Write out a file that can generate a plot of %ID v %gaps here.
-    outfile = "{0}/ids_v_gaps.tsv".format(args.out)
+    # Write out a file that can generate a plot of %ID v coverage
+    outfile = "{0}/ids_v_cov.tsv".format(args.out)
     with open(outfile,'w') as out:
-
-        out.write("Best_%_ID\tBest_%_gap\n")
-
-        for pair in id_v_gap:
+        for pair in id_v_cov:
             ele = pair.split(':')
             out.write("{0}\t{1}\n".format(ele[0],ele[1]))
 
@@ -133,7 +148,7 @@ def main():
 # infile = *.trimmed_align.txt file generated from a Needle alignment. 
 def parse_alignment(infile):
 
-    stats = {'score':0,'id':0,'gap':0}
+    stats = {'score':0,'id':0}
 
     with open(infile,'r') as alignment:
         for line in alignment:
@@ -141,8 +156,6 @@ def parse_alignment(infile):
                 stats['score'] = re.search(r'#\sScore:\s(.*)$',line).group(1) 
             elif line.startswith('# Identity:'):
                 stats['id'] = re.search(r'#\sIdentity:\s+\d+/\d+\s\(\s?(\d+\.\d+)%\)$',line).group(1)
-            elif line.startswith('# Gaps:'):
-                stats['gap'] = re.search(r'#\sGaps:\s+\d+/\d+\s\(\s?(\d+\.\d+)%\)$',line).group(1)
             elif line.startswith('a.trimmed'): # reached actual alignment, no need
                 break
 

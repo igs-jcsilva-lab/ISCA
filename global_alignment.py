@@ -133,8 +133,7 @@ def align(out,allele,contig,aseq,bseq):
 
     a,b = (None for i in range(2))
 
-    # This should just be one alignment... but handles more. 
-    for alignment in AlignIO.parse(initial_align,format):
+    alignment = AlignIO.read(initial_align,format):
         for sequence in alignment:
 
             if a == None: # grab both sequences, first being the reference seq
