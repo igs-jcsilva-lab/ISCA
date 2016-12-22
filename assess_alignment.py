@@ -61,7 +61,7 @@ def main():
                 continue
 
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
-            isos,scores,ids,cov = ([] for i in range(4)) # reinitialize for every locus
+            isos,scores,ids,files,cov = ([] for i in range(5)) # reinitialize for every locus
 
             # Found the alignment directory for this locus, now iterate over 
             # the final alignments and pull the best score.
@@ -95,14 +95,16 @@ def main():
                     scores.append(float(stats['score']))
                     ids.append(stats['id'])
                     cov.append(len(a)/len(b))
+                    files.append(full_path)
 
             best = scores.index(max(scores))
             best_iso = isos[best]
             best_id = ids[best]
             best_cov = cov[best]
+            best_file = files[best]
 
             # extract the %ID match + coverage for plotting
-            id_v_cov.append("{0}:{1}".format(best_id,best_cov))
+            id_v_cov.append("{0}:{1}:{2}".format(best_id,best_cov,best_file))
 
             # Now assess overall stats for which reference aligned and bin the % ID. 
             if best_iso in isolate_counts:
@@ -139,7 +141,7 @@ def main():
     with open(outfile,'w') as out:
         for pair in id_v_cov:
             ele = pair.split(':')
-            out.write("{0}\t{1}\n".format(ele[0],ele[1]))
+            out.write("{0}\t{1}\t{2}\n".format(ele[0],ele[1],ele[2]))
 
 
 # Function to parse over the output of EMBOSS's Needle program and extract the
