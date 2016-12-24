@@ -24,13 +24,14 @@ with open(args.i,'r') as infile:
     for line in infile:
         line = line.rstrip()
         ele = line.split('\t')
-        x.append(ele[0])
-        y.append(ele[1])
+        x.append(ele[1])
+        y.append(ele[0])
 
 plt.scatter(x, y, s=10, alpha=0.5, marker="x")
-plt.title('%ID vs %gaps from best alignments')
+plt.title('%ID vs coverage ratio from best alignments')
 plt.ylabel('% ID match')
 plt.xlabel('(reference / assembled) length ratio')
+plt.xlim([0,6]) # trimming outliers
 plt.ylim([0,101])
 plt.yticks(range(0,101,5))
 plt.show()

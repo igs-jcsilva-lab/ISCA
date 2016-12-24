@@ -32,7 +32,7 @@ from shared_fxns import make_directory
 def main():
 
     parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTQ reads.')
-    parser.add_argument('-ab_map', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
+    parser.add_argument('-ab_read_map', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
     parser.add_argument('-fastq', type=str, required=True, help='Path to the original FASTQ file prefix of paired-end reads (e.g., enter ABC.123 for pairs ABC.123.1+ABC.123.2). MUST be gunzipped.')
     parser.add_argument('-filter', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
     parser.add_argument('-out', type=str, required=True, help='Path to where the output directory for the FASTQs to go.')
@@ -50,7 +50,7 @@ def main():
     r1,r2,ids_to_keep = (defaultdict(list) for j in range(3)) # establish each mate dict as an empty list
 
     # This first iteration only cares about grabbing all mates and their reference alignment info
-    with open(args.reads,'r') as reads:
+    with open(args.ab_read_map,'r') as reads:
         for line in reads: 
             
             line = line.rstrip()

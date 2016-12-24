@@ -76,17 +76,16 @@ def main():
                     # Extract the sequence lengths to establish a ratio of
                     # potential coverage. >1 means reference is longer than
                     # assembled seq and <1 means the assembled seq is longer.
-                    alignment = AlignIO.read(full_path,'emboss'):
-                        for sequence in alignment:
+                    alignment = AlignIO.read(full_path,'emboss')
+                    for sequence in alignment:
+                        if a == "":
+                            a = str(sequence.seq)
+                        else:
+                            b = str(sequence.seq)
 
-                            if a == "":
-                                a = sequence.seq
-                            else:
-                                b = sequence.seq
-
-                            if a != "" and b != "":
-                                a = a.replace('-','')
-                                b = b.replace('-','')
+                        if a != "" and b != "":
+                            a = a.replace('-','')
+                            b = b.replace('-','')
 
                     stats = parse_alignment(full_path)
 
@@ -170,7 +169,7 @@ def parse_alignment(infile):
 # percent = percent value to use to bin
 def bin_percent_id(id_dict,percent):
 
-    percent = int(percent) # can trim decimals due to bin
+    percent = int(float(percent)) # can trim decimals due to bin
 
     # Take advantage of the order of processing to slim down the if statements
     if percent == 100:
