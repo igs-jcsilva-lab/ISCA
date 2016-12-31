@@ -27,7 +27,7 @@ def main():
     id = 1
 
     # First, rename the directories
-    with open(args.refs,'r') as infile:
+    with open(args.ref_map,'r') as infile:
         for line in infile:
             
             line = line.rstrip()
