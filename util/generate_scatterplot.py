@@ -1,11 +1,10 @@
 
 
 # This script is supplementary to the pipeline and allows one to generate
-# a scatter plot based off the data in one of the ids_v_gaps.tsv file 
-# yielded by assess_alignment.py 
+# a scatter plot based off the TSV output file from assess_alignment.py 
 #
 # Run the script using a command like this:
-# python3 plot_assessment.py -i ids_v_gaps.tsv
+# python3 plot_assessment.py -i aa_out.tsv
 #
 # Author: James Matsumura
 
@@ -14,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='Script to generate a scatter plot for best alignments, follows assess_alignment.py.')
-parser.add_argument('-i', type=str, required=True, help='Location of ids_v_gaps.tsv.')
+parser.add_argument('-i', type=str, required=True, help='Location of ids_v_coverage.tsv.')
 args = parser.parse_args()
 
 x,y = ([] for i in range(2))
