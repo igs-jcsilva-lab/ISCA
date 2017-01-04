@@ -133,34 +133,34 @@ def align(out,allele,contig,aseq,bseq):
 
     a,b = (None for i in range(2))
 
-    alignment = AlignIO.read(initial_align,format):
-        for sequence in alignment:
+    alignment = AlignIO.read(initial_align,format)
+    for sequence in alignment:
 
-            if a == None: # grab both sequences, first being the reference seq
-                a = sequence.seq
-            else: # now grab the assembled seq
-                b = sequence.seq            
+        if a == None: # grab both sequences, first being the reference seq
+            a = sequence.seq
+        else: # now grab the assembled seq
+            b = sequence.seq            
 
-            # Once two sequences are extracted, refine and align trimming the 
-            # outside extended blank sequence.  
-            if a != None and b != None:
-                refined_align = "{0}/{1}.WITH.{2}.trimmed_align.txt".format(out,allele,contig)
-                a_fsa = "{0}/{1}.WITH.{2}.a.fsa".format(out,allele,contig) # filename
-                b_fsa = "{0}/{1}.WITH.{2}.b.fsa".format(out,allele,contig)
-                a_trim = "a.trimmed".format(allele,contig) # sequence header, file name makes distinction
-                b_trim = "b.trimmed".format(allele,contig)
+        # Once two sequences are extracted, refine and align trimming the 
+        # outside extended blank sequence.  
+        if a != None and b != None:
+            refined_align = "{0}/{1}.WITH.{2}.trimmed_align.txt".format(out,allele,contig)
+            a_fsa = "{0}/{1}.WITH.{2}.a.fsa".format(out,allele,contig) # filename
+            b_fsa = "{0}/{1}.WITH.{2}.b.fsa".format(out,allele,contig)
+            a_trim = "a.trimmed".format(allele,contig) # sequence header, file name makes distinction
+            b_trim = "b.trimmed".format(allele,contig)
 
-                seqs = trim_extensions(a,b)
-                write_fasta(a_fsa,a_trim,seqs['a'])
-                write_fasta(b_fsa,b_trim,seqs['b'])
+            seqs = trim_extensions(a,b)
+            write_fasta(a_fsa,a_trim,seqs['a'])
+            write_fasta(b_fsa,b_trim,seqs['b'])
 
-                needle = NeedleCommandline(needle_exe,
-                                asequence=a_fsa,
-                                bsequence=b_fsa,
-                                gapopen=10, gapextend=0.5,outfile=refined_align)
-                stdout,stderr = needle()
+            needle = NeedleCommandline(needle_exe,
+                            asequence=a_fsa,
+                            bsequence=b_fsa,
+                            gapopen=10, gapextend=0.5,outfile=refined_align)
+            stdout,stderr = needle()
 
-                return seqs
+            return seqs
 
 # Function to trim the extended blank bases identified from a Needle alignment.
 # Note that this trimming just removes the blanks present in the extension on
@@ -244,9 +244,8 @@ def trim_extensions(a,b):
     else:
         b = b[l_trim:r_trim]
 
-    a = a.replace('-','') # remove embedded gaps, let Needle re-add
-    b = b.replace('-','')
-    return {'a':a ,'b':b,'type':'assmb'}
+    b = b.replace('-','')  # remove any embedded gaps, let Needle re-add
+    return {'a':aseq ,'b':b,'type':'assmb'}
 
 if __name__ == '__main__':
     main()
