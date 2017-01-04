@@ -198,7 +198,10 @@ def trim_extensions(a,b):
         ltrim = curr_length - len(a)
         b = b[ltrim:]
         b = b.replace('-','')
-        return {'a':aseq,'b':b,'type':'staggered'}
+        if len(b) == 0: # 0 overlap present, return the sequence as is
+            return {'a':aseq,'b':bseq,'type':'staggered'}
+        else:
+            return {'a':aseq,'b':b,'type':'staggered'}
 
     # If the sequences overlap like this:   ref:      =========
     #                                       assembled:      ==========
@@ -208,7 +211,10 @@ def trim_extensions(a,b):
         rtrim = (curr_length - len(a)) * -1
         b = b[:rtrim]
         b = b.replace('-','')
-        return {'a':aseq,'b':b,'type':'staggered'}
+        if len(b) == 0: # 0 overlap present, return the sequence as is
+            return {'a':aseq,'b':bseq,'type':'staggered'}
+        else:
+            return {'a':aseq,'b':b,'type':'staggered'}
 
     # If we've made it here, know that the reference likely falls 
     # entirely within the assembly. Trim the overextensions from 
