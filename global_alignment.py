@@ -186,15 +186,29 @@ def trim_extensions(a,b):
     if len(aseq) > len(bseq):
         return {'a':aseq,'b':bseq,'type':'ref'}
 
+    curr_length = len(a) # length before trimming left
+
+    # Trim ONLY the assembled region that fails to align to the ref in a 
+    # staggered alignment. This can be one of two cases...
+    # If the sequences overlap like this:   ref:             =========
+    #                                       assembled:  ==========
+    if ((a[0] == "-" and b[0] != "-") and (a[-1] != "-" and b[-1] == "-")):
+        ltrim = 0
+        a = a.lstrip('-') # L strip
+        ltrim = curr_length - len(a)
+        b = b[ltrim:]
+        b = b.replace('-','')
+        return {'a':aseq,'b':b,'type':'staggered'}
+
     # If the sequences overlap like this:   ref:      =========
     #                                       assembled:      ==========
-    # it's a bit harder to trim. Seems inappropriate to just chop off the 
-    # regions that overextend beyond the alignment. Do not modify these
-    # cases for now. 
-    if ((a[0] == "-" and b[0] != "-") and (a[-1] != "-" and b[-1] == "-")):
-        return {'a':aseq,'b':bseq,'type':'staggered'}
     elif ((b[0] == "-" and a[0] != "-") and (b[-1] != "-" and a[-1] == "-")):
-        return {'a':aseq,'b':bseq,'type':'staggered'}
+        rtrim = 0
+        a = a.rstrip('-') # R strip
+        rtrim = (curr_length - len(a)) * -1
+        b = b[:rtrim]
+        b = b.replace('-','')
+        return {'a':aseq,'b':b,'type':'staggered'}
 
     # If we've made it here, know that the reference likely falls 
     # entirely within the assembly. Trim the overextensions from 
@@ -205,33 +219,34 @@ def trim_extensions(a,b):
     # also be the case where the two are the exact same length. 
     #                                       ref:         ===
     #                                       assembled: =======
-    
     l_trim,r_trim = (0 for i in range(2))
 
-    curr_length = len(a) # length before trimming left
     # Only trim the left side if gaps were present there
-    a = a.lstrip('-')
+    a = a.lstrip('-') # L strip
     if curr_length != len(a):
         l_trim = curr_length - len(a)
 
-    curr_length = len(a) # length before trimming right    
+    curr_length = len(a) # length before trimming right  
+
     # If the right side needs trimming, do so. Otherwise
     # make sure it doesn't lose any data.
-    a = a.rstrip('-')
+    a = a.rstrip('-') # R strip
     if curr_length != len(a):
         r_trim = (curr_length - len(a)) * -1
     else: # don't trim! go all the way to the end of the seq
         r_trim = len(b)
 
     # If it's the case where the assembly fills in the internal regions,
-    # make sure not to do an subset of [0:0] for b. 
+    # meaning the reference is full of gaps but matches on the ends, make
+    # sure not to do a subset of [0:0] for b. 
     if l_trim == 0 and r_trim == 0:
         pass
     else:
         b = b[l_trim:r_trim]
-    a = a.replace('-','') # remove embedded gaps, let Needle re-add
-    return {'a':a ,'b':b,'type':'assmb'}
 
+    a = a.replace('-','') # remove embedded gaps, let Needle re-add
+    b = b.replace('-','')
+    return {'a':a ,'b':b,'type':'assmb'}
 
 if __name__ == '__main__':
     main()
