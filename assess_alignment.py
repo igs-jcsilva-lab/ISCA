@@ -5,7 +5,7 @@
 # assembled reads that best mapped to which reference isolates. 
 #
 # Run the script using a command like this:
-# python3 assess_alignment.py -ffs_map /path/to/format_for_spades.tsv -ga_map ga_out.tsv -algn_path -/path/to/alignments_out -out /path/to/stats.txt
+# python3 assess_alignment.py -ffs_map /path/to/format_for_spades.tsv -ga_stdout ga_out.tsv -algn_path -/path/to/alignments_out -out /path/to/stats.txt
 #
 # Author: James Matsumura
 
@@ -16,7 +16,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
     parser.add_argument('-ffs_map', type=str, required=True, help='Path to map.tsv output from format_for_spades.py.')
-    parser.add_argument('-ga_map', type=str, required=True, help='Optional path to map.tsv output from global_alignment.py. If provided, this will filter only by those best alignments where the reference length is entirely captured by the assembly.')
+    parser.add_argument('-ga_stdout', type=str, required=True, help='Path to where the STDOUT of global_alignment.py went.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
     args = parser.parse_args()
@@ -42,8 +42,8 @@ def main():
 
     # First identify which assemblies could not align. This is captured by the 
     # STDOUT of global_alignment.py
-    if args.ga_map:
-        with open(args.ga_map,'r') as align_map:
+    if args.ga_stdout:
+        with open(args.ga_stdout,'r') as align_map:
             for line in align_map:
                 line = line.rstrip()
                 ele = line.split('\t')
