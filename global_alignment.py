@@ -160,6 +160,11 @@ def align(out,allele,contig,aseq,bseq):
                             gapopen=10, gapextend=0.5,outfile=refined_align)
             stdout,stderr = needle()
 
+            # No need to keep the initial align at this point as the trimmed
+            # should be better. If really needed, can use the original untrimmed
+            # sequences and manually re-perform needle alignment.
+            os.remove(initial_align)
+
             return seqs
 
 # Function to trim the extended blank bases identified from a Needle alignment.
