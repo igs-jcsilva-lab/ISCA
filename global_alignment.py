@@ -22,6 +22,7 @@ def main():
     parser.add_argument('-ea_map', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('-ffs_map', type=str, required=True, help='Path to map.tsv output from format_for_spades.py.')
     parser.add_argument('-ref_genome', type=str, required=True, help='Path to the reference genome file used to build Bowtie2 index.')
+    parser.add_argument('-min_align_len', type=str, required=True, help='Minimum length of an assembled sequence that should be aligned to.')
     parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for all these alignments.')
     args = parser.parse_args()
@@ -84,6 +85,13 @@ def main():
                 # Make individual FASTA files for each contig
                 with open(bseq_file,'w') as bfsa:
                     SeqIO.write(record,bfsa,"fasta")
+
+                # Some of these shorter sequences hold little to no useful 
+                # information. Thus, generate a FASTA for the sequence so 
+                # that one can inspect or do a manual alignment but 
+                # don't perform any alignments automatically.
+                if len(record) < int(args.min_align_len):
+                    continue
 
                 # Iterate over each distinct ref sequence (or allele) associated
                 # with this particular locus. 

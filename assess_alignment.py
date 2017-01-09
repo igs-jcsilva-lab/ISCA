@@ -63,14 +63,20 @@ def main():
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
             isos,scores,ids,files,cov = ([] for i in range(5)) # reinitialize for every locus
 
+            # If the minimum threshold is set high enough, it is possible for
+            # no alignments to have been performed. Print to STDOUT in case
+            # this does happen. 
+            aligned = False
+
             # Found the alignment directory for this locus, now iterate over 
             # the final alignments and pull the best score.
             for file in os.listdir(algn_dir):
                 a,b = ("" for i in range(2)) # store lengths of the trimmed alignments
                 if file.endswith(".trimmed_align.txt"):
 
-                    isolate = file.split('.')[0] # grab the isolate name
+                    aligned = True
 
+                    isolate = file.split('.')[0] # grab the isolate name
                     full_path = "{0}/{1}".format(algn_dir,file)
 
                     # Extract the sequence lengths to establish a ratio of
@@ -95,6 +101,11 @@ def main():
                     ids.append(stats['id'])
                     cov.append(len(a)/len(b))
                     files.append(full_path)
+
+            # If no trimmed_align.txt files found, no alignments were performed
+            # even though contigs were present.
+            if aligned == False:
+                print("The locus {0} could assemble but none of the contigs passed the minimum threshold chosen when running global_alignment.py".format(locus))
 
             best = scores.index(max(scores))
             best_iso = isos[best]
