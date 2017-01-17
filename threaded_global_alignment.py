@@ -62,6 +62,12 @@ def main():
 
     watcher = pool.apply_async(listener, (q,args.out))
 
+    # If a minimum length is present, set it as the length to ignore 
+    # alignment on. 
+    min_len = 0
+    if args.min_align_len:
+        min_len = args.min_align_len
+
     # Now that we can easily extract the sequences for alignment, iterate over
     # the directory name map file and perform alignments. 
     with open(args.ffs_map,'r') as dir_map:
@@ -77,17 +83,21 @@ def main():
             # Split out the contigs if more than one is present and have to do
             # alignment of all refs to all contigs.
             contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
-            job = pool.apply_async(worker, (contigs,out_dir,q))
-            contig_jobs.append(job)
-
-    for job in contig_jobs:
-        job.get()
-
+            pool.apply_async(worker, (contigs,ref_dict[locus],seq_dict,out_dir,min_len,q))
+    
+    pool.close() #  Tell the queue it's done getting new jobs
+    pool.join() # Make sure these new jobs are all finished
     q.put('stop')
-    pool.close
 
 # This is the worker that each CPU will process asynchronously
-def worker(contigs,out_dir,queue):
+# Arguments:
+# contigs = contig file assembled by spades
+# ref_dict = list of all alleles mapped to this locus
+# seq_dict = dictionary of sequences from the reference genome
+# out_dir = where to put this output of the alignments
+# min_len = minimum length to perform an alignment
+# queue = queue used to send writes to the outfile
+def worker(contigs,ref_dict,seq_dict,out_dir,min_len,queue):
     # SPAdes is not able to assemble all the reads, often this seems 
     # to be due to low coverage. Output this to STDOUT. 
     if not os.path.isfile(contigs):
@@ -108,12 +118,12 @@ def worker(contigs,out_dir,queue):
         # information. Thus, generate a FASTA for the sequence so 
         # that one can inspect or do a manual alignment but 
         # don't perform any alignments automatically.
-        if len(record) < int(args.min_align_len):
+        if len(record) < int(min_len):
             continue
 
         # Iterate over each distinct ref sequence (or allele) associated
         # with this particular locus. 
-        for ref_seq in ref_dict[locus]:
+        for ref_seq in ref_dict:
             seq = seq_dict[ref_seq]
             aseq_file = "{0}/{1}.fsa".format(out_dir,ref_seq)
 
@@ -134,6 +144,11 @@ def worker(contigs,out_dir,queue):
         for k,v in type_map.items():
             queue.put("{0}\t{1}\n".format(k,v))
 
+# This will act as the sole writer to the output file. This way there is no 
+# concern with locks and what not. 
+# Arguments:
+# queue = queue used to communicate what should be written out
+# file = location of file to write out the output of global_alignment.py
 def listener(queue,file):
 
     # Listens for messages and writes to the final map file
