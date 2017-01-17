@@ -60,7 +60,7 @@ def main():
     q = manager.Queue()
     pool = mp.Pool(mp.cpu_count())
 
-    watcher = pool.apply_async(listener, (q,args.out))
+    pool.apply_async(listener, (q,args.out))
 
     # If a minimum length is present, set it as the length to ignore 
     # alignment on. 
@@ -148,21 +148,18 @@ def worker(contigs,ref_dict,seq_dict,out_dir,min_len,queue):
 # concern with locks and what not. 
 # Arguments:
 # queue = queue used to communicate what should be written out
-# file = location of file to write out the output of global_alignment.py
-def listener(queue,file):
+# out_dir = location of file to write out the output of global_alignment.py
+def listener(queue,out_dir):
 
     # Listens for messages and writes to the final map file
-    file = "{0}/ga_map.tsv.gz".format(file)
-    with open(type_file,'wb') as type_out:
-
-        while 1:
-            m = q.get()
-            if m == 'stop':
-                break
-            f.write("%s\n" % (str(m)))
-            f.flush()
-        f.close()
-
+    outfile = "{0}/ga_map.tsv.gz".format(out_dir)
+    while 1:
+        msg = queue.get()
+        if msg == 'stop':
+            break
+        with open(outfile,'ab') as out:
+            out.write(str(msg).encode())
+            out.flush()
 
 # Function to perform an alignment between the reference FASTA sequence and
 # the SPAdes contig assembled. 
