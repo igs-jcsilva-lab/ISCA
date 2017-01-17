@@ -157,7 +157,7 @@ def listener(queue,out_dir):
         msg = queue.get()
         if msg == 'stop':
             break
-        with open(outfile,'ab') as out:q
+        with open(outfile,'ab',0) as out:
             out.write(str(msg).encode())
             out.flush()
 
