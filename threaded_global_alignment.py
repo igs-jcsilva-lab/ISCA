@@ -86,7 +86,7 @@ def main():
             # Split out the contigs if more than one is present and have to do
             # alignment of all refs to all contigs.
             contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
-            job = pool.apply_async(worker, (contigs,ref_dict[locus],seq_dict,out_dir,min_len,q))
+            job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q))
             jobs.append(job)
 
     # Get all the returns from the apply_async function.
@@ -99,13 +99,14 @@ def main():
 
 # This is the worker that each CPU will process asynchronously
 # Arguments:
+# locus = the locus that SPAdes attempted to assemble
 # contigs = contig file assembled by spades
 # ref_dict = list of all alleles mapped to this locus
 # seq_dict = dictionary of sequences from the reference genome
 # out_dir = where to put this output of the alignments
 # min_len = minimum length to perform an alignment
 # queue = queue used to send writes to the outfile
-def worker(contigs,ref_dict,seq_dict,out_dir,min_len,queue):
+def worker(locus,contigs,ref_dict,seq_dict,out_dir,min_len,queue):
     # SPAdes is not able to assemble all the reads, often this seems 
     # to be due to low coverage. Output this to STDOUT. 
     if not os.path.isfile(contigs):
