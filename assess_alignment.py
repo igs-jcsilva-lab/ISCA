@@ -32,10 +32,6 @@ def main():
     percent_id = {"0<=x<10":0,"10<=x<20":0,"20<=x<30":0,"30<=x<40":0,
                 "40<=x<50":0,"50<=x<60":0,"60<=x<70":0,"70<=x<80":0,
                 "80<=x<90":0,"90<=x<100":0,"x=100":0}  
-    
-    percent_id_list = ["x=100","90<=x<100","80<=x<90","70<=x<80","60<=x<70",
-                    "50<=x<60","40<=x<50","30<=x<40","20<=x<30","0<=x<10",
-                    "10<=x<20"]
 
     # A set that will specify which directories of alignments to skip over.
     unassembled = set()
@@ -139,12 +135,12 @@ def main():
         tot = 0
         for k,v in percent_id.items():
             tot += v
-        for bin in percent_id_list:
-            rel = float("{0:.2f}".format(100*percent_id[bin]/tot))
+        for bin,count in percent_id.items():
+            rel = float("{0:.2f}".format(100*count/tot))
             if bin != 'x=100' and bin != '0<=x<10':
-                out.write("{0}\t\t{1} ({2}%)\n".format(bin,percent_id[bin],rel))
+                out.write("{0}\t\t{1} ({2}%)\n".format(bin,count,rel))
             else:
-                out.write("{0}\t\t\t{1} ({2}%)\n".format(bin,percent_id[bin],rel))
+                out.write("{0}\t\t\t{1} ({2}%)\n".format(bin,count,rel))
 
     # Write out a file that can generate a plot of %ID v coverage
     outfile = "{0}/ids_v_cov.tsv".format(args.out)
