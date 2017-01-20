@@ -109,6 +109,7 @@ def main():
             # even though contigs were present.
             if aligned == False:
                 print("The locus {0} could assemble but none of the contigs passed the minimum threshold chosen when running global_alignment.py".format(locus))
+                continue
 
             best = scores.index(max(scores))
             best_iso = isos[best]
