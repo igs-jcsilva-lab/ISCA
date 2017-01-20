@@ -98,6 +98,13 @@ def main():
                     cov.append(len(a)/len(b))
                     files.append(full_path)
 
+                    # It's not going to get better than this, leave early.
+                    # Yes, this will arbitrarily pick the top 100% if there
+                    # are multiple but it will also omit a bunch of needless
+                    # processing. 
+                    if int(float(stats['id'])) == 100:
+                        break
+
             # If no trimmed_align.txt files found, no alignments were performed
             # even though contigs were present.
             if aligned == False:
