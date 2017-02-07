@@ -21,7 +21,7 @@ def main():
     parser.add_argument('-l', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('-ea_map', type=str, required=True, help='Path to the output from extract_alleles.py.')
     parser.add_argument('-b', type=str, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
-    parser.add_argument('-o', type=str, required=True, help='Path to where the output TSV should go.')
+    parser.add_argument('-o', type=str, required=True, help='Path to where the output FASTA should go.')
     args = parser.parse_args()
 
     b = 0 # buffer region defaults to 0
@@ -32,7 +32,7 @@ def main():
 
     # Iterate over the output from extract_alleles.py and build a dict of lists
     # for all the regions from each FASTA file that need to be extracted. 
-    with open(args.i,'r') as i:
+    with open(args.ea_map,'r') as i:
         for allele in i: 
             allele = allele.rstrip()
             indv_allele = allele.split('\t')
@@ -54,7 +54,7 @@ def main():
             fasta_file = vals[2]
             gene_list = extract_us[vals[3]]
 
-            extract_sequences(fasta_file,gene_list,b,o)
+            extract_sequences(fasta_file,gene_list,b,args.o)
 
 
 # Arguments:
@@ -108,7 +108,6 @@ def extract_sequences(file,genes,buffer,outfile):
         sequence = sequence.upper() # remove any lowercase
 
         if strand == "-": # if reverse strand, swap the bases
-            sequence = sequence[::-1] # reverse
             complement = {"A":"T","T":"A","G":"C","C":"G"}
             mod_seq = ""
             for base in sequence:

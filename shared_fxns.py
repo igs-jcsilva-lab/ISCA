@@ -21,7 +21,7 @@ def make_directory(path):
 # header: header ID
 # seq: sequence to be written
 def write_fasta(file,header,seq):
-    with open(file,'w') as out:
+    with open(file,'a') as out:
         out.write(">{0}\n".format(header))
         for j in range(0, len(seq), 60):
             out.write(seq[j:j+60] + "\n")
