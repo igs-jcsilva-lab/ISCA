@@ -19,9 +19,11 @@
 # times this given event occurred.
 # 3. unique_out.tsv - map for loci and their input file they were uniquely assembled
 # from. 
+# 4. stats.txt - file with some general statistics like how many unique counts percent
+# file or how the loci were shared across files. 
 #
 # Run the script using a command like this:
-# python generate_scatterplot.py -i list_of_ids_v_cov_files.txt -m 70 -p PF3D7 -o output.tsv
+# python generate_scatterplot.py -i list_of_ids_v_cov_files.txt -m 70 -p PF3D7 -o /out/path
 #
 # Author: James Matsumura
 
@@ -80,11 +82,30 @@ def main():
                                     overall_dict[captured] = 1
                                     unique_dict[captured] = simple_fname
 
-    # Write all outfiles
+    # Write all TSV outfiles
     write_outfile("{0}/overall_out.tsv".format(args.o),overall_dict)
     write_outfile("{0}/shared_out.tsv".format(args.o),shared_dict)
     write_outfile("{0}/unique_out.tsv".format(args.o),unique_dict)
 
+    # Generate stats and write an overall stats file
+    shared_stats_dict = count_vals(shared_dict)
+    unique_stats_dict = count_vals(unique_dict)
+    shared_list,unique_list = ([] for i in range(2))
+
+    out = "{0}/stats.txt".format(args.o)
+
+    with open(out,'w') as outfile:
+
+        outfile.write("Shared loci\tCounts\n")
+        for k,v in shared_stats_dict.items():
+            outfile.write("{0}\t{1}\n".format(k,v))
+
+        outfile.write("\nUnique loci\tCounts\n")
+        for k,v in unique_stats_dict.items():
+            outfile.write("{0}\t{1}\n".format(k,v))
+
+# Function to write out a TSV file using the key/value pairs in a dict as
+# the two columns to be generated.
 # Arguments:
 # outfile - path to outfile
 # in_dict - dictionary to iterate over and write out
@@ -93,6 +114,18 @@ def write_outfile(out,in_dict):
         for key in sorted(in_dict,key=in_dict.get,reverse=True):
             outfile.write("{0}\t{1}\n".format(key,in_dict[key]))
 
+# Function to generate a dictionary that counts the number of times a particular
+# value occurs.
+# Argument:
+# in_dict - dictionary to count the occurrences of a given value
+def count_vals(in_dict):
+    out_dict = {}
+    for k,v in in_dict.items():
+        if v in out_dict:
+            out_dict[v] += 1
+        else:
+            out_dict[v] = 1
+    return out_dict
 
 if __name__ == '__main__':
     main()
