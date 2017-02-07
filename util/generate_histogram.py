@@ -4,7 +4,7 @@
 # a histogram off the TSV output file from assess_alignment.py.
 #
 # Run the script using a command like this:
-# python3 plot_assessment.py -i aa_out.tsv
+# python generate_histogram.py -i aa_out.tsv
 #
 # Author: James Matsumura
 

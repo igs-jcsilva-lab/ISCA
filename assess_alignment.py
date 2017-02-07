@@ -9,7 +9,7 @@
 #
 # Author: James Matsumura
 
-import re,argparse,os
+import re,argparse,os,collections
 from Bio import AlignIO
 
 def main():
@@ -143,12 +143,19 @@ def main():
         tot = 0
         for k,v in percent_id.items():
             tot += v
-        for bin,count in percent_id.items():
-            rel = float("{0:.2f}".format(100*count/tot))
-            if bin != 'x=100' and bin != '0<=x<10':
-                out.write("{0}\t\t{1} ({2}%)\n".format(bin,count,rel))
+
+        sorted_bins = collections.OrderedDict(sorted(percent_id.items(),reverse=True))
+
+        for bin in sorted_bins:
+            rel = ""
+            if percent_id[bin] != 0:
+                rel = float("{0:.2f}".format(100*percent_id[bin]/tot))
             else:
-                out.write("{0}\t\t\t{1} ({2}%)\n".format(bin,count,rel))
+                rel = "0.0"
+            if bin != 'x=100' and bin != '0<=x<10':
+                print("{0}\t\t{1} ({2}%)\n".format(bin,percent_id[bin],rel))
+            else:
+                print("{0}\t\t\t{1} ({2}%)\n".format(bin,percent_id[bin],rel))
 
     # Write out a file that can generate a plot of %ID v coverage
     outfile = "{0}/ids_v_cov.tsv".format(args.out)
