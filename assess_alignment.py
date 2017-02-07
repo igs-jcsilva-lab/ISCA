@@ -19,6 +19,7 @@ def main():
     parser.add_argument('-ga_stdout', type=str, required=True, help='Path to where the STDOUT of global_alignment.py went.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
+    parser.add_argument('-priority', type=str, required=False, help='Optional prefix for prioritizing one reference over the others.')
     args = parser.parse_args()
 
     # dict for counting which isolates have the best alignments
@@ -102,7 +103,7 @@ def main():
                     # Yes, this will arbitrarily pick the top 100% if there
                     # are multiple but it will also omit a bunch of needless
                     # processing. 
-                    if int(float(stats['id'])) == 100:
+                    if int(stats['id']) == 100:
                         break
 
             # If no trimmed_align.txt files found, no alignments were performed
@@ -111,7 +112,18 @@ def main():
                 print("The locus {0} could assemble but none of the contigs passed the minimum threshold chosen when running global_alignment.py".format(locus))
                 continue
 
-            best = scores.index(max(scores))
+            best = scores.index(max(ids))
+
+            # If one reference is prioritized, make sure to use this as the best
+            # hit given a tie of two best IDs. 
+            if args.priority:
+                m = max(ids)
+                x = [i for i, j in enumerate(ids) if j == m]
+                if len(x > 1): # only a concern in the case of a tie
+                    for i in x:
+                        if isos[i] == args.priority:
+                            best = i
+
             best_iso = isos[best]
             best_id = ids[best]
             best_cov = cov[best]
@@ -179,6 +191,7 @@ def parse_alignment(infile):
                 stats['score'] = re.search(r'#\sScore:\s(.*)$',line).group(1) 
             elif line.startswith('# Identity:'):
                 stats['id'] = re.search(r'#\sIdentity:\s+\d+/\d+\s\(\s?(\d+\.\d+)%\)$',line).group(1)
+                stats['id'] = float(stats['id'])
             elif line.startswith('a.trimmed'): # reached actual alignment, no need
                 break
 
