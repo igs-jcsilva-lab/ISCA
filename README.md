@@ -10,8 +10,8 @@ A new pipeline to perform targeted assembly given WGS reads, reference genome as
   * extract_sequences.py 
 4. remove duplicate FASTA sequences
   * remove_duplicates.py
-4.1 If duplicates are found, need to reformat the map from extract_alleles.py to not contain these sequences.
-  * mod_ea_map.py
+  1. If duplicates are found, need to reformat the map from extract_alleles.py to not contain these sequences.
+    * mod_ea_map.py
 5. Bowtie2
   1. Build index
   2. align
@@ -27,4 +27,7 @@ A new pipeline to perform targeted assembly given WGS reads, reference genome as
 10. Run global alignment 
   * threaded_global_alignment.py
 11. Run assessment to isolate the best assemblies and overall stats
-  * assess_alignment.py
+  * threaded_assess_alignment.py
+
+Within the util/~ directory there are a number of other post-processing scripts that can
+be used to analyze the results of this final step. 

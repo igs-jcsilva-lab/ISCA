@@ -55,7 +55,6 @@ def main():
                 allele = allele_info[4]
                 ref_dict[locus].append(allele)
 
-    contig_jobs = []
     manager = mp.Manager()
     q = manager.Queue()
     pool = mp.Pool(mp.cpu_count())
@@ -157,7 +156,7 @@ def worker(locus,contigs,ref_dict,seq_dict,out_dir,min_len,queue):
 # concern with locks and what not. 
 # Arguments:
 # queue = queue used to communicate what should be written out
-# out_dir = location of file to write out the output of global_alignment.py
+# out_dir = location of where to write out the file
 def listener(queue,out_dir):
 
     # Listens for messages and writes to the final map file

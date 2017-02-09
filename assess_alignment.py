@@ -112,7 +112,7 @@ def main():
                 print("The locus {0} could assemble but none of the contigs passed the minimum threshold chosen when running global_alignment.py".format(locus))
                 continue
 
-            best = scores.index(max(ids))
+            best = ids.index(max(ids))
 
             # If one reference is prioritized, make sure to use this as the best
             # hit given a tie of two best IDs. 
@@ -130,7 +130,7 @@ def main():
             best_file = files[best]
 
             # extract the %ID match + coverage for plotting
-            id_v_cov.append("{0}:{1}:{2}".format(best_id,best_cov,best_file))
+            id_v_cov.append("{0}\t{1}\t{2}\n".format(best_id,best_cov,best_file))
 
             # Now assess overall stats for which reference aligned and bin the % ID. 
             if best_iso in isolate_counts:
@@ -173,8 +173,7 @@ def main():
     outfile = "{0}/ids_v_cov.tsv".format(args.out)
     with open(outfile,'w') as out:
         for pair in id_v_cov:
-            ele = pair.split(':')
-            out.write("{0}\t{1}\t{2}\n".format(ele[0],ele[1],ele[2]))
+            out.write(pair)
 
 
 # Function to parse over the output of EMBOSS's Needle program and extract the
