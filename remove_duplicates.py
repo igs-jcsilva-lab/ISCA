@@ -60,7 +60,7 @@ def main():
             else: # Same sequence but different loci
                 conflicts += 1
 
-            duplicate_entries = process_duplicate_entry(duplicate_entries,id)
+            duplicate_entries.append(id)
 
     print("Number of duplicates removed: {0}".format(duplicates))
     print("Number of conflicts sequences removed: {0}".format(conflicts))
@@ -68,23 +68,6 @@ def main():
     with open(args.conflicts,'w') as outfile:
         for dupe in duplicate_entries:
             outfile.write("{0}\n".format(dupe))
-
-# Function to add either just the locus or the full path of the sequence.
-# e.g., it converts PF.123456 and PF.123456.1 into 123456 and PF.123456.1 
-# respectively.
-# Arguments: 
-# dupe_list - list to build upon duplicate entries
-# id - ID extracted from the header of the FASTA sequence
-def process_duplicate_entry(dupe_list,id):
-
-    if re.search(r'\.\d+$',id):
-        dupe_list.append(id)
-    elif re.search(r'\.path\d+$',id):
-        dupe_list.append(id) 
-    else:
-        dupe_list.append(id.split('.')[1])
-
-    return dupe_list
 
 
 if __name__ == '__main__':
