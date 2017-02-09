@@ -10,6 +10,8 @@ A new pipeline to perform targeted assembly given WGS reads, reference genome as
 - extract_sequences.py 
 4. remove duplicate FASTA sequences
 - remove_duplicates.py
+4.1 If duplicates are found, need to reformat the map from extract_alleles.py to not contain these sequences.
+- mod_ea_map.py
 5. Bowtie2
 5.1 Build index
 5.2 align
