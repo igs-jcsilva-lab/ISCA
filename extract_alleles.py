@@ -24,24 +24,26 @@
 # ref_id_0001   ref_loc   1-8888  iso1.ref_id_0001  iso1_loc    2-7999  iso2.ref_id_0001    iso2_loc    3-8000
 # 
 # Run the script using a command like this:
-# python3 extract_alleles.py -i /path/to/list_input.tsv -o /path/to/outfile.tsv
+# python3 extract_alleles.py -list /path/to/list_input.tsv -insert 500 -out /path/to/outfile.tsv
 #
 # Author: James Matsumura
 
 import re,argparse
+from collections import defaultdict
 
 def main():
 
     parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
-    parser.add_argument('-l', type=str, required=True, help='Path to a TSV list for references and isolates.')
-    parser.add_argument('-o', type=str, required=True, help='Path to where the output TSV should go.')
+    parser.add_argument('-list', type=str, required=True, help='Path to a TSV list for references and isolates.')
+    parser.add_argument('-insert', type=int, required=True, help='Insert size from SRA for the reads that will be used as input.')
+    parser.add_argument('-out_dir', type=str, required=True, help='Directory for where the output should go.')
     args = parser.parse_args()
 
     # dictionary where the key is the ID and the value is a list for ref/loc/coords 
     allele_map = {} 
 
     # Iterate over each reference/isolate
-    with open(args.l,'r') as i:
+    with open(args.list,'r') as i:
         for entry in i:
             entry = entry.rstrip()
             vals = entry.split('\t')
@@ -51,10 +53,11 @@ def main():
 
             # Regardless of reference or isolate, all should be mapping to the same name
             # designated by the reference. vi 
-            allele_map = parse_gff3(gff3,allele_map,type,name)
+            allele_map = parse_gff3(gff3,allele_map,type,name,args.insert,args.out_dir)
 
     # Iterate over the final hash of lists and print out a TSV
-    with open(args.o,'w') as o:
+    out = "{0}/ea_map.tsv".format(args.out_dir)
+    with open(out,'w') as o:
         for key,value in allele_map.items():
             vals = ('\t').join(value)
             line = "{0}\t{1}\n".format(key,vals)
@@ -66,10 +69,15 @@ def main():
 # allele_map = a dictionary with the reference ID/Name as the key and the values an allele tied to it
 # ref_or_iso = is this a reference or an isolate? This will potentially change the ID
 # name = prefix/name of isolate
-def parse_gff3(file,allele_map,ref_or_iso,name):
+def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
 
     regex_for_name = r'.*Name=([a-zA-Z0-9_\.\-]+)'
     regex_for_gmap_name = r'.*ID=([a-zA-Z0-9_\.\-]+)'
+
+    # Build a dictionary of all the loci and their positions to look for any
+    # instances of overlap which may assist in deciding whether to filter
+    # or not when it comes to assigning individual reads per locus. 
+    overlap_dict = defaultdict(list)
 
     with open(file,'r') as gff3:
         for line in gff3:
@@ -99,6 +107,46 @@ def parse_gff3(file,allele_map,ref_or_iso,name):
                         allele_map[attr_name] = []
 
                     allele_map[attr_name].append(combined_vals)
+
+                    overlap_dict[source].append("{0}:{1}:{2}".format(start,stop,id))
+
+    # Identify whether there is any overlap. If there is, print to STDOUT. 
+    # Despite the nested loops, this shouldn't be too bad since it's split
+    # up by each GFF3 file. Doing it this way since the GFF3 files aren't 
+    # guaranteed to be in order and genes are not always going to overlap
+    # in a consistent manner (some may span multiple, just 1 bp, etc.)
+    overlap_set = set() # don't add duplicates
+    overlap_out = "{0}/overlap.tsv".format(out_dir)
+    with open(overlap_out,'a') as out:
+        for k,v in overlap_dict.items():
+            for j in range(0,len(v)):
+
+                ele = v[j].split(':')
+                jstart = int(ele[0])
+                jstop = int(ele[1])
+                jid = ele[2]
+
+                for x in range(0,len(v)):
+                    if j != x: # only compare to other gene regions
+                        ele = v[x].split(":")
+                        xstart = int(ele[0])
+                        xstop = int(ele[1])
+                        xid = ele[2]
+                        pair = ""
+
+                        if xid < jid:
+                            pair = "{0}{1}".format(xid,jid)
+                        else:
+                            pair = "{0}{1}".format(jid,xid)
+                            
+                        if jstart < (xstart-insert) < jstop:
+                            if pair not in overlap_set:
+                                overlap_set.add(pair)
+                                out.write('{0}\t{1}\n'.format(jid,xid))
+                        elif jstart < (xstop+insert) < jstop: 
+                            if pair not in overlap_set:
+                                overlap_set.add(pair)
+                                out.write('{0}\t{1}\n'.format(jid,xid))
 
     return allele_map
 
