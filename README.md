@@ -1,5 +1,5 @@
 # targeted_assembly
-A new pipeline to perform targeted assembly given WGS reads, reference genome assemblies, and a primary reference annotation (GFF3)
+A pipeline to perform targeted assembly of individual loci given WGS reads, reference genome assemblies, and a primary reference annotation (GFF3)
 
 # Complete steps:
 1. Map an annotated reference genome to other assembled genomes
@@ -31,3 +31,6 @@ A new pipeline to perform targeted assembly given WGS reads, reference genome as
 
 Within the util/~ directory there are a number of other post-processing scripts that can
 be used to analyze the results of this final step. 
+* generate_alignment_stats.py - will give an overview of the output of threaded_assess_alignment.py
+* generate_histogram.py - will generate a histogram plot of the coverage found from the output of threaded_assess_alignment.py
+* generate_scatterplot.py - will generate a scatter plot (%ID v coverage) from the output of threaded_assess_alignment.py
