@@ -165,7 +165,7 @@ def listener(queue,out_dir):
         msg = queue.get()
         if msg == 'stop':
             break
-        with open(outfile,'a',0) as out:
+        with open(outfile,'a') as out:
             out.write(str(msg))
             out.flush()
 
@@ -189,40 +189,6 @@ def parse_alignment(infile):
 
     return stats
 
-# Function to house what is essentially a switch statement for grouping together
-# different percent identity values for output.
-# Argument:
-# id_dict = a percent_id dict that will be built upon
-# percent = percent value to use to bin
-def bin_percent_id(id_dict,percent):
-
-    percent = int(float(percent)) # can trim decimals due to bin
-
-    # Take advantage of the order of processing to slim down the if statements
-    if percent == 100:
-        id_dict['x=100'] += 1
-    elif percent >= 90:
-        id_dict['90<=x<100'] += 1
-    elif percent >= 80:
-        id_dict['80<=x<90'] += 1
-    elif percent >= 70:
-        id_dict['70<=x<80'] += 1
-    elif percent >= 60:
-        id_dict['60<=x<70'] += 1
-    elif percent >= 50:
-        id_dict['50<=x<60'] += 1
-    elif percent >= 40:
-        id_dict['40<=x<50'] += 1
-    elif percent >= 30:
-        id_dict['30<=x<40'] += 1
-    elif percent >= 20:
-        id_dict['20<=x<30'] += 1
-    elif percent >= 10:
-        id_dict['10<=x<20'] += 1
-    elif percent >= 0:
-        id_dict['0<=x<10'] += 1
-
-    return id_dict
 
 if __name__ == '__main__':
     main()
