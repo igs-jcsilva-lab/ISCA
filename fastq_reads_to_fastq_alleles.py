@@ -48,6 +48,8 @@ def main():
     # first two dicts consist of one for each mate
     # third dict is the IDs that need to be mapped (checking based on if the user wants to filter)
     r1,r2,ids_to_keep = (defaultdict(list) for j in range(3)) # establish each mate dict as an empty list
+    
+    unique_refs = set() # make directories now for where all the reads will go
 
     # This first iteration only cares about grabbing all mates and their reference alignment info
     with open(args.ab_read_map,'r') as reads:
@@ -102,6 +104,11 @@ def main():
                 if ref not in ids_to_keep[shared_id]: # make sure not to double up on loci across mates
                     ids_to_keep[shared_id].append(ref)
 
+                    if ref not in unique_refs: # create the output directory if not made already
+                        unique_refs.add(ref)
+                        dir = "{0}/{1}".format(output,ref)
+                        make_directory(dir)
+
         checked_ids.add(shared_id) # identify these as looked at before going into r2 dict
 
     for read in r2: # mate 2, only check if the mate wasn't caught by the r1 dict
@@ -120,6 +127,11 @@ def main():
             else: # Again, was not found in R1 so we know all loci are from R2. 
                 for ref in r2[read]:
                     ids_to_keep[shared_id].append(ref)
+
+                    if ref not in unique_refs:
+                        unique_refs.add(ref)
+                        dir = "{0}/{1}".format(output,ref)
+                        make_directory(dir)
 
     # At this point, ids_to_keep now has a dictionary mapping all read IDs to loci that
     # they aligned to. This is all that's needed to build a set of directories that house
@@ -206,8 +218,6 @@ def filter_fastq(ids,fastq,outdir):
                         for ref in ids[id]:
                             
                             dir = "{0}/{1}".format(outdir,ref)
-                            make_directory(dir)
-
                             out1 = dir + "/R1.fastq.gz"
                             out2 = dir + "/R2.fastq.gz"
 
