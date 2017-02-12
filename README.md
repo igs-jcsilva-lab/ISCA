@@ -28,7 +28,7 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
   * threaded_global_alignment.py
 11. Run assessment to isolate the best assemblies and overall stats
   * threaded_assess_alignment.py
-12. If still have loci that could not assemble well, can send these to another round and use more sensitive Bowtie2 alignment parameters to try catch these. Note that running this script will essentially put the data back at the end of step 3. 
+12. If there are any remaining loci that could not assemble at a desired minimum threshold, can isolate these reference sequences to another round of the pipeline and use more sensitive Bowtie2 alignment parameters. Note that using this step will essentially format the data similar to the end of step 3. 
   * extact_new_round_seqs.py
 
 Within the util/~ directory there are a number of other post-processing scripts that can
