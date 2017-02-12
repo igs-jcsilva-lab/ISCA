@@ -5,7 +5,7 @@
 # FASTA set used to build the Bowtie2 reference.  
 #
 # Run the script using a command like this:
-# python3 global_alignment.py -ea_map /path/to/extract_alleles_map.tsv -ffs_map /path/to/format_for_spades.tsv -ref_genome /path/to/ref_genome.fsa -assmb_path -/path/to/spades_out -out /path/to/alignment_out
+# python3 threaded_assess_alignment.py -ffs_map out_format_for_SPAdes.tsv -ga_stdout threaded_global_alignment_stdout.txt -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
 #
 # Author: James Matsumura
 

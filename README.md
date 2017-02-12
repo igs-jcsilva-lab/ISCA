@@ -28,9 +28,17 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
   * threaded_global_alignment.py
 11. Run assessment to isolate the best assemblies and overall stats
   * threaded_assess_alignment.py
+12. If still have loci that could not assemble well, can send these to another round and use more sensitive Bowtie2 alignment parameters to try catch these. Note that running this script will essentially put the data back at the end of step 3. 
+  * extact_new_round_seqs.py
 
 Within the util/~ directory there are a number of other post-processing scripts that can
 be used to analyze the results of this final step. 
 * generate_alignment_stats.py - will give an overview of the output of threaded_assess_alignment.py
 * generate_histogram.py - will generate a histogram plot of the coverage found from the output of threaded_assess_alignment.py
 * generate_scatterplot.py - will generate a scatter plot (%ID v coverage) from the output of threaded_assess_alignment.py
+
+
+Dependencies:
+- Python 3 (with Biopython)
+- SPAdes 3.5>
+- Bowtie2

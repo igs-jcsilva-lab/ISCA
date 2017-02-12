@@ -18,15 +18,15 @@ from shared_fxns import write_fasta
 def main():
 
     parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
-    parser.add_argument('-l', type=str, required=True, help='Path to a TSV list for references and isolates.')
+    parser.add_argument('-list', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('-ea_map', type=str, required=True, help='Path to the output from extract_alleles.py.')
-    parser.add_argument('-b', type=str, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
-    parser.add_argument('-o', type=str, required=True, help='Path to where the output FASTA should go.')
+    parser.add_argument('-buffer', type=str, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
+    parser.add_argument('-out', type=str, required=True, help='Path to where the output FASTA should go.')
     args = parser.parse_args()
 
     b = 0 # buffer region defaults to 0
-    if args.b:
-        b = args.b
+    if args.buffer:
+        b = args.buffer
 
     extract_us = {}
 
@@ -47,14 +47,14 @@ def main():
                 extract_us[name].append(indv_allele[j])
 
     # Iterate over the input list and extract sequences per FASTA file.
-    with open(args.l,'r') as l:
+    with open(args.list,'r') as l:
         for entry in l:
             entry = entry.rstrip()
             vals = entry.split('\t')
             fasta_file = vals[2]
             gene_list = extract_us[vals[3]]
 
-            extract_sequences(fasta_file,gene_list,b,args.o)
+            extract_sequences(fasta_file,gene_list,b,args.out)
 
 
 # Arguments:
