@@ -39,6 +39,9 @@ be used to analyze the results of this final step.
 
 
 Dependencies:
-- Python 3 (with Biopython)
-- SPAdes 3.5>
-- Bowtie2
+- Python 3
+  * [Biopython](https://pypi.python.org/pypi/biopython/1.66)
+    * [EMBOSS](http://emboss.open-bio.org/)
+  * [pysam](https://pypi.python.org/pypi/pysam)
+- [SPAdes 3.5+](http://bioinf.spbau.ru/spades)
+- [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
