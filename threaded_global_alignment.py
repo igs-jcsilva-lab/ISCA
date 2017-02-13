@@ -22,6 +22,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to generate EMBOSS Needle alignments given output from format_for_spades.py.')
     parser.add_argument('-ea_map', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('-ffs_map', type=str, required=True, help='Path to map.tsv output from format_for_spades.py.')
+    parser.add_argument('-cpus', type=int, required=True, help='Number of cores to use.')
     parser.add_argument('-ref_genome', type=str, required=True, help='Path to the reference genome file used to build Bowtie2 index.')
     parser.add_argument('-min_align_len', type=str, required=True, help='Minimum length of an assembled sequence that should be aligned to.')
     parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
@@ -57,7 +58,7 @@ def main():
 
     manager = mp.Manager()
     q = manager.Queue()
-    pool = mp.Pool(mp.cpu_count())
+    pool = mp.Pool(args.cpus)
 
     pool.apply_async(listener, (q,args.out))
 

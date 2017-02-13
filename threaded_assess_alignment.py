@@ -17,6 +17,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
     parser.add_argument('-ffs_map', type=str, required=True, help='Path to map.tsv output from format_for_spades.py.')
+    parser.add_argument('-cpus', type=int, required=True, help='Number of cores to use.')
     parser.add_argument('-ga_stdout', type=str, required=True, help='Path to where the STDOUT of global_alignment.py went.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
@@ -26,7 +27,7 @@ def main():
     # Set up the multiprocessing manager, pool, and queue
     manager = mp.Manager()
     q = manager.Queue()
-    pool = mp.Pool(mp.cpu_count())
+    pool = mp.Pool(args.cpus)
     pool.apply_async(listener, (q,args.out))
     jobs = []
 
