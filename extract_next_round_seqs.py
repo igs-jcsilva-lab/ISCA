@@ -26,32 +26,34 @@ def main():
     parser.add_argument('-new_fsa', type=str, required=True, help='Path to where the new FASTA file should go.')
     args = parser.parse_args()
 
-    extract_us = set()
+    passed = set()
     regex_for_locus = r'/([a-zA-Z0-9\_\.]+).txt'
 
     # Iterate over the ids_v_cov.tsv file and find those loci which were
-    # unable to assemble at the minimum threshold. 
+    # ABLE to assemble at the minimum threshold. Note that it needs to be
+    # done in this manner since not every locus from the original set
+    # may have even produced alignments via Bowtie.  
     with open(args.ivc,'r') as i:
         for line in i:
             line = line.rstrip()
             result = line.split('\t') 
 
-            # First check if this sequence didn't pass the minimum threshold
-            if float(result[0]) < args.threshold:
+            # First check if this sequence passed the minimum threshold
+            if float(result[0]) >= args.threshold:
 
                 # Know that the locus is the second group of the alignment.txt
                 # file split by periods
                 filename = re.search(regex_for_locus,result[3]).group(1)
                 locus = filename.split('.')[1]
 
-                extract_us.add(locus)
+                passed.add(locus)
 
-    extract_sequences(args.original_fsa,extract_us,args.new_fsa)
+    extract_sequences(args.original_fsa,passed,args.new_fsa)
 
 
 # Arguments:
 # file = FASTA file
-# loci = set of loci that need to be extracted from FASTA file.  
+# loci = set of loci that are already assembled well enough.  
 # outfile = output file to write to. 
 def extract_sequences(file,loci,outfile):
 
@@ -75,9 +77,7 @@ def extract_sequences(file,loci,outfile):
 
                 # in addition to grabbing entire header, check if this entry is needed later
                 locus = line.split('.')[1] 
-                if locus in loci:
-                    print(locus)
-                    print(current_id)
+                if locus not in loci:
                     keep_us.append(current_id)
 
             else:
