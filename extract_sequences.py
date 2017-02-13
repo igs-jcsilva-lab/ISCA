@@ -116,6 +116,9 @@ def extract_sequences(file,genes,buffer,outfile):
                 else: # just add Ns
                     mod_seq += base
 
+            sequence = mod_seq
+            sequence = sequence[::-1]
+
         # Print out in standard FASTA format
         write_fasta(outfile,id,sequence)
 
