@@ -96,6 +96,8 @@ def main():
             else: # else, they both mapped to the same locus and can use either value
                 ids_to_keep[shared_id].append(r1[read][0])
 
+            unique_refs.add(ids_to_keep[shared_id][0]) # add the single locus
+
         else: # no filter needed, add all distinct loci found per read
 
             for ref in r1[read]:
@@ -104,10 +106,7 @@ def main():
                 if ref not in ids_to_keep[shared_id]: # make sure not to double up on loci across mates
                     ids_to_keep[shared_id].append(ref)
 
-                    if ref not in unique_refs: # create the output directory if not made already
-                        unique_refs.add(ref)
-                        dir = "{0}/{1}".format(output,ref)
-                        make_directory(dir)
+                    unique_refs.add(ref) # add all loci
 
         checked_ids.add(shared_id) # identify these as looked at before going into r2 dict
 
@@ -123,15 +122,13 @@ def main():
             # If we are here, the read was not found in R1. Thus, get loci strictly from R2.
             if filter == "yes" and count_val == "single_map": 
                 ids_to_keep[shared_id].append(r2[read][0])
+                unique_refs.add(ids_to_keep[shared_id][0]) # add the single locus
 
             else: # Again, was not found in R1 so we know all loci are from R2. 
                 for ref in r2[read]:
                     ids_to_keep[shared_id].append(ref)
 
-                    if ref not in unique_refs:
-                        unique_refs.add(ref)
-                        dir = "{0}/{1}".format(output,ref)
-                        make_directory(dir)
+                    unique_refs.add(ref) # add the single locus
 
     # At this point, ids_to_keep now has a dictionary mapping all read IDs to loci that
     # they aligned to. This is all that's needed to build a set of directories that house
@@ -144,6 +141,11 @@ def main():
     with open(out_stats,'w') as stats_file:
         for k,v in counts.items():
             stats_file.write("{0} read-pairs have a {1}.\n".format(v,k))
+
+    # Write out all the directories
+    for ref in unique_refs:
+        dir = "{0}/{1}".format(output,ref)
+        make_directory(dir)
 
     # Regardless of filtering based on alignment single/multiple/discrepancies or not, still
     # need to filter all the FASTQ reads to just those that aligned to a gene region.
