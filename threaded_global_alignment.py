@@ -101,12 +101,12 @@ def main():
 # Arguments:
 # locus = the locus that SPAdes attempted to assemble
 # contigs = contig file assembled by spades
-# ref_dict = list of all alleles mapped to this locus
+# ref_list = list of all alleles mapped to this locus
 # seq_dict = dictionary of sequences from the reference genome
 # out_dir = where to put this output of the alignments
 # min_len = minimum length to perform an alignment
 # queue = queue used to send writes to the outfile
-def worker(locus,contigs,ref_dict,seq_dict,out_dir,min_len,queue):
+def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue):
     # SPAdes is not able to assemble all the reads, often this seems 
     # to be due to low coverage. Output this to STDOUT. 
     if not os.path.isfile(contigs):
@@ -132,7 +132,7 @@ def worker(locus,contigs,ref_dict,seq_dict,out_dir,min_len,queue):
 
         # Iterate over each distinct ref sequence (or allele) associated
         # with this particular locus. 
-        for ref_seq in ref_dict:
+        for ref_seq in ref_list:
             seq = seq_dict[ref_seq]
             aseq_file = "{0}/{1}.fsa".format(out_dir,ref_seq)
 
