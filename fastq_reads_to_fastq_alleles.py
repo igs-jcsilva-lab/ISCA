@@ -102,10 +102,11 @@ def main():
 
             for ref in r1[read]:
                 ids_to_keep[shared_id].append(ref)
+                unique_refs.add(ref) # add all loci
+
             for ref in r2[mate_id]:
                 if ref not in ids_to_keep[shared_id]: # make sure not to double up on loci across mates
                     ids_to_keep[shared_id].append(ref)
-
                     unique_refs.add(ref) # add all loci
 
         checked_ids.add(shared_id) # identify these as looked at before going into r2 dict
@@ -127,7 +128,6 @@ def main():
             else: # Again, was not found in R1 so we know all loci are from R2. 
                 for ref in r2[read]:
                     ids_to_keep[shared_id].append(ref)
-
                     unique_refs.add(ref) # add the single locus
 
     # At this point, ids_to_keep now has a dictionary mapping all read IDs to loci that
