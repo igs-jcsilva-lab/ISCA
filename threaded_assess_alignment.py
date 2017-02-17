@@ -1,8 +1,17 @@
 
 
-# This script uses EMBOSS's needle global alignment tool to perform alignments
-# between the assembled output of format_for_spades.py+SPAdes and the initial 
-# FASTA set used to build the Bowtie2 reference.  
+# This script parses through the output directories of threaded_global_alignment.py
+# to extract the best alignment for each assembled sequence. Note the 'priority' 
+# parameter which prefers that isolate set which was used to map from via GMAP. 
+# When the desired reference priority is not the best hit, brief stats on what %ID 
+# it was capable of reaching for that locus compared to the best hit are presented.
+# 
+# The STDOUT consists of the following columns (tab-separated):
+# locus best_ref %id_of_best_ref priority_ref %id_of_priority_ref %id_difference
+#
+# The ids_v_cov.tsv file consists of the best hits for each assembled locus. 
+# The columns are as follows (tab-separated):
+# %ID coverage(reference/assembled) reference path_to_best_alignment
 #
 # Run the script using a command like this:
 # python3 threaded_assess_alignment.py -ffs_map out_format_for_SPAdes.tsv -ga_stdout threaded_global_alignment_stdout.txt -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
@@ -21,7 +30,7 @@ def main():
     parser.add_argument('-ga_stdout', type=str, required=True, help='Path to where the STDOUT of global_alignment.py went.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
-    parser.add_argument('-priority', type=str, required=False, help='Optional prefix for prioritizing one reference over the others.')
+    parser.add_argument('-priority', type=str, required=False, help='Prefix for prioritizing one isolate over the others.')
     args = parser.parse_args()
 
     # Set up the multiprocessing manager, pool, and queue
@@ -93,6 +102,10 @@ def worker(algn_dir,locus,priority,queue):
 
         if file.endswith(".trimmed_align.txt"):
 
+            # If we know which reference we want to assemble, skip all other files. 
+            if priority != "" and not file.startswith(priority):
+                continue
+
             aligned = True 
             
             isolate = file.split('.')[0] # grab the reference group
@@ -121,13 +134,6 @@ def worker(algn_dir,locus,priority,queue):
             cov.append(len(a)/len(b))
             files.append(full_path)
 
-            # It's not going to get better than this, leave early.
-            # Yes, this will arbitrarily pick the top 100% if there
-            # are multiple but it will also omit a bunch of needless
-            # processing. 
-            if int(stats['id']) == 100:
-                break
-
     # If no trimmed_align.txt files found, no alignments were performed
     # even though contigs were present.
     if aligned == False:
@@ -136,8 +142,7 @@ def worker(algn_dir,locus,priority,queue):
 
     best = ids.index(max(ids))
 
-    # If one reference is prioritized, make sure to use this as the best
-    # hit given a tie of two best IDs. 
+    # Make sure a tie goes to the prioritized isolate.
     if priority != "":
         m = max(ids)
         x = [i for i, j in enumerate(ids) if j == m]
@@ -152,6 +157,18 @@ def worker(algn_dir,locus,priority,queue):
     best_file = files[best]
 
     queue.put("{0}\t{1}\t{2}\t{3}\n".format(best_id,best_cov,best_iso,best_file))
+
+    if priority != "":
+        # If the best hit was not the prioritized isolate, then print to STDOUT
+        # what the best value was for the priority as well as the actual best.
+        if best_iso != priority:
+            prioritized_indexes = [i for i,j in enumerate(isos) if j == priority]
+            prioritized_ids = [ids[i] for i in prioritized_indexes]
+            # Make sure the prioritized isolate has an alignment. 
+            prioritized_best_id = 0
+            if len(prioritized_ids) > 0:
+                prioritized_best_id = max(prioritized_ids)
+            print("{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}".format(locus,best_iso,best_id,priority,prioritized_best_id,best_id-prioritized_best_id))
 
 # This will act as the sole writer to the output file. This way there is no 
 # concern with locks and what not. 
