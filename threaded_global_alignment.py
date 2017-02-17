@@ -13,7 +13,9 @@ import argparse,os,sys
 import multiprocessing as mp
 from collections import defaultdict
 from Bio.Emboss.Applications import NeedleCommandline
-from Bio import AlignIO, SeqIO, Seq
+from Bio import AlignIO, SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 from shared_fxns import make_directory,write_fasta
 
 def main():
@@ -153,7 +155,7 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue):
 
             if not os.path.isfile(aseq_file): # skip if made for previous contig
                 with open(aseq_file,'w') as afsa:
-                    SeqIO.write(Seq(seq).reverse_complement(),afsa,"fasta")
+                    SeqIO.write(seq.reverse_complement(),afsa,"fasta")
 
             # Now have the reference FASTA file, perform alignment
             # with the assembled contig.
