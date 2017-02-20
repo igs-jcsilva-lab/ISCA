@@ -216,20 +216,20 @@ def filter_fastq(ids,fastq,outdir):
                     if id in ids: # if relevant, write to all necessary directories/files
                         seen += 1
 
+                        # SPAdes, more specifically BWA, complains if the read
+                        # IDs are not exactly the same. Thus, trim the .1 and 
+                        # .2 suffixes from each of the header lines. 
+                        entry1[0] = entry1[0].replace('.1 ',' ')
+                        entry1[2] = entry1[2].replace('.1 ',' ')
+                        entry2[0] = entry2[0].replace('.2 ',' ')
+                        entry2[2] = entry2[2].replace('.2 ',' ')
+
                         # Establish all loci mapped to, could be many if not filtering
                         for ref in ids[id]:
                             
                             dir = "{0}/{1}".format(outdir,ref)
                             out1 = dir + "/R1.fastq.gz"
                             out2 = dir + "/R2.fastq.gz"
-
-                            # SPAdes, more specifically BWA, complains if the read
-                            # IDs are not exactly the same. Thus, trim the .1 and 
-                            # .2 suffixes from each of the header lines. 
-                            entry1[0] = entry1[0].replace('.1 ',' ')
-                            entry1[2] = entry1[2].replace('.1 ',' ')
-                            entry2[0] = entry2[0].replace('.2 ',' ')
-                            entry2[2] = entry2[2].replace('.2 ',' ')
 
                             # add to whatever FASTQ file is already there
                             with gzip.open(out1,'ab') as o1:
