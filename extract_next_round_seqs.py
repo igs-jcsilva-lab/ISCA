@@ -8,6 +8,10 @@
 # sequences to have aligned at. This means if you give it a value of 80
 # then only %ID alignments from assemblies less than 80 will be put into
 # the next round of reference sequences. 
+#
+# Note that beyond the second round of reconstruction you must concatenate 
+# all ids_v_cov.tsv files from previous runs in order to make sure to not
+# include a locus that has already been assembled well enough. 
 # 
 # Run the script using a command like this:
 # python3 extract_new_round_seqs.py -ivc /path/to/ids_v_cov.tsv -threshold 80 -original_fsa /path/to/old.fsa -new_fsa /path/to/new.fsa

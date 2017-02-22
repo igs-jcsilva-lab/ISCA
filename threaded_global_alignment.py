@@ -25,7 +25,7 @@ def main():
     parser.add_argument('-ffs_map', type=str, required=True, help='Path to map.tsv output from format_for_spades.py.')
     parser.add_argument('-cpus', type=int, required=True, help='Number of cores to use.')
     parser.add_argument('-ref_genome', type=str, required=True, help='Path to the reference genome file used to build Bowtie2 index.')
-    parser.add_argument('-min_align_len', type=str, required=True, help='Minimum length of an assembled sequence that should be aligned to.')
+    parser.add_argument('-min_align_len', type=str, required=False, help='Optional minimum length of an assembled sequence that should be aligned to.')
     parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for all these alignments.')
     args = parser.parse_args()
@@ -222,7 +222,7 @@ def align(out,allele,contig,aseq,bseq,f_or_r):
         if a != None and b != None:
             refined_align = "{0}/{1}.WITH.{2}.{3}.trimmed_align.txt".format(out,allele,contig,f_or_r)
             a_fsa = "{0}/{1}.WITH.{2}.{3}.a.fsa".format(out,allele,contig,f_or_r) # filename
-            b_fsa = "{0}/{1}.WITH.{2}.b.fsa".format(out,allele,contig) # will be same for F or R runs
+            b_fsa = "{0}/{1}.WITH.{2}.{3}.b.fsa".format(out,allele,contig,f_or_r) # will be different since alignments will be different
             a_trim = "{0}.a.trimmed".format(f_or_r) # sequence header, file name makes distinction
             b_trim = "{0}.b.trimmed".format(f_or_r)
 

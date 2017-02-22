@@ -30,7 +30,7 @@ def main():
     parser.add_argument('-ga_stdout', type=str, required=True, help='Path to where the STDOUT of global_alignment.py went.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
-    parser.add_argument('-priority', type=str, required=False, help='Prefix for prioritizing one isolate over the others.')
+    parser.add_argument('-priority', type=str, required=False, help='Optional prefix for prioritizing one isolate over the others.')
     args = parser.parse_args()
 
     # Set up the multiprocessing manager, pool, and queue
