@@ -2,19 +2,24 @@
 
 # This script takes in a FASTA file formatted from the targeted_assembly pipeline
 # and extracts from the FASTA headers exon counts from a particular GFF3 file.
-# The output will be a TSV for each ID and their respective ID, GC content, nt length,
-# number of exons, and number of repeats.
+# The output will be a TSV with 5 columns:
+#
+# 1. ID
+# 2. GC content
+# 3. Length
+# 4. Number of repeats
+# 5. Number of exons. 
 #
 # The program Red (REpeat Detector) is used to generate an *.rpt file from the given
 # FASTA sequence to get an idea of how many repeats are present per sequence. 
 # http://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-015-0654-5#MOESM4
 #
 # Run the script using a command like this:
-# python3 analyze_genes.py -fasta /path/to/inp.fsa -gff3 pf.gff3 -priority 3D7 -red_out out.rpt -outfile output_dir/
+# python3 analyze_genes.py -fasta /path/to/inp.fsa -gff3 pf.gff3 -priority 3D7 -red_out out.rpt -outfile output_dir/out.tsv
 #
 # Author: James Matsumura
 
-import argparse,os,re,urllib
+import argparse,os,re
 from collections import defaultdict
 from Bio import SeqIO
 
@@ -23,7 +28,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to assess stats of those sequences that are unaligned.')
     parser.add_argument('-fasta', type=str, required=True, help='Path to FASTA file generated from the targeted assembly pipeline.')
     parser.add_argument('-gff3', type=str, required=True, help='Path to the GFF3 annotation to count exons from.')
-    parser.add_argument('-priority', type=str, required=True, help='Prefix of the allele to generate stats for, must match prefix in headers of the input FASTA..')
+    parser.add_argument('-priority', type=str, required=True, help='Prefix of the allele to generate stats for, must match prefix in headers of the input FASTA.')
     parser.add_argument('-red_out', type=str, required=True, help='Path to the .rpt file output from Red.')
     parser.add_argument('-outfile', type=str, required=True, help='Path to the output file.')
     args = parser.parse_args()
@@ -37,7 +42,7 @@ def main():
         exon_cnt = 0
         id = ""
 
-        regex_for_id = r'ID=([a-zA-Z0-9_\-]+)'
+        regex_for_id = r'ID=([a-zA-Z0-9_\-\.]+)'
         regex_for_desc = r'description=(.*)'
 
         for line in gff3:
