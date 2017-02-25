@@ -2,13 +2,14 @@
 
 # This script takes in a FASTA file formatted from the targeted_assembly pipeline
 # and extracts from the FASTA headers exon counts from a particular GFF3 file.
-# The output will be a TSV with 5 columns:
+# The output will be a TSV with 6 columns:
 #
 # 1. ID
 # 2. GC content
 # 3. Length
 # 4. Number of repeats
-# 5. Number of exons. 
+# 5. Total repeat length for the ID (aggregate length of all repeats)
+# 6. Number of exons
 #
 # The program Red (REpeat Detector) is used to generate an *.rpt file from the given
 # FASTA sequence to get an idea of how many repeats are present per sequence. 
@@ -34,7 +35,7 @@ def main():
     args = parser.parse_args()
 
     loci = [] # list for outputting locus objects once we have all the info needed
-    exon_cnts,repeat_cnts = (defaultdict(lambda:0) for i in range(2)) # count number of exons and repeats
+    exon_cnts,repeat_cnts,repeat_lens = (defaultdict(lambda:0) for i in range(3)) # count number of exons and repeats
 
     # Extract from the GFF3 file the number of exons per gene.  
     with open(args.gff3,'r') as gff3:
@@ -69,7 +70,11 @@ def main():
         
         for line in rpt:
             id = line.split(':')[0]
+            start_end = line.split(':')[1]
+            start = start_end.split('-')[0]
+            end = start_end.split('-')[1]
             repeat_cnts[id[1:]] += 1
+            repeat_lens[id[1:]] += (end-start) # Red outputs 0 indexing so don't need to offset by 1
 
     # Extract the sequences from the FASTA file and *STORE IN MEMORY*
     seq_dict = SeqIO.to_dict(SeqIO.parse(args.fasta,"fasta"))
@@ -84,8 +89,9 @@ def main():
                 gc = calc_gc_content(seq_dict[id].seq)
                 length = len(seq_dict[id].seq)
                 repeats = repeat_cnts[id]
+                repeat_len = repeat_lens[id]
                 exons = exon_cnts[id]
-                out.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format(id,gc,length,repeats,exons))
+                out.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".format(id,gc,length,repeats,repeat_len,exons))
 
 # Function to calculate GC percentage given a sequence.
 # Argument:
