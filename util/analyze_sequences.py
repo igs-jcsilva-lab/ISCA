@@ -74,7 +74,7 @@ def main():
             start = start_end.split('-')[0]
             end = start_end.split('-')[1]
             repeat_cnts[id[1:]] += 1
-            repeat_lens[id[1:]] += (end-start) # Red outputs 0 indexing so don't need to offset by 1
+            repeat_lens[id[1:]] += (int(end)-int(start)) # Red outputs 0 indexing so don't need to offset by 1
 
     # Extract the sequences from the FASTA file and *STORE IN MEMORY*
     seq_dict = SeqIO.to_dict(SeqIO.parse(args.fasta,"fasta"))

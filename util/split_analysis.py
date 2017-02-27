@@ -15,7 +15,7 @@ import argparse,os
 def main():
 
     parser = argparse.ArgumentParser(description='Script to assess stats of those sequences that are unaligned.')
-    parser.add_argument('-fasta', type=str, required=True, help='Path to FASTA file generated from the targeted assembly pipeline.')
+    parser.add_argument('-fasta', type=str, required=True, help='Path to FASTA file generated from the targeted assembly pipeline. Must contain reads that cannot assemble.')
     parser.add_argument('-analyze_out', type=str, required=True, help='Path to the GFF3 annotation to count exons from.')
     parser.add_argument('-out_dir', type=str, required=True, help='Path to where the output files should be created.')
     args = parser.parse_args()
