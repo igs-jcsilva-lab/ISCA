@@ -59,6 +59,11 @@ def main():
 
         cigar = read.cigartuples # extract a tuple for the CIGAR string
 
+        # GSNAP may arbitrarily write an invalid start position to denote an invalid
+        # alignment. Seems to be particular to the version. 
+        if read.reference_start < 0:
+            continue
+
         if cigar is not None: # only act if a CIGAR string is present
             length = read.query_alignment_length # grab length of alignment
             percent_id = calculate_percent_id(cigar,length)
