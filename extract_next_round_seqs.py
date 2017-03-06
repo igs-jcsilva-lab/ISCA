@@ -27,10 +27,10 @@ def main():
     parser.add_argument('-ivc', type=str, required=True, help='Path to an ids_v_cov.tsv file from the previous run.')
     parser.add_argument('-threshold', type=float, required=True, help='Minimum threshold of %ID that needs to be met to pass final assembly.')
     parser.add_argument('-original_fsa', type=str, required=True, help='Path to where the initial FASTA file generated from the pipeline is.')
-    parser.add_argument('-new_fsa', type=str, required=True, help='Path to where the new FASTA file should go.')
+    parser.add_argument('-new_files', type=str, required=True, help='Path to where the unaligned and unassembled FASTA entries should go.')
     args = parser.parse_args()
 
-    passed = set()
+    assembled,aligned = (set() for i in range(2))
     regex_for_locus = r'/([a-zA-Z0-9\_\.]+).txt'
 
     # Iterate over the ids_v_cov.tsv file and find those loci which were
@@ -42,31 +42,39 @@ def main():
             line = line.rstrip()
             result = line.split('\t') 
 
+            filename = re.search(regex_for_locus,result[3]).group(1)
+            locus = filename.split('.')[1]
+
             # First check if this sequence passed the minimum threshold
             if float(result[0]) >= args.threshold:
 
                 # Know that the locus is the second group of the alignment.txt
                 # file split by periods
-                filename = re.search(regex_for_locus,result[3]).group(1)
-                locus = filename.split('.')[1]
+                assembled.add(locus)
+                aligned.add(locus)
+            
+            else:
+                aligned.add(locus)
 
-                passed.add(locus)
-
-    extract_sequences(args.original_fsa,passed,args.new_fsa)
+    not_assembled = "not_assembled.fsa"
+    not_aligned = "not_aligned.fsa"
+    extract_sequences(args.original_fsa,assembled,not_assembled,aligned,not_aligned)
 
 
 # Arguments:
 # file = FASTA file
-# loci = set of loci that are already assembled well enough.  
-# outfile = output file to write to. 
-def extract_sequences(file,loci,outfile):
+# loci1 = set of loci that are already assembled well enough.  
+# loci2 = set of loci that at least aligned and tried to assemble.
+# outfile1 = output file to write unassembled to. 
+# outfile2 = output file to write unaligned to. 
+def extract_sequences(file,assembled,outfile1,aligned,outfile2):
 
     regex_for_contig_id = ">([a-zA-Z0-9_\.]+)"
 
     # Since PF is fairly small, can be greedy about how the FASTA entries are being
     # processed and store them in memory.
     contigs = {}
-    keep_us = [] # note which IDs should be re-added at the end
+    not_assembled,not_aligned = ([] for i in range(2)) # note which IDs should be re-added at the end
     current_id = "" # store the previous key for the bases to be assigned to
 
     with open(file,'r') as fasta:
@@ -81,16 +89,19 @@ def extract_sequences(file,loci,outfile):
 
                 # in addition to grabbing entire header, check if this entry is needed later
                 locus = line.split('.')[1] 
-                if locus not in loci:
-                    keep_us.append(current_id)
+                if locus not in aligned:
+                    not_aligned.append(current_id)
+                elif locus not in assembled:
+                    not_assembled.append(current_id)
 
             else:
                 contigs[current_id] += line # add all the bases
 
-    for allele in keep_us:
+    for allele in not_assembled:
+        write_fasta(outfile1,allele,contigs[allele])
 
-        # Print out in standard FASTA format
-        write_fasta(outfile,allele,contigs[allele])
+    for allele in not_aligned:
+        write_fasta(outfile2,allele,contigs[allele])
 
 
 if __name__ == '__main__':
