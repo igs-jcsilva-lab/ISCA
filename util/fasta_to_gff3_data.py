@@ -28,7 +28,7 @@ def main():
     with open(args.fasta,'r') as fasta:
         for line in fasta:
             if line.startswith('>'+args.priority): # only grab references that we care about
-                references.add(line.split('.')[1].strip())
+                references.add(line.split('.',1)[1].strip())
 
     regex_for_name = r'.*Name=([a-zA-Z0-9_\.\-]+)'
     regex_for_description = r'description=(.*)'
