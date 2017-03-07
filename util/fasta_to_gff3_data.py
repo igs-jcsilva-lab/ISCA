@@ -5,7 +5,7 @@
 # description of the gene as well as the length. 
 # 
 # Run the script using a command like this:
-# python3 extract_unaligned_info.py -fasta /path/to/in.fsa -gff3 /path/to/file.gff3 -priority 3D7 -out /path/to/outfile.tsv
+# python3 fasta_to_gff3_data.py -fasta /path/to/in.fsa -gff3 /path/to/file.gff3 -priority 3D7 -outfile /path/to/outfile.tsv
 #
 # Author: James Matsumura
 
@@ -14,8 +14,8 @@ import re,argparse,urllib
 def main():
 
     parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
-    parser.add_argument('-fasta', type=str, required=True, help='Path to a TSV list for references and isolates.')
-    parser.add_argument('-gff3', type=str, required=True, help='.')
+    parser.add_argument('-fasta', type=str, required=True, help='Path to a FASTA file with entries to isolate details for.')
+    parser.add_argument('-gff3', type=str, required=True, help='Reference GFF3 file to get details from for entries from FASTA file.')
     parser.add_argument('-priority', type=str, required=True, help='Prefix priority.')
     parser.add_argument('-outfile', type=str, required=True, help='Output file.')
     args = parser.parse_args()

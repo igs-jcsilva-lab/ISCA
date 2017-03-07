@@ -16,7 +16,7 @@
 # http://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-015-0654-5#MOESM4
 #
 # Run the script using a command like this:
-# python3 analyze_genes.py -fasta /path/to/inp.fsa -gff3 pf.gff3 -priority 3D7 -red_out out.rpt -outfile output_dir/out.tsv
+# python3 analyze_sequences.py -fasta /path/to/inp.fsa -gff3 pf.gff3 -priority 3D7 -red_out out.rpt -outfile output_dir/out.tsv
 #
 # Author: James Matsumura
 
