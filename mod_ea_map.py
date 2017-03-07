@@ -4,11 +4,11 @@
 # all duplicate entries from the run are no longer considered. Note that 
 # just because a locus is in this map file does not mean that it is present
 # in the current round's FASTA set. All this does is ensure that when 
-# it comes to the alignment step that this is only aligning unique sequences
+# it comes to the alignment step that this is only aligning relevant sequences
 # from those loci being re-assembled in the current round. 
 #
 # Run the script using a command like this:
-# python3 mod_ea_map.py -original ea_map.tsv -new mod_ea_map.tsv -dupes remove_duplicates.output
+# python3 mod_ea_map.py -original ea_map.tsv -new mod_ea_map.tsv (-dupes remove_duplicates.output | -not_aligned extract_next_round_seqs.output)
 #
 # Author: James Matsumura
 
@@ -19,16 +19,25 @@ def main():
     parser = argparse.ArgumentParser(description='Script to modify the extract alleles map to get rid of duplicate entries.')
     parser.add_argument('-original', type=str, required=True, help='Path to extract alleles map from extract_alleles.py.')
     parser.add_argument('-new', type=str, required=True, help='Path to where the new extract alleles map.')
-    parser.add_argument('-dupes', type=str, required=True, help='Conflict output from remove_duplicates.py.')
+    parser.add_argument('-dupes', type=str, required=False, help='Conflict output from remove_duplicates.py.')
+    parser.add_argument('-not_aligned', type=str, required=False, help='Sequences which could not be aligned and need extraction with buffer regions.')
     args = parser.parse_args()
 
-    duplicates = set()
+    duplicates,not_aligned = (set() for i in range(2))
 
-    # First identify all the IDs for alleles that were duplicates
-    with open(args.dupes,'r') as dupe_file:
-        for entry in dupe_file:
-            entry = entry.rstrip()
-            duplicates.add(entry)
+    if args.dupes:
+        # First identify all the IDs for alleles that were duplicates
+        with open(args.dupes,'r') as dupe_file:
+            for entry in dupe_file:
+                entry = entry.rstrip()
+                duplicates.add(entry)
+
+    elif args.not_aligned: # either dealing with duplicates or those not aligned
+        with open(args.not_aligned,'r') as not_aligned_fasta:
+            for line in not_aligned_fasta:
+                if line.startswith('>'):
+                    line = line.strip()
+                    not_aligned.add(line.split('.')[1])
 
     # Now iterate over the original extract alleles map and create a new one. 
     with open(args.new,'w') as new:
@@ -38,8 +47,15 @@ def main():
                 elements = line.split('\t')
                 new_line = []
 
-                # Grab the locus
-                new_line.append(elements[0])
+                # Grab the locus. Note how we want only those within
+                # the not aligned when given that parameter but take
+                # everything and do a length check later for duplicates.
+                if args.not_aligned:
+                    if elements[0] in not_aligned:
+                        new_line.append(elements[0])
+
+                else:
+                    new_line.append(elements[0])
                 
                 # Now dealing with the cases of particular alleles of that
                 # locus potentially being considered duplicates of another
