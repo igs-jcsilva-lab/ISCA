@@ -246,16 +246,14 @@ def filter_fastq(ids,fastq,outdir):
                         for ref in ids[id]:
                             
                             dir = "{0}/{1}".format(outdir,ref)
-                            out1 = dir + "/R1.fastq.gz"
-                            out2 = dir + "/R2.fastq.gz"
+                            out = dir + "/reads.fastq.gz"
 
                             # add to whatever FASTQ file is already there
-                            with gzip.open(out1,'ab') as o1:
+                            with gzip.open(out,'ab') as o:
                                 for l in entry1:
-                                    o1.write(l.encode())
-                            with gzip.open(out2,'ab') as o2:
+                                    o.write(l.encode())
                                 for l in entry2:
-                                    o2.write(l.encode())
+                                    o.write(l.encode())
 
                     entry1,entry2 = ([] for j in range(2)) # reset for next entry
                     lineno = 0
