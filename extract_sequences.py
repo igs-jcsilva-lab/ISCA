@@ -8,7 +8,7 @@
 # a reference o be used in Bowtie2. 
 # 
 # Run the script using a command like this:
-# python3 extract_sequences.py -l /path/to/list_input.tsv -i /path/to/out_from_extract_alleles.tsv -o /path/to/out.fsa -b 20
+# python3 extract_sequences.py -list /path/to/list_input.tsv -ea_map /path/to/out_from_extract_alleles.tsv -out /path/to/out.fsa -buffer 20
 #
 # Author: James Matsumura
 
@@ -17,10 +17,10 @@ from shared_fxns import write_fasta
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
+    parser = argparse.ArgumentParser(description='Script to extract sequences from each allele across GFF3/FASTA files. Read the top of the file for more details.')
     parser.add_argument('-list', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('-ea_map', type=str, required=True, help='Path to the output from extract_alleles.py.')
-    parser.add_argument('-buffer', type=str, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
+    parser.add_argument('-buffer', type=int, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
     parser.add_argument('-out', type=str, required=True, help='Path to where the output FASTA should go.')
     args = parser.parse_args()
 

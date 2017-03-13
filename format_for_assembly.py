@@ -2,12 +2,12 @@
 
 # This script aims to reformat all directories created by fastq_reads_to_fastq_alleles.py
 # into something that SGE grid can use for a job array submission. This script
-# is meant to be run both before and after the grid job to run SPAdes is compelted.
+# is meant to be run before the grid job to perform assembly is initiated.
 # The output is a basic map file with two columns, ref and grid ID. The grid IDs will
 # be arbitrary and start at 1 climbing until it hits the number of directories made.
 #
 # Run the script using a command like this:
-# python3 analyze_bam.py -i /path/to/ref_map.tsv -path /path/to/ref_dirs -spades_path /path/to/spades/dirs -out /path/to/out_map.tsv
+# python3 format_for_assembly.py -ref_map /path/to/ref_map.tsv -path /path/to/ref_dirs -assmb_path /path/to/assmb/dirs -out /path/to/out_map.tsv
 #
 # Author: James Matsumura
 
@@ -19,7 +19,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to set up for SPAdes alignment on a grid.')
     parser.add_argument('-ref_map', type=str, required=True, help='Path to *_ref_map.tsv output from analyze_bam.py.')
     parser.add_argument('-path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
-    parser.add_argument('-spades_path', type=str, required=True, help='Path to the the directory to initialize directories for all the SPAdes output.')
+    parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory to initialize directories for all the assembly output.')
     parser.add_argument('-outfile', type=str, required=True, help='Path to output map (maps the ref to the SGE ID)).')
     args = parser.parse_args()
 
@@ -47,7 +47,7 @@ def main():
                 ref_map[ref[0]] = id
 
                 # Make a new output directory for all the SPAdes assembly files
-                spades_out_dir = "{0}/{1}".format(args.spades_path,id)
+                spades_out_dir = "{0}/{1}".format(args.assmb_path,id)
                 make_directory(spades_out_dir)
 
                 id += 1 # if no exception, it was renamed and need a new ID
