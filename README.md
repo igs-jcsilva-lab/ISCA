@@ -1,6 +1,8 @@
 # targeted_assembly
 A pipeline to perform targeted assembly of individual loci given WGS reads, reference genome assemblies, and a primary reference annotation (GFF3)
 
+* Note that this is a work in progress and this tutorial will be updated once it has passed the stage of proof-of-concept.
+
 # Complete steps:
 1. Map an annotated reference genome to other assembled genomes
   * GMAP
@@ -43,5 +45,7 @@ Dependencies:
   * [Biopython](https://pypi.python.org/pypi/biopython/1.66)
     * [EMBOSS](http://emboss.open-bio.org/)
   * [pysam](https://pypi.python.org/pypi/pysam)
+- Python 2.7
+- [GSNAP](http://research-pub.gene.com/gmap/)
 - [SPAdes 3.5+](http://bioinf.spbau.ru/spades)
-- [Bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml)
+- [Velvet](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2952100/)

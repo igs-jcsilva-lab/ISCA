@@ -28,7 +28,7 @@ from shared_fxns import write_fasta
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
+    parser = argparse.ArgumentParser(description='Script to assess the results of the base Targeted Assembly pipeline.')
     parser.add_argument('-ivc', type=str, required=True, help='Path to an ids_v_cov.tsv file from the previous run.')
     parser.add_argument('-threshold', type=float, required=True, help='Minimum threshold of %ID that needs to be met to pass final assembly.')
     parser.add_argument('-original_fsa', type=str, required=True, help='Path to where the initial FASTA file generated from the pipeline is.')
