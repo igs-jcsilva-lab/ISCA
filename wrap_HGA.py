@@ -57,7 +57,7 @@ def main():
          " -ins {6} -std {7} -P 5 -Pkmer 21 -Rkmer 81 -t {8} -out {9}"
          " && rm {10} && rm -rf {11}"
          .format(args.python,args.hga,args.velvet,args.spades,reads_loc,reads_loc,args.ins,args.std,args.threads,hga_assmb_path,remove_fastqs,remove_partitions)
-         )
+    )
 
     subprocess.call(command,shell=True)
 

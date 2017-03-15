@@ -1,8 +1,7 @@
 
 
 # This script uses EMBOSS's needle global alignment tool to perform alignments
-# between the assembled output of format_for_spades.py+SPAdes and the initial 
-# FASTA set used to build the Bowtie2 reference.  
+# between the assembled output of SPAdes and the unbuffered set of FASTA sequences. 
 #
 # Run the script using a command like this:
 # python3 threaded_global_alignment.py -ea_map /path/to/extract_alleles_map.tsv -ffs_map /path/to/format_for_spades.tsv -ref_genome /path/to/ref_genome.fsa -assmb_path -/path/to/spades_out -out /path/to/alignment_out
