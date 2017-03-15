@@ -30,7 +30,7 @@ def main():
     parser.add_argument('-threads', type=int, required=True, help='Number of threads to use.')
     parser.add_argument('-reads_dir', type=str, required=True, help='Base path to where the reads are stored.')
     parser.add_argument('-out_dir', type=str, required=True, help='Base path to where HGA.py should write the new assemblies out to.')
-    parser.add_argument('-sge_id', type=int, required=True, help='SGE ID of this particular assembly.')
+    parser.add_argument('-sge_id', type=int, required=True, help='Newest assigned SGE ID of this particular assembly.')
     args = parser.parse_args()
 
     original_sge_id = 0 # find the previous SGE grid value for where the reads are stored
@@ -51,12 +51,13 @@ def main():
     hga_assmb_path = "{0}/{1}".format(args.out_dir,original_sge_id)
     # Cleanup a bit of the unnecessary files. 
     remove_fastqs = "{0}/*.fastq".format(hga_assmb_path)
-    remove_partitions = "{0}/*.fastq".format(hga_assmb_path)
+    remove_partitions = "{0}/part*assembly".format(hga_assmb_path)
 
-    command = """{0} {1} -velvet {2} -spades {3} -PA SPAdes -P12 {4} -R12 {5}
-         -ins {6} -std {7} -P 5 -Pkmer 21 -Rkmer 81 -t {8} -out {9}
-         && rm {10} && rm -rf {11}
-        """.format(args.python,args.hga,args.velvet,args.spades,reads_loc,reads_loc,args.ins,args.std,args.threads,hga_assmb_path,remove_fastqs,remove_partitions)
+    command = ("{0} {1} -velvet {2} -spades {3} -PA SPAdes -P12 {4} -R12 {5}"
+         " -ins {6} -std {7} -P 5 -Pkmer 21 -Rkmer 81 -t {8} -out {9}"
+         " && rm {10} && rm -rf {11}"
+         .format(args.python,args.hga,args.velvet,args.spades,reads_loc,reads_loc,args.ins,args.std,args.threads,hga_assmb_path,remove_fastqs,remove_partitions)
+         )
 
     subprocess.call(command,shell=True)
 
