@@ -46,6 +46,11 @@ Dependencies:
     * [EMBOSS](http://emboss.open-bio.org/)
   * [pysam](https://pypi.python.org/pypi/pysam)
 - Python 2.7
+  * Primarily needed for the externally developed scripts (HGA and Scaffold Builder)
 - [GSNAP](http://research-pub.gene.com/gmap/)
-- [SPAdes 3.5+](http://bioinf.spbau.ru/spades)
-- [Velvet](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2952100/)
+- [SPAdes](http://bioinf.spbau.ru/spades)
+- [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/)
+- [MUMmer](http://mummer.sourceforge.net/manual/)
+- [Hierarchical Genome Assembly Tool](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
+- [Scaffold Builder](https://github.com/metageni/Scaffold_builder)
+  * Note a slight, but necessary, modification to the default script needs to be made for this pipline. The new NUCmer call can be found [here](https://github.com/jmatsumura/Scaffold_builder/blob/master/scaffold_builder.py)

@@ -5,7 +5,12 @@
 # output of this script will be a FASTA file. The final argument of this script,
 # -b, is optional. This parameter sets a "buffer" region to extend the gene
 # positions noted in the GFF3 file a bit. The output of this is meant to build
-# a reference o be used in Bowtie2. 
+# a reference tob e used for alignment.
+#
+# It is recommended that you set a value for the buffer length that makes sense
+# depending on your read length (e.g. use 125 for 250bp reads). If you do set
+# a buffer, you should run this script twice as you'll want a set of sequences
+# that lack a buffer when it comes to the alignment steps.  
 # 
 # Run the script using a command like this:
 # python3 extract_sequences.py -list /path/to/list_input.tsv -ea_map /path/to/out_from_extract_alleles.tsv -out /path/to/out.fsa -buffer 20
