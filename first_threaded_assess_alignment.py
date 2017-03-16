@@ -14,7 +14,7 @@
 # %ID coverage(reference/assembled) reference path_to_best_alignment
 #
 # Run the script using a command like this:
-# python3 threaded_assess_alignment.py -ffs_map out_format_for_SPAdes.tsv -ga_stdout threaded_global_alignment_stdout.txt -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
+# python3 first_threaded_assess_alignment.py -assmb_map /path/to/format_for_assembly.tsv -ga_stdout threaded_global_alignment_stdout.txt -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
 #
 # Author: James Matsumura
 
@@ -25,7 +25,7 @@ from Bio import AlignIO
 def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
-    parser.add_argument('-ffs_map', type=str, required=True, help='Path to map.tsv output from format_for_spades.py.')
+    parser.add_argument('-assmb_map', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or final_verdict.py.')
     parser.add_argument('-cpus', type=int, required=True, help='Number of cores to use.')
     parser.add_argument('-ga_stdout', type=str, required=True, help='Path to where the STDOUT of global_alignment.py went.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
@@ -58,7 +58,7 @@ def main():
                 unassembled.add(ele[0])
 
     # Need to iterate over the map generated from SPAdes step.
-    with open(args.ffs_map,'r') as loc_map:
+    with open(args.assmb_map,'r') as loc_map:
         for line in loc_map:
             line = line.rstrip()
             ele = line.split('\t')

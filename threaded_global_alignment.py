@@ -5,7 +5,7 @@
 # sequences. 
 #
 # Run the script using a command like this:
-# python3 first_threaded_global_alignment.py -ea_map /path/to/extract_alleles_map.tsv -assmb_map /path/to/format_for_assembly.tsv -ref_genome /path/to/ref_genome.fsa -assmb_path -/path/to/assemblies_out -out /path/to/alignment_out
+# python3 first_threaded_global_alignment.py -ea_map /path/to/extract_alleles_map.tsv -assmb_map /path/to/format_for_assembly.tsv -ref_genome /path/to/ref_genome.fsa -assmb_path -/path/to/assemblies_out -assmb_type (HGA|SPAdes) -out /path/to/alignment_out
 #
 # Author: James Matsumura
 
@@ -27,6 +27,7 @@ def main():
     parser.add_argument('-ref_genome', type=str, required=True, help='Path to the reference genome file used to build Bowtie2 index.')
     parser.add_argument('-min_align_len', type=str, required=False, help='Optional minimum length of an assembled sequence that should be aligned to.')
     parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('-assmb_type', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for all these alignments.')
     args = parser.parse_args()
 
@@ -87,7 +88,7 @@ def main():
             # Split out the contigs if more than one is present and have to do
             # alignment of all refs to all contigs.
             contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
-            job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q))
+            job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type))
             jobs.append(job)
 
     # Get all the returns from the apply_async function.
@@ -107,18 +108,28 @@ def main():
 # out_dir = where to put this output of the alignments
 # min_len = minimum length to perform an alignment
 # queue = queue used to send writes to the outfile
-def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue):
+# assmb_type = either "SPAdes" or "HGA"
+def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type):
     # Cannot assemble all the reads, often this seems 
     # to be due to low coverage. Output this to STDOUT. 
     if not os.path.isfile(contigs):
         print("{0}\tcould not assemble.".format(locus))
         return
 
+    scaffold_built = False # only relevant to HGA alignments
+
     # Iterate over each contig assembled
     for record in SeqIO.parse(contigs,"fasta"):
 
         type_map = {}
         bseq_file = "{0}/{1}.fsa".format(out_dir,record.id)
+
+        if assmb_type == 'HGA':
+            # only want scaffolds since we already have contigs from default SPAdes
+            if not record.id.startswith('Scaffold'): 
+                continue
+            else: # built a scaffold, HGA worked
+                scaffold_built = True
 
         # Make individual FASTA files for each contig
         with open(bseq_file,'w') as bfsa:
@@ -168,6 +179,12 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue):
         # re-aligned and potentially better optimized. 
         for k,v in type_map.items():
             queue.put("{0}\t{1}\n".format(k,v))
+
+    # HGA still produces output regardless of whether it can construct scaffolds,
+    # check whether it was actually able to build any. 
+    if assmb_type == 'HGA':
+        if scaffold_built == False: 
+            print("{0}\tcould not assemble.".format(locus))
 
 # This will act as the sole writer to the output file. This way there is no 
 # concern with locks and what not. 
