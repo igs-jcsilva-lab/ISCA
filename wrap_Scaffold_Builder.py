@@ -29,7 +29,7 @@ def main():
     args = parser.parse_args()
 
     original_sge_id = 0 # find the previous SGE grid value for where the reads are stored
-    locus_of_interest = ""
+    locus_of_interest,ea_locus = ("" for i in range(2))
 
     with open(args.final_verdict_map,'r') as i:
         for line in i:
@@ -47,10 +47,17 @@ def main():
         for line in i:
             line = line.rstrip()
             elements = line.split('\t')
-            if elements[0] == locus_of_interest:
+
+            # Need to handle the case where the reference locus is 
+            # split into multiple like ABC123.1,ABC123.2,etc.
+            if '.' in elements[0]:
+                ea_locus = elements[0].split('.')[0]
+            else:
+                ea_locus = elements[0]
+
+            if ea_locus == locus_of_interest:
                 for x in range(1,len(elements)): # grab all the alleles
                     allele_list.append(elements[x].split('|')[4])
-                break
 
     # Extract and write out the sequences. 
     seq_dict = SeqIO.to_dict(SeqIO.parse(args.fasta,"fasta"))
