@@ -87,7 +87,11 @@ def main():
 
             # Split out the contigs if more than one is present and have to do
             # alignment of all refs to all contigs.
-            contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
+            contigs = ""
+            if args.assmb_type == "SPAdes":
+                contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
+            else:
+                contigs  = "{0}/{1}/sb_out_Scaffold.fasta".format(args.assmb_path,loc_dir)
             job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type))
             jobs.append(job)
 
