@@ -81,8 +81,14 @@ def main():
             line = line.rstrip()
             ele = line.split('\t')
             locus = ele[0] # reference/locus that maps to directory number
-            loc_dir = ele[1] # the directory number from assembly for grid submission
             out_dir = "{0}/{1}".format(args.out,locus) # alignment output goes here
+            
+            loc_dir = ""
+            if args.assmb_type == "SPAdes":
+                loc_dir = ele[1] # the directory number from assembly for grid submission
+            elif args.assmb_path == "HGA":
+                loc_dir = ele[2] # the directory number from assembly for grid submission
+
             make_directory(out_dir)
 
             # Split out the contigs if more than one is present and have to do
