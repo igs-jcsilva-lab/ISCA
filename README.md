@@ -10,34 +10,30 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
   * extract_alleles.py 
 3. Extract sequences for all references given the previous scripts output
   * extract_sequences.py 
-4. remove duplicate FASTA sequences
-  * remove_duplicates.py
-  1. If duplicates are found, need to reformat the map from extract_alleles.py to not contain these sequences.
-    * mod_ea_map.py
-5. GSNAP
-  1. Build index
-  2. align
-  3. optional, but can compress SAM to BAM here
-6. Analyze BAM to map reads to refs and vice-versa 
+4. GSNAP
+  * Build index
+  * align
+  * optional, but can compress SAM to BAM here
+5. Analyze BAM to map reads to refs and vice-versa 
   * analyze_bam.py
-7. Assign all the reads to their own directories for each reference
+6. Assign all the reads to their own directories for each reference
   * fastq_reads_to_fastq_alleles.py
-8. Rename all the directories to format for running SPAdes on the grid 
-  * format_for_spades.py
-9. SPAdes
+7. Rename all the directories to format for running SPAdes on the grid 
+  * format_for_assembly.py
+8. SPAdes
   * http://spades.bioinf.spbau.ru/release3.5.0/manual.html
-10. Run global alignment 
+9. Run global alignment 
   * threaded_global_alignment.py
-11. Run assessment to isolate the best assemblies and overall stats
+10. Run assessment to isolate the best assemblies and overall stats
   * first_threaded_assess_alignment.py
-12. If there are any remaining loci that could not assemble at a desired minimum threshold, can isolate these reference sequences to another round of the pipeline and use more sensitive Bowtie2 alignment parameters. Note that using this step will essentially format the data similar to the end of step 3. 
+11. If there are any remaining loci that could not assemble at a desired minimum threshold, can isolate these reference sequences to another round of the pipeline and use more sensitive Bowtie2 alignment parameters. Note that using this step will essentially format the data similar to the end of step 3. 
   * final_verdict.py
-13. Assemble those that SPAdes could not using HGA+Scaffold Builder.
+12. Assemble those that SPAdes could not using HGA+Scaffold Builder.
   * wrap_HGA.py
   * wrap_Scaffold_Builder.py
-14. Rerun global alignment using these new assemblies.
+13. Rerun global alignment using these new assemblies.
   * threaded_global_alignment.py
-15. Assess these new assemblies.
+14. Assess these new assemblies.
   * second_threaded_assess_alignment.py
 
 Within the util/~ directory there are a number of other post-processing scripts that can
