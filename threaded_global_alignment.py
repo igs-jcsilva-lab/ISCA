@@ -137,6 +137,10 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type):
 
         # Make individual FASTA files for each contig
         with open(bseq_file,'w') as bfsa:
+            # If working with scaffolds, get rid of the spacers
+            if assmb_type == "HGA":
+                sequence = str(record.seq)
+                record.seq = Seq(sequence.replace("N",""))
             SeqIO.write(record,bfsa,"fasta")
 
         # Some of these shorter sequences hold little to no useful 
@@ -223,57 +227,48 @@ def align(out,allele,contig,aseq,bseq,f_or_r,assmb_type):
 
     initial_align = "{0}/{1}.WITH.{2}.align.txt".format(out,allele,contig)
 
-    if assmb_type == "HGA" and f_or_r == "f":
-        initial_align = "{0}/{1}.WITH.{2}.f.align.txt".format(out,allele,contig)
-    elif assmb_type == "HGA" and f_or_r == "r":
-        initial_align = "{0}/{1}.WITH.{2}.r.align.txt".format(out,allele,contig)
-
     needle = NeedleCommandline(needle_exe,
                                 asequence=aseq,
                                 bsequence=bseq,
                                 gapopen=10,gapextend=0.5,outfile=initial_align)
     stdout,stderr = needle()
 
-    if assmb_type == "SPAdes":
+    a,b = (None for i in range(2))
+    alignment = AlignIO.read(initial_align,format)
 
-        a,b = (None for i in range(2))
-        alignment = AlignIO.read(initial_align,format)
+    for sequence in alignment:
 
-        for sequence in alignment:
+        if a == None: # grab both sequences, first being the reference seq
+            a = sequence.seq
+        else: # now grab the assembled seq
+            b = sequence.seq            
 
-            if a == None: # grab both sequences, first being the reference seq
-                a = sequence.seq
-            else: # now grab the assembled seq
-                b = sequence.seq            
+        # Once two sequences are extracted, refine and align trimming the 
+        # outside extended blank sequence.  
+        if a != None and b != None:
+            refined_align = "{0}/{1}.WITH.{2}.{3}.trimmed_align.txt".format(out,allele,contig,f_or_r)
+            a_fsa = "{0}/{1}.WITH.{2}.{3}.a.fsa".format(out,allele,contig,f_or_r) # filename
+            b_fsa = "{0}/{1}.WITH.{2}.{3}.b.fsa".format(out,allele,contig,f_or_r) # will be different since alignments will be different
+            a_trim = "{0}.a.trimmed".format(f_or_r) # sequence header, file name makes distinction
+            b_trim = "{0}.b.trimmed".format(f_or_r)
 
-            # Once two sequences are extracted, refine and align trimming the 
-            # outside extended blank sequence.  
-            if a != None and b != None:
-                refined_align = "{0}/{1}.WITH.{2}.{3}.trimmed_align.txt".format(out,allele,contig,f_or_r)
-                a_fsa = "{0}/{1}.WITH.{2}.{3}.a.fsa".format(out,allele,contig,f_or_r) # filename
-                b_fsa = "{0}/{1}.WITH.{2}.{3}.b.fsa".format(out,allele,contig,f_or_r) # will be different since alignments will be different
-                a_trim = "{0}.a.trimmed".format(f_or_r) # sequence header, file name makes distinction
-                b_trim = "{0}.b.trimmed".format(f_or_r)
+            seqs = trim_extensions(a,b)
+            write_fasta(a_fsa,a_trim,seqs['a'])
+            write_fasta(b_fsa,b_trim,seqs['b'])
 
-                seqs = trim_extensions(a,b)
-                write_fasta(a_fsa,a_trim,seqs['a'])
-                write_fasta(b_fsa,b_trim,seqs['b'])
+            needle = NeedleCommandline(needle_exe,
+                            asequence=a_fsa,
+                            bsequence=b_fsa,
+                            gapopen=10, gapextend=0.5,outfile=refined_align)
+            stdout,stderr = needle()
 
-                needle = NeedleCommandline(needle_exe,
-                                asequence=a_fsa,
-                                bsequence=b_fsa,
-                                gapopen=10, gapextend=0.5,outfile=refined_align)
-                stdout,stderr = needle()
+            # No need to keep the initial align at this point as the trimmed
+            # should be better. If really needed, can use the original untrimmed
+            # sequences and manually re-perform needle alignment.
+            os.remove(initial_align)
 
-                # No need to keep the initial align at this point as the trimmed
-                # should be better. If really needed, can use the original untrimmed
-                # sequences and manually re-perform needle alignment.
-                os.remove(initial_align)
+            return seqs
 
-                return seqs
-
-    elif assmb_type == "HGA": # need to check scaffold alignments more carefully
-        return {'type':'hga'}
 
 # Function to trim the extended blank bases identified from a Needle alignment.
 # Note that this trimming just removes the blanks present in the extension on
