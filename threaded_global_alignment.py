@@ -72,6 +72,7 @@ def main():
 
     # Build a jobs array to make sure these all finish. 
     jobs = []
+    job = ""
 
     # Now that we can easily extract the sequences for alignment, iterate over
     # the directory name map file and perform alignments. 
@@ -90,10 +91,15 @@ def main():
             contigs = ""
             if args.assmb_type == "SPAdes":
                 contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
+                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type))
+                jobs.append(job)
             else:
-                contigs  = "{0}/{1}/sb_out_Scaffold.fasta".format(args.assmb_path,loc_dir)
-            job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type))
-            jobs.append(job)
+                contigs  = "{0}/{1}/f_Scaffold.fasta".format(args.assmb_path,loc_dir)
+                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type))
+                jobs.append(job)
+                contigs  = "{0}/{1}/r_Scaffold.fasta".format(args.assmb_path,loc_dir)
+                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type))
+                jobs.append(job)
 
     # Get all the returns from the apply_async function.
     for job in jobs:
@@ -174,7 +180,8 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type):
 
             if not os.path.isfile(aseq_file): # skip if made for previous contig
                 with open(aseq_file,'w') as afsa:
-                    SeqIO.write(seq.reverse_complement(),afsa,"fasta")
+                    seq.seq = seq.seq.reverse_complement()
+                    SeqIO.write(seq,afsa,"fasta")
 
             # Now have the reference FASTA file, perform alignment
             # with the assembled contig.

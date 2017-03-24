@@ -14,7 +14,7 @@
 
 import re,argparse,subprocess
 import os.path
-from Bio import AlignIO, SeqIO
+from Bio import SeqIO
 
 def main():
 
@@ -61,19 +61,30 @@ def main():
 
     # Extract and write out the sequences. 
     seq_dict = SeqIO.to_dict(SeqIO.parse(args.fasta,"fasta"))
-    new_fasta = "{0}/{1}/locus.fasta".format(args.hga_dir,original_sge_id)
-    with open(new_fasta,'w') as out:
+    f_fasta = "{0}/{1}/f_locus.fasta".format(args.hga_dir,original_sge_id)
+    with open(f_fasta,'w') as out:
         for allele in allele_list:
             seq = seq_dict[allele]
+            SeqIO.write(seq,out,"fasta")
+
+    r_fasta = "{0}/{1}/r_locus.fasta".format(args.hga_dir,original_sge_id)
+    with open(r_fasta,'w') as out:
+        for allele in allele_list:
+            seq = seq_dict[allele]
+            seq.seq = seq.seq.reverse_complement()
             SeqIO.write(seq,out,"fasta")
 
     # Now we have the reference sequence(s), so use Scaffold Builder to combine
     # those contigs based on these sequences.
     query = "{0}/{1}/HGA_combined/contigs.fasta".format(args.hga_dir,original_sge_id)
-    scaffold_out = "{0}/{1}/sb_out".format(args.hga_dir,original_sge_id)
+    f_out = "{0}/{1}/f".format(args.hga_dir,original_sge_id)
+    r_out = "{0}/{1}/r".format(args.hga_dir,original_sge_id)
 
+    # Need both forward and reverse scaffolds built
     if os.path.isfile(query):
-        command = "{0} {1} -q {2} -r {3} -p {4}".format(args.python,args.sb,query,new_fasta,scaffold_out)
+        command = "{0} {1} -q {2} -r {3} -p {4}".format(args.python,args.sb,query,f_fasta,f_out)
+        subprocess.call(command,shell=True)
+        command = "{0} {1} -q {2} -r {3} -p {4}".format(args.python,args.sb,query,r_fasta,r_out)
         subprocess.call(command,shell=True)
     else:
         print("HGA could not assemble locus:{0}\n".format(locus_of_interest))
