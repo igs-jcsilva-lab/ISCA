@@ -142,14 +142,16 @@ def worker(algn_dir,locus,priority,queue):
 
     best = ids.index(max(ids))
 
+    # This block is not needed for the current set of test cases but likely
+    # will be needed in the future. 
     # Make sure a tie goes to the prioritized isolate.
-    if priority != "":
-        m = max(ids)
-        x = [i for i, j in enumerate(ids) if j == m]
-        if len(x) > 1: # only a concern in the case of a tie
-            for i in x:
-                if isos[i] == priority:
-                    best = i
+    #if priority != "":
+    #    m = max(ids)
+    #    x = [i for i, j in enumerate(ids) if j == m]
+    #    if len(x) > 1: # only a concern in the case of a tie
+    #        for i in x:
+    #            if isos[i] == priority:
+    #                best = i
 
     best_iso = isos[best]
     best_id = ids[best]
@@ -158,17 +160,19 @@ def worker(algn_dir,locus,priority,queue):
 
     queue.put("{0}\t{1}\t{2}\t{3}\n".format(best_id,best_cov,best_iso,best_file))
 
-    if priority != "":
+    # This block is not needed for the current set of test cases but likely
+    # will be needed in the future. 
+    #if priority != "":
         # If the best hit was not the prioritized isolate, then print to STDOUT
         # what the best value was for the priority as well as the actual best.
-        if best_iso != priority:
-            prioritized_indexes = [i for i,j in enumerate(isos) if j == priority]
-            prioritized_ids = [ids[i] for i in prioritized_indexes]
+    #    if best_iso != priority:
+    #        prioritized_indexes = [i for i,j in enumerate(isos) if j == priority]
+    #        prioritized_ids = [ids[i] for i in prioritized_indexes]
             # Make sure the prioritized isolate has an alignment. 
-            prioritized_best_id = 0
-            if len(prioritized_ids) > 0:
-                prioritized_best_id = max(prioritized_ids)
-            print("{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}".format(locus,best_iso,best_id,priority,prioritized_best_id,best_id-prioritized_best_id))
+    #        prioritized_best_id = 0
+    #        if len(prioritized_ids) > 0:
+    #            prioritized_best_id = max(prioritized_ids)
+    #        print("{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}".format(locus,best_iso,best_id,priority,prioritized_best_id,best_id-prioritized_best_id))
 
 # This will act as the sole writer to the output file. This way there is no 
 # concern with locks and what not. 
