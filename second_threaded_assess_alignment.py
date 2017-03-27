@@ -86,6 +86,10 @@ def worker(algn_dir,locus,priority,queue):
     # no alignments to have been performed. Print to STDOUT in case
     # this does happen. 
     aligned = False
+    
+    if not os.path.isdir(algn_dir):
+        print("The locus {0} could build a scaffold but failed to find an alignment.".format(locus))
+        return
 
     # Found the alignment directory for this locus, now iterate over 
     # the final alignments and pull the best score.
