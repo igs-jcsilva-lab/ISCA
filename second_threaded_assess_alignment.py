@@ -16,11 +16,11 @@
 # This script differs from first_threaded_assess_alignment.py in that it 
 # does some additional analysis on any embedded unaligned regions within
 # the assembled sequence compared to the reference sequence. In addition 
-# to the columns mentioned above for ids_v_cov.tsv, there will be subsequent 
-# columns (if applicable) for any embedded regions which will tell:
-# where the regions are and how long the regions are. If there are multiple
-# embedded regions then the output will be separated by commas. For instance:
-# region1,region2 length1,length2 
+# to the columns mentioned above for ids_v_cov.tsv, there will be a subsequent 
+# column to tell the percent ID of the original reference that is successfully
+# recreated by the assembler. This means it ignores gaps and just checks 
+# for each base of the reference whether or not it could align to an exact 
+# match in the assembly. 
 #
 # Run the script using a command like this:
 # python3 second_threaded_assess_alignment.py -assmb_map /path/to/format_for_assembly.tsv -ga_stdout threaded_global_alignment_stdout.txt -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
@@ -86,7 +86,7 @@ def worker(algn_dir,locus,priority,queue):
     # no alignments to have been performed. Print to STDOUT in case
     # this does happen. 
     aligned = False
-    
+
     if not os.path.isdir(algn_dir):
         print("The locus {0} could build a scaffold but failed to find an alignment.".format(locus))
         return
@@ -144,7 +144,9 @@ def worker(algn_dir,locus,priority,queue):
         print("The locus {0} could build a scaffold but failed to find an alignment.".format(locus))
         return
 
-    best = ids.index(max(ids))
+    # We want to find the best ID regardless of GAPs (meaning how many of the
+    # reference bases can be covered).
+    best = ids.index(max(nogap_id))
     
     # This block is not needed for the current set of test cases but likely
     # will be needed in the future. 

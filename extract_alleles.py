@@ -14,6 +14,9 @@
 # isolate       /path/to/iso1.gff3   /path/to/iso1.fasta    name_of_iso1
 # isolate       /path/to/iso2.gff3   /path/to/iso2.fasta    name_of_iso2
 #
+# *** It is VERY important that the name_of_* column does not have periods ('.') ***
+# *** This is to guarantee correct mapping later on in the pipeline. ***
+#
 # Note there can only be one reference as this is what all other alleles will map
 # to. The output will be another TSV file with the first column being the reference
 # ID, the second column being source/location of this gene, and the third column
