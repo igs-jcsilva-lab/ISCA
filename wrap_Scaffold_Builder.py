@@ -12,7 +12,7 @@
 #
 # Author: James Matsumura
 
-import re,argparse,subprocess
+import re,argparse,subprocess,sys
 import os.path
 from Bio import SeqIO
 
@@ -39,6 +39,9 @@ def main():
                 original_sge_id = elements[1]
                 locus_of_interest = elements[0]
                 break
+
+    if original_sge_id == 0: # not in the map so irrelevant
+        sys.exit()
 
     # Now that we know where to do work, build the reference file for just the
     # relevant locus. First need to get all the correct sequences.

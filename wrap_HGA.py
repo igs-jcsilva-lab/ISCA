@@ -15,7 +15,7 @@
 #
 # Author: James Matsumura
 
-import re,argparse,subprocess
+import re,argparse,subprocess,sys
 
 def main():
 
@@ -43,6 +43,9 @@ def main():
             if args.sge_id == int(elements[2]): # If we find the mapping point, leave
                 original_sge_id = elements[1]
                 break
+
+    if original_sge_id == 0: # isn't mapped so doesn't need to be re-assembled
+        sys.exit()
 
     reads_loc = "{0}/{1}/reads.fastq".format(args.reads_dir,original_sge_id)
     # By default, the reads are gunzipped so need to uncompress. 
