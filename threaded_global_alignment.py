@@ -141,6 +141,14 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type):
             else: # built a scaffold, HGA worked
                 scaffold_built = True
 
+                # Need to differentiate F and R scaffolds
+                if contigs.split('/')[-1].startswith('f'):
+                    record.id += ".f"
+                    bseq_file = "{0}/{1}.fsa".format(out_dir,record.id)
+                else:
+                    record.id += ".r"
+                    bseq_file = "{0}/{1}.fsa".format(out_dir,record.id)
+
         # Make individual FASTA files for each contig
         with open(bseq_file,'w') as bfsa:
             # If working with scaffolds, get rid of the spacers
