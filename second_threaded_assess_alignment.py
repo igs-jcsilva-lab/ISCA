@@ -146,7 +146,7 @@ def worker(algn_dir,locus,priority,queue):
 
     # We want to find the best ID regardless of GAPs (meaning how many of the
     # reference bases can be covered).
-    best = ids.index(max(nogap_id))
+    best = nogap_id.index(max(nogap_id))
     
     # This block is not needed for the current set of test cases but likely
     # will be needed in the future. 
