@@ -87,10 +87,6 @@ def worker(algn_dir,locus,priority,queue):
     # this does happen. 
     aligned = False
 
-    if not os.path.isdir(algn_dir):
-        print("The locus {0} could build a scaffold but failed to find an alignment.".format(locus))
-        return
-
     # Found the alignment directory for this locus, now iterate over 
     # the final alignments and pull the best score.
     for file in os.listdir(algn_dir):
@@ -106,6 +102,12 @@ def worker(algn_dir,locus,priority,queue):
             
             isolate = file.split('.')[0] # grab the reference group
             full_path = "{0}/{1}".format(algn_dir,file)
+
+            # Make sure the file is actually populated and EMBOSS didn't fail
+            if os.stat(full_path).st_size == 0:
+                print("{0} is empty.".format(full_path))
+                continue
+
 
             # Extract the sequence lengths to establish a ratio of
             # potential coverage. >1 means reference is longer than
