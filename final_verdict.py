@@ -51,8 +51,15 @@ def main():
             filename = re.search(regex_for_locus,result[3]).group(1)
             locus = filename.split('.')[1]
 
+            percent_id = result[0]
+
+            # If we are using the assessment results from scaffold builder, 
+            # get the reference % ID to exclude gaps
+            if len(result) == 5:
+                percent_id = result[4]
+
             # First check if this sequence passed the minimum threshold
-            if float(result[0]) >= args.threshold:
+            if float(percent_id) >= args.threshold:
 
                 # Know that the locus is the second group of the alignment.txt
                 # file split by periods
