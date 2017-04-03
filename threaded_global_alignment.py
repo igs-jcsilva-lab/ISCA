@@ -183,19 +183,23 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type):
             align_id = "{0}/{1}.WITH.{2}.f.trimmed_align.txt".format(out_dir,ref_seq,record.id)
             type_map[align_id] = alignment['type']
 
-            # Process reverse complement alignment
-            aseq_file = "{0}/{1}.r.fsa".format(out_dir,ref_seq)
+            # Scaffold Builder builds scaffolds in the forward orientation, so 
+            # shouldn't be aligning to the reverse 
+            if assmb_type == "SPAdes":
 
-            if not os.path.isfile(aseq_file): # skip if made for previous contig
-                with open(aseq_file,'w') as afsa:
-                    seq.seq = seq.seq.reverse_complement()
-                    SeqIO.write(seq,afsa,"fasta")
+                # Process reverse complement alignment
+                aseq_file = "{0}/{1}.r.fsa".format(out_dir,ref_seq)
 
-            # Now have the reference FASTA file, perform alignment
-            # with the assembled contig.
-            alignment = align(out_dir,ref_seq,record.id,aseq_file,bseq_file,'r',assmb_type)
-            align_id = "{0}/{1}.WITH.{2}.r.trimmed_align.txt".format(out_dir,ref_seq,record.id)
-            type_map[align_id] = alignment['type']
+                if not os.path.isfile(aseq_file): # skip if made for previous contig
+                    with open(aseq_file,'w') as afsa:
+                        seq.seq = seq.seq.reverse_complement()
+                        SeqIO.write(seq,afsa,"fasta")
+
+                # Now have the reference FASTA file, perform alignment
+                # with the assembled contig.
+                alignment = align(out_dir,ref_seq,record.id,aseq_file,bseq_file,'r',assmb_type)
+                align_id = "{0}/{1}.WITH.{2}.r.trimmed_align.txt".format(out_dir,ref_seq,record.id)
+                type_map[align_id] = alignment['type']
 
         # For each contig, note the type of alignment so that when the
         # best score is extracted we know whether this could be 
