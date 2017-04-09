@@ -175,7 +175,7 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type,prio
         # with this particular locus. 
         for ref_seq in ref_list:
 
-            if not priority: # if priority isn't an empty string, check if this ref is relevant
+            if priority: # if priority isn't an empty string, check if this ref is relevant
                 if not ref_seq.startswith(priority):
                     continue
 
