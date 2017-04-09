@@ -5,7 +5,7 @@
 # sequences. 
 #
 # Run the script using a command like this:
-# python3 first_threaded_global_alignment.py -ea_map /path/to/extract_alleles_map.tsv -assmb_map /path/to/format_for_assembly.tsv -ref_genome /path/to/ref_genome.fsa -assmb_path -/path/to/assemblies_out -assmb_type (HGA|SPAdes) -out /path/to/alignment_out
+# python3 first_threaded_global_alignment.py -ea_map /path/to/extract_alleles_map.tsv -assmb_map /path/to/format_for_assembly.tsv -ref_genome /path/to/ref_genome.fsa -assmb_path -/path/to/assemblies_out -assmb_type (HGA|SPAdes) -out /path/to/alignment_out -priority 3D7
 #
 # Author: James Matsumura
 
@@ -28,6 +28,7 @@ def main():
     parser.add_argument('-min_align_len', type=str, required=False, help='Optional minimum length of an assembled sequence that should be aligned to.')
     parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-assmb_type', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
+    parser.add_argument('-priority', type=str, required=False, help='If given, the prefix of the sequence to solelys align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for all these alignments.')
     args = parser.parse_args()
 
@@ -35,6 +36,10 @@ def main():
     # *STORE IN MEMORY* (careful how big the reference genome used is.
     # We need this to generate small FASTA files for Needle alignment. 
     seq_dict = SeqIO.to_dict(SeqIO.parse(args.ref_genome,"fasta"))
+
+    priority = ""
+    if args.priority:
+        priority = args.priority
 
     # In order to access these seqs efficiently, rebuild the DS created 
     # in extract_alleles.py. This is a dictionary where the key is the 
@@ -91,14 +96,14 @@ def main():
             contigs = ""
             if args.assmb_type == "SPAdes":
                 contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
-                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type))
+                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type,priority))
                 jobs.append(job)
             else:
                 contigs  = "{0}/{1}/f_Scaffold.fasta".format(args.assmb_path,loc_dir)
-                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type))
+                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type,priority))
                 jobs.append(job)
                 contigs  = "{0}/{1}/r_Scaffold.fasta".format(args.assmb_path,loc_dir)
-                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type))
+                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,q,args.assmb_type,priority))
                 jobs.append(job)
 
     # Get all the returns from the apply_async function.
@@ -119,7 +124,9 @@ def main():
 # min_len = minimum length to perform an alignment
 # queue = queue used to send writes to the outfile
 # assmb_type = either "SPAdes" or "HGA"
-def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type):
+# priority = optional prefix for the reference set to align against, use an empty
+# string to align against all references of a particular locus. 
+def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type,priority):
     # Cannot assemble all the reads, often this seems 
     # to be due to low coverage. Output this to STDOUT. 
     if not os.path.isfile(contigs):
@@ -167,6 +174,11 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type):
         # Iterate over each distinct ref sequence (or allele) associated
         # with this particular locus. 
         for ref_seq in ref_list:
+
+            if not priority: # if priority isn't an empty string, check if this ref is relevant
+                if not ref_seq.startswith(priority):
+                    continue
+
             seq = seq_dict[ref_seq]
 
             # Process forward alignment
