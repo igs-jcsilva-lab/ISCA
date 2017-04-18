@@ -169,7 +169,13 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,queue,assmb_type,prio
         # that one can inspect or do a manual alignment but 
         # don't perform any alignments automatically.
         if len(record) < int(min_len):
+            print("{0}\tcould not assemble. Sequence too short.")
             continue
+
+        if len(record) > 40000:
+            print("{0}\tcould not assemble. Sequence too long.")
+            continue
+        
 
         # Iterate over each distinct ref sequence (or allele) associated
         # with this particular locus. 
