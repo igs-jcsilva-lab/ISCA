@@ -174,11 +174,11 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_t
         # that one can inspect or do a manual alignment but 
         # don't perform any alignments automatically.
         if len(record) < int(min_len):
-            print("{0}\tcould not assemble. Sequence too short.")
+            print("{0}\tcould not align. Sequence too short.".format(locus))
             continue
 
         if len(record) > int(max_len):
-            print("{0}\tcould not align. Sequence too long.")
+            print("{0}\tcould not align. Sequence too long.".format(locus))
             continue
         
 
