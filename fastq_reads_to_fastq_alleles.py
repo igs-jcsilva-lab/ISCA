@@ -229,18 +229,21 @@ def filter_fastq(ids,fastq,outdir):
                     header = entry1[0]
                     elements = header.split(' ')
                     id = elements[0][1:] # drop the '@'
-                    id = id[:-2] # drop the mate distinction of '.1' or '.2'
+                    if id.endswith('.1'):
+                        id = id[:-2] # drop the mate distinction of '.1' or '.2'
 
                     if id in ids: # if relevant, write to all necessary directories/files
                         seen += 1
 
                         # SPAdes, more specifically BWA, complains if the read
                         # IDs are not exactly the same. Thus, trim the .1 and 
-                        # .2 suffixes from each of the header lines. 
-                        entry1[0] = entry1[0].replace('.1 ',' ')
-                        entry1[2] = entry1[2].replace('.1 ',' ')
-                        entry2[0] = entry2[0].replace('.2 ',' ')
-                        entry2[2] = entry2[2].replace('.2 ',' ')
+                        # .2 suffixes from each of the header lines. Only certain
+                        # data have these suffixes so only act if necessary.
+                        if entry1[0].endswith('.1'):
+                            entry1[0] = entry1[0].replace('.1 ',' ')
+                            entry1[2] = entry1[2].replace('.1 ',' ')
+                            entry2[0] = entry2[0].replace('.2 ',' ')
+                            entry2[2] = entry2[2].replace('.2 ',' ')
 
                         # Establish all loci mapped to, could be many if not filtering
                         for ref in ids[id]:
