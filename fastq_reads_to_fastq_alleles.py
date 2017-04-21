@@ -35,7 +35,7 @@ def main():
     parser.add_argument('-ab_read_map', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
     parser.add_argument('-fastq', type=str, required=True, help='Path to the original FASTQ file prefix of paired-end reads (e.g., enter ABC.123 for pairs ABC.123.1+ABC.123.2). MUST be gunzipped.')
     parser.add_argument('-filter', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
-    parser.add_argument('-aligner', type=str, required=True, help='Whether Bowtie2 or GSNAP was used to align. Enter either "bowtie2" or "gsnap".')
+    parser.add_argument('-paired_suffixes', type=str, required=True, help='Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2.')
     parser.add_argument('-out', type=str, required=True, help='Path to where the output directory for the FASTQs to go.')
     args = parser.parse_args()
 
@@ -52,7 +52,7 @@ def main():
     
     unique_refs = set() # make directories now for where all the reads will go
 
-    if args.aligner == 'bowtie2':
+    if args.paired_suffixes == 'yes':
         # This first iteration only cares about grabbing all mates and their reference alignment info
         with open(args.ab_read_map,'r') as reads:
             for line in reads: 
@@ -144,7 +144,7 @@ def main():
             for k,v in counts.items():
                 stats_file.write("{0} read-pairs have a {1}.\n".format(v,k))
 
-    elif args.aligner == 'gsnap':
+    elif args.paired_suffixes == 'no':
         with open(args.ab_read_map,'r') as reads:
             for line in reads: 
                 
