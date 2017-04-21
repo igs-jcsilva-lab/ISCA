@@ -6,7 +6,7 @@
 # this script is the ids_v_cov.tsv file generated from the assessment script.
 #
 # Run the script using a command like this:
-# python3 generate_alignment_stats.py -i ids_v_cov.tsv -o stats.out -f_or_s F
+# python3 generate_alignment_stats.py -i ids_v_cov.tsv -o stats.out 
 #
 # Author: James Matsumura
 
@@ -17,7 +17,6 @@ def main():
     parser = argparse.ArgumentParser(description='Script to generate basic stats from the output of threaded_assess_alignment.py.')
     parser.add_argument('-i', type=str, required=True, help='Path to ids_v_cov.tsv output from threaded_assess_alignment.py.')
     parser.add_argument('-o', type=str, required=True, help='Name of an outfile.')
-    parser.add_argument('-F_or_S', type=str, required=True, help='F or S for First or Second alignment assessment output.')
     args = parser.parse_args()
 
     # dict for counting which isolates have the best alignments
@@ -35,9 +34,9 @@ def main():
 
             # Sort the %ID into bins
             id = ""
-            if args.F_or_S == "F":
+            if len(elements) == 4:
                 id = elements[0]
-            elif args.F_or_S == "S":
+            else:
                 id = elements[4]
             percent_id = bin_percent_id(percent_id,id)
 
