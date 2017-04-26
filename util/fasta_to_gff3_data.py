@@ -9,26 +9,29 @@
 #
 # Author: James Matsumura
 
-import re,argparse,urllib
+import re,argparse
+from urllib.parse import unquote
 
 def main():
 
     parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
     parser.add_argument('-fasta', type=str, required=True, help='Path to a FASTA file with entries to isolate details for.')
-    parser.add_argument('-gff3', type=str, required=True, help='Reference GFF3 file to get details from for entries from FASTA file.')
-    parser.add_argument('-priority', type=str, required=True, help='Prefix priority.')
+    parser.add_argument('-gff3', type=str, required=True, help='Reference GFF3 file to get details from for entries from FASTA file. Note this is likely the core file that you GMAPped from.')
+    parser.add_argument('-priority', type=str, required=True, help='Prefix priority to grab from FASTA file.')
     parser.add_argument('-outfile', type=str, required=True, help='Output file.')
     args = parser.parse_args()
 
     # dictionary where the key is the ID and the value is a list for ref/loc/coords 
     references = set()
+    reference_map = {} # for those that aren't part of original reference, map newest name to this one
     output_list = []
 
     # Iterate over each reference/isolate
     with open(args.fasta,'r') as fasta:
         for line in fasta:
             if line.startswith('>'+args.priority): # only grab references that we care about
-                references.add(line.split('.',1)[1].strip())
+                references.add(line.split('.')[1].strip())
+                reference_map[line.split('.')[1].strip()] = line.strip()[1:]
 
     regex_for_name = r'.*Name=([a-zA-Z0-9_\.\-]+)'
     regex_for_description = r'description=(.*)'
@@ -59,11 +62,12 @@ def main():
                     id = re.search(regex_for_name,ele[8]).group(1) # extract the name from attr that links via GMAP
 
                     if id in references:
-                        output_list.append("{0}\t{1}\t{2}\n".format(id,aliases,urllib.unquote_plus(description)))
+                        output_list.append("{0}\t{1}\t{2}".format(id,aliases,unquote(description)))
 
     with open(args.outfile,'w') as out:
         for ele in output_list:
-            out.write(ele)
+            id = ele.split('\t')[0]
+            out.write("{0}\t{1}\n".format(reference_map[id],ele))
 
 
 if __name__ == '__main__':
