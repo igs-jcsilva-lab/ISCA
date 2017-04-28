@@ -64,34 +64,36 @@ def main():
 
     # Extract and write out the sequences. 
     seq_dict = SeqIO.to_dict(SeqIO.parse(args.fasta,"fasta"))
-    f_fasta = "{0}/{1}/f_locus.fasta".format(args.hga_dir,original_sge_id)
-    with open(f_fasta,'w') as out:
-        for allele in allele_list:
-            seq = seq_dict[allele]
-            SeqIO.write(seq,out,"fasta")
 
-    r_fasta = "{0}/{1}/r_locus.fasta".format(args.hga_dir,original_sge_id)
-    with open(r_fasta,'w') as out:
-        for allele in allele_list:
-            seq = seq_dict[allele]
-            seq.seq = seq.seq.reverse_complement()
-            SeqIO.write(seq,out,"fasta")
-
-    # Now we have the reference sequence(s), so use Scaffold Builder to combine
-    # those contigs based on these sequences.
+    # First check if HGA worked
     query = "{0}/{1}/HGA_combined/contigs.fasta".format(args.hga_dir,original_sge_id)
-    f_out = "{0}/{1}/f".format(args.hga_dir,original_sge_id)
-    r_out = "{0}/{1}/r".format(args.hga_dir,original_sge_id)
 
-    # Need both forward and reverse scaffolds built
+    # If HGA built contigs, build both F/R scaffolds to align to
     if os.path.isfile(query):
+
+        f_fasta = "{0}/{1}/f_locus.fasta".format(args.hga_dir,original_sge_id)
+        with open(f_fasta,'w') as out:
+            for allele in allele_list:
+                seq = seq_dict[allele]
+                SeqIO.write(seq,out,"fasta")
+
+        r_fasta = "{0}/{1}/r_locus.fasta".format(args.hga_dir,original_sge_id)
+        with open(r_fasta,'w') as out:
+            for allele in allele_list:
+                seq = seq_dict[allele]
+                seq.seq = seq.seq.reverse_complement()
+                SeqIO.write(seq,out,"fasta")
+
+        f_out = "{0}/{1}/f".format(args.hga_dir,original_sge_id)
+        r_out = "{0}/{1}/r".format(args.hga_dir,original_sge_id)
+
         command = "{0} {1} -q {2} -r {3} -p {4}".format(args.python,args.sb,query,f_fasta,f_out)
         subprocess.call(command,shell=True)
         command = "{0} {1} -q {2} -r {3} -p {4}".format(args.python,args.sb,query,r_fasta,r_out)
         subprocess.call(command,shell=True)
+
     else:
         print("HGA could not assemble locus:{0}\n".format(locus_of_interest))
-
 
 if __name__ == '__main__':
     main()
