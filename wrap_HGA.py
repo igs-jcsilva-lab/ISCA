@@ -28,6 +28,7 @@ def main():
     parser.add_argument('-ins', type=int, required=True, help='Insert size.')
     parser.add_argument('-std', type=int, required=True, help='Standard deviation of insert size.')
     parser.add_argument('-threads', type=int, required=True, help='Number of threads to use.')
+    parser.add_argument('-partitions', type=int, required=True, help='Number of partitions to split into HGA.')
     parser.add_argument('-reads_dir', type=str, required=True, help='Base path to where the reads are stored.')
     parser.add_argument('-out_dir', type=str, required=True, help='Base path to where HGA.py should write the new assemblies out to.')
     parser.add_argument('-sge_id', type=int, required=True, help='Newest assigned SGE ID of this particular assembly.')
@@ -57,9 +58,9 @@ def main():
     remove_partitions = "{0}/part*assembly".format(hga_assmb_path)
 
     command = ("{0} {1} -velvet {2} -spades {3} -PA SPAdes -P12 {4} -R12 {5}"
-         " -ins {6} -std {7} -P 5 -Pkmer 21 -Rkmer 81 -t {8} -out {9}"
+         " -ins {6} -std {7} -P 5 -Pkmer 21 -Rkmer 81 -t {8} -P {12} -out {9}"
          " && rm {10} && rm -rf {11}"
-         .format(args.python,args.hga,args.velvet,args.spades,reads_loc,reads_loc,args.ins,args.std,args.threads,hga_assmb_path,remove_fastqs,remove_partitions)
+         .format(args.python,args.hga,args.velvet,args.spades,reads_loc,reads_loc,args.ins,args.std,args.threads,hga_assmb_path,remove_fastqs,remove_partitions,args.partitions)
     )
 
     subprocess.call(command,shell=True)
