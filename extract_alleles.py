@@ -56,7 +56,7 @@ def main():
 
             # Regardless of reference or isolate, all should be mapping to the same name
             # designated by the reference. vi 
-            allele_map = parse_gff3(gff3,allele_map,type,name,args.insert,args.out_dir)
+            allele_map = parse_gff3(gff3,allele_map,type,name,args.insert,args.out_dir,)
 
     # Iterate over the final hash of lists and print out a TSV
     out = "{0}/ea_map.tsv".format(args.out_dir)
@@ -72,6 +72,8 @@ def main():
 # allele_map = a dictionary with the reference ID/Name as the key and the values an allele tied to it
 # ref_or_iso = is this a reference or an isolate? This will potentially change the ID
 # name = prefix/name of isolate
+# insert = size of the insert to check for overlaps
+# out_dir = prefix for the output directory to write to
 def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
 
     regex_for_name = r'.*Name=([a-zA-Z0-9_\.\-]+)'
@@ -81,10 +83,15 @@ def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
     # instances of overlap which may assist in deciding whether to filter
     # or not when it comes to assigning individual reads per locus. 
     overlap_dict = defaultdict(list)
+    intron_check = {}
+    max_intron_length = {} # keep track, per allele, of the maximum intron length
+    attr_name = ""
 
     with open(file,'r') as gff3:
         for line in gff3:
             if line.startswith('##FASTA'): # don't care about sequences
+                if len(intron_check[attr_name]['list']) > 1 and ref_or_iso == "reference": # one last check for last gene
+                    max_intron_length[attr_name] = calculate_max_intron_length(intron_check,attr_name)
                 break
             elif line.startswith('#'): # don't care about comments or header data
                 pass
@@ -95,6 +102,10 @@ def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
                     start = ele[3]
                     stop = ele[4]
                     strand = ele[6]
+
+                    if attr_name in intron_check and ref_or_iso == "reference": # make sure it's been initialized
+                        if len(intron_check[attr_name]['list']) > 1: # only need to process if more than one exon
+                            max_intron_length[attr_name] = calculate_max_intron_length(intron_check,attr_name)
 
                     attr_name = re.search(regex_for_name,ele[8]).group(1) # extract the name from attr that links via GMAP
 
@@ -113,45 +124,91 @@ def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
 
                     overlap_dict[source].append("{0}:{1}:{2}".format(start,stop,id))
 
-    # Identify whether there is any overlap. If there is, print to STDOUT. 
-    # Despite the nested loops, this shouldn't be too bad since it's split
-    # up by each GFF3 file. Doing it this way since the GFF3 files aren't 
-    # guaranteed to be in order and genes are not always going to overlap
-    # in a consistent manner (some may span multiple, just 1 bp, etc.)
-    overlap_set = set() # don't add duplicates
-    overlap_out = "{0}/overlap.tsv".format(out_dir)
-    with open(overlap_out,'a') as out:
-        for k,v in overlap_dict.items():
-            for j in range(0,len(v)):
+                    intron_check[attr_name] = {'list':[],'strand':""}
+                    intron_check[attr_name]['strand'] = strand
 
-                ele = v[j].split(':')
-                jstart = int(ele[0])
-                jstop = int(ele[1])
-                jid = ele[2]
+                elif ele[2] == 'exon':
+                    intron_check[attr_name]['list'].append("{0}:{1}".format(ele[3],ele[4]))
+                        
+    # Only do overlap and intron checks for the reference as we can't really
+    # trust GMAP to capture these properly with the way it maps fragments of
+    # genes. 
+    if ref_or_iso == "reference":
+        # Identify whether there is any overlap. If there is, print to STDOUT. 
+        # Despite the nested loops, this shouldn't be too bad since it's split
+        # up by each GFF3 file. Doing it this way since the GFF3 files aren't 
+        # guaranteed to be in order and genes are not always going to overlap
+        # in a consistent manner (some may span multiple, just 1 bp, etc.)
+        overlap_set = set() # don't add duplicates
+        overlap_out = "{0}/overlap.tsv".format(out_dir)
+        with open(overlap_out,'a') as out:
+            for k,v in overlap_dict.items():
+                for j in range(0,len(v)):
 
-                for x in range(0,len(v)):
-                    if j != x: # only compare to other gene regions
-                        ele = v[x].split(":")
-                        xstart = int(ele[0])
-                        xstop = int(ele[1])
-                        xid = ele[2]
-                        pair = ""
+                    ele = v[j].split(':')
+                    jstart = int(ele[0])
+                    jstop = int(ele[1])
+                    jid = ele[2]
 
-                        if xid < jid:
-                            pair = "{0}{1}".format(xid,jid)
-                        else:
-                            pair = "{0}{1}".format(jid,xid)
-                            
-                        if jstart < (xstart-insert) < jstop:
-                            if pair not in overlap_set:
-                                overlap_set.add(pair)
-                                out.write('{0}\t{1}\n'.format(jid,xid))
-                        elif jstart < (xstop+insert) < jstop: 
-                            if pair not in overlap_set:
-                                overlap_set.add(pair)
-                                out.write('{0}\t{1}\n'.format(jid,xid))
+                    for x in range(0,len(v)):
+                        if j != x: # only compare to other gene regions
+                            ele = v[x].split(":")
+                            xstart = int(ele[0])
+                            xstop = int(ele[1])
+                            xid = ele[2]
+                            pair = ""
+
+                            if xid < jid:
+                                pair = "{0}{1}".format(xid,jid)
+                            else:
+                                pair = "{0}{1}".format(jid,xid)
+                                
+                            if jstart < (xstart-insert) < jstop:
+                                if pair not in overlap_set:
+                                    overlap_set.add(pair)
+                                    out.write('{0}\t{1}\n'.format(jid,xid))
+                            elif jstart < (xstop+insert) < jstop: 
+                                if pair not in overlap_set:
+                                    overlap_set.add(pair)
+                                    out.write('{0}\t{1}\n'.format(jid,xid))
+
+        # Write out some output for intron length
+        introns_out = "{0}/max_intron_length.tsv".format(out_dir)
+        with open(introns_out,'a') as out:
+            for k,v in max_intron_length.items():
+                out.write("{0}\t{1}\n".format(k,v))
 
     return allele_map
+
+
+def calculate_max_intron_length(intron_dict,key):
+
+    prev = -1 # previous end position
+    max = 0 # maximum intron length found so far
+
+    if intron_dict[key]['strand'] == '-':
+
+        for exon in reversed(intron_dict[key]['list']):
+            if prev == -1:
+                prev = exon.split(":")[1]
+            else:
+                intron_length = int(exon.split(":")[0])-int(prev)
+                if intron_length > max:
+                    max = intron_length
+                prev = exon.split(":")[1]
+
+    else:
+
+        for exon in intron_dict[key]['list']:
+            if prev == -1:
+                prev = exon.split(":")[1]
+            else:
+                intron_length = int(exon.split(":")[0])-int(prev)
+                if intron_length > max:
+                    max = intron_length
+                prev = exon.split(":")[1]
+                
+    return max
 
 
 if __name__ == '__main__':
