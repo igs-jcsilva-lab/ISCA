@@ -91,7 +91,7 @@ def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
         for line in gff3:
             if line.startswith('##FASTA'): # don't care about sequences
                 if len(intron_check[attr_name]['list']) > 1 and ref_or_iso == "reference": # one last check for last gene
-                    max_intron_length[attr_name] = calculate_max_intron_length(intron_check,attr_name)
+                    max_intron_length[attr_name]['max_list'] = calculate_max_intron_length(intron_check,attr_name)
                 break
             elif line.startswith('#'): # don't care about comments or header data
                 pass
@@ -105,7 +105,7 @@ def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
 
                     if attr_name in intron_check and ref_or_iso == "reference": # make sure it's been initialized
                         if len(intron_check[attr_name]['list']) > 1: # only need to process if more than one exon
-                            max_intron_length[attr_name] = calculate_max_intron_length(intron_check,attr_name)
+                            max_intron_length[attr_name]['max_list'] = calculate_max_intron_length(intron_check,attr_name)
 
                     attr_name = re.search(regex_for_name,ele[8]).group(1) # extract the name from attr that links via GMAP
 
@@ -126,6 +126,8 @@ def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
 
                     intron_check[attr_name] = {'list':[],'strand':""}
                     intron_check[attr_name]['strand'] = strand
+                    max_intron_length[attr_name] = {'max_list':[],'start_pos':0}
+                    max_intron_length[attr_name]['start_pos'] = ele[3]
 
                 elif ele[2] == 'exon':
                     intron_check[attr_name]['list'].append("{0}:{1}".format(ele[3],ele[4]))
@@ -173,10 +175,11 @@ def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
                                     out.write('{0}\t{1}\n'.format(jid,xid))
 
         # Write out some output for intron length
-        introns_out = "{0}/max_intron_length.tsv".format(out_dir)
+        introns_out = "{0}/intron_positions.tsv".format(out_dir)
         with open(introns_out,'a') as out:
-            for k,v in max_intron_length.items():
-                out.write("{0}\t{1}\n".format(k,v))
+            for k in max_intron_length:
+                if max_intron_length[k]['max_list']:
+                    out.write("{0}\t{1}\t{2}\n".format(k,max_intron_length[k]['start_pos'],"\t".join(max_intron_length[k]['max_list'])))
 
     return allele_map
 
@@ -185,10 +188,12 @@ def calculate_max_intron_length(intron_dict,key):
 
     prev = -1 # previous end position
     max = 0 # maximum intron length found so far
+    out_list = [0]
 
     if intron_dict[key]['strand'] == '-':
 
         for exon in reversed(intron_dict[key]['list']):
+            out_list.append(exon)
             if prev == -1:
                 prev = exon.split(":")[1]
             else:
@@ -200,6 +205,7 @@ def calculate_max_intron_length(intron_dict,key):
     else:
 
         for exon in intron_dict[key]['list']:
+            out_list.append(exon)
             if prev == -1:
                 prev = exon.split(":")[1]
             else:
@@ -207,8 +213,9 @@ def calculate_max_intron_length(intron_dict,key):
                 if intron_length > max:
                     max = intron_length
                 prev = exon.split(":")[1]
-                
-    return max
+    
+    out_list[0] = str(max)           
+    return out_list
 
 
 if __name__ == '__main__':
