@@ -27,6 +27,7 @@ def main():
 
     with open(args.intron_map,'r') as im:
         with open(args.outfile,'w') as out:
+            out.write("overall_gc\texon_gc\tintron_gc\tmax_intron_length\tgene_length\n")
             for line in im:
                 elements = line.strip().split("\t")
 
@@ -43,7 +44,7 @@ def main():
                 intron_only = calculate_intron_content(start_pos,seq_dict[locus].seq,exons)
                 exon_only = calculate_exon_content(start_pos,seq_dict[locus].seq,exons)
                 
-                out.write("{0}\t{1:.4f}\t{2:.4f}\t{3:.4f}\t{4}\n".format(elements[0],GC(seq_dict[locus].seq),exon_only,intron_only,max_intron_length))
+                out.write("{0}\t{1:.4f}\t{2:.4f}\t{3:.4f}\t{4}\t{5}\n".format(elements[0],GC(seq_dict[locus].seq),exon_only,intron_only,max_intron_length,len(seq_dict[locus].seq)))
 
 # Feed this the start_pos/offset for the intron positions and the sequence
 # to pull introns from and it gives back GC content for just the intronic 
