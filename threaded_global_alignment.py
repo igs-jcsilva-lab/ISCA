@@ -169,19 +169,10 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_t
                 record.seq = Seq(sequence.replace("N",""))
             SeqIO.write(record,bfsa,"fasta")
 
-        # Some of these shorter sequences hold little to no useful 
-        # information. Thus, generate a FASTA for the sequence so 
-        # that one can inspect or do a manual alignment but 
-        # don't perform any alignments automatically.
-        if len(record) < int(len(record)*min_len):
-            print("{0}\tcould not align. Sequence too short.".format(locus))
-            continue
-
         if len(record) > int(max_len):
             print("{0}\tcould not align. Sequence too long.".format(locus))
             continue
         
-
         # Iterate over each distinct ref sequence (or allele) associated
         # with this particular locus. 
         for ref_seq in ref_list:
@@ -191,6 +182,15 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_t
                     continue
 
             seq = seq_dict[ref_seq]
+
+            # Some of the shorter assembled sequences hold little to no 
+            # useful information. Thus, generate a FASTA for the sequence 
+            # so that one can inspect or do a manual alignment but 
+            # don't perform any alignments automatically. Note that short
+            # is relative to a proportion of the original sequence.
+            if len(record) < int(len(seq)*min_len):
+                print("{0}\twas not aligned. Assembled sequence too short.".format(locus))
+                continue
 
             # Process forward alignment
             aseq_file = "{0}/{1}.f.fsa".format(out_dir,ref_seq)
