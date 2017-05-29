@@ -10,7 +10,7 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
   * extract_alleles.py 
 3. Extract sequences for all references given the previous scripts output
   * extract_sequences.py 
-4. GSNAP
+4. GSNAP/SMALT
   * Build index
   * align
   * optional, but can compress SAM to BAM here
@@ -26,7 +26,7 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
   * threaded_global_alignment.py
 10. Run assessment to isolate the best assemblies and overall stats
   * first_threaded_assess_alignment.py
-11. If there are any remaining loci that could not assemble at a desired minimum threshold, can isolate these reference sequences to another round of the pipeline and use more sensitive Bowtie2 alignment parameters. Note that using this step will essentially format the data similar to the end of step 3. 
+11. If there are any remaining loci that could not assemble at a desired minimum threshold, can isolate these reference sequences to another round of the pipeline and use a different aligner/sensitivity. Note that using this step will essentially format the data similar to the end of step 3. 
   * final_verdict.py
 12. Assemble those that SPAdes could not using HGA+Scaffold Builder.
   * wrap_HGA.py
@@ -51,6 +51,7 @@ Dependencies:
 - Python 2.7
   * Primarily needed for the externally developed scripts (HGA and Scaffold Builder)
 - [GSNAP](http://research-pub.gene.com/gmap/)
+- [SMALT](http://www.sanger.ac.uk/science/tools/smalt-0)
 - [SPAdes](http://bioinf.spbau.ru/spades)
 - [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/)
 - [MUMmer](http://mummer.sourceforge.net/manual/)
