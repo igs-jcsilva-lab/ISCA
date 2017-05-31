@@ -3,7 +3,7 @@
 # This script follows extract_alleles.py. This expects the output from that 
 # script in addition to the same list used as input for that script. The 
 # output of this script will be a FASTA file. The final argument of this script,
-# -b, is optional. This parameter sets a "buffer" region to extend the gene
+# -buffer, is optional. This parameter sets a "buffer" region to extend the gene
 # positions noted in the GFF3 file a bit. The output of this is meant to build
 # a reference tob e used for alignment.
 #
