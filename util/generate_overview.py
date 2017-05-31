@@ -111,7 +111,7 @@ def main():
                     continue
                 else:
                     seq_len = len(seq_dict[locus].seq)
-                    out.write("{0}\t{1}\t{2:.4f}\t{3:.4f}\t{4}\t{5}\t{6}\t{7}\t{8}\n".format(locus,best_id[mapped_locus],GC(seq_dict[locus].seq),exon_only,"NA","NA",seq_len,seq_len,gff3_dict[unmapped_locus]))
+                    out.write("{0}\t{1}\t{2:.4f}\t{3:.4f}\t{4}\t{5}\t{6}\t{7}\t{8}\n".format(mapped_locus,best_id[mapped_locus],GC(seq_dict[locus].seq),exon_only,"NA","NA",seq_len,seq_len,gff3_dict[unmapped_locus]))
 
 # Feed this the start_pos/offset for the intron positions and the sequence
 # to pull introns from and it gives back GC content for just the intronic 
