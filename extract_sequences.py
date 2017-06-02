@@ -25,13 +25,9 @@ def main():
     parser = argparse.ArgumentParser(description='Script to extract sequences from each allele across GFF3/FASTA files. Read the top of the file for more details.')
     parser.add_argument('-list', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('-ea_map', type=str, required=True, help='Path to the output from extract_alleles.py.')
-    parser.add_argument('-buffer', type=int, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
+    parser.add_argument('-buffer', type=int, default=0, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
     parser.add_argument('-out', type=str, required=True, help='Path to where the output FASTA should go.')
     args = parser.parse_args()
-
-    b = 0 # buffer region defaults to 0
-    if args.buffer:
-        b = args.buffer
 
     extract_us = {}
 
@@ -59,7 +55,7 @@ def main():
             fasta_file = vals[2]
             gene_list = extract_us[vals[3]]
 
-            extract_sequences(fasta_file,gene_list,b,args.out)
+            extract_sequences(fasta_file,gene_list,args.buffer,args.out)
 
 
 # Arguments:
