@@ -109,11 +109,7 @@ def parse_gff3(file,allele_map,ref_or_iso,name,insert,out_dir):
 
                     attr_name = re.search(regex_for_name,ele[8]).group(1) # extract the name from attr that links via GMAP
 
-                    id = ""
-                    if ref_or_iso == "reference":
-                        id = "{0}.{1}".format(name,attr_name) # need to make a unique ID for each group/isolate that ties back to attr name
-                    else: # working with an isolate and need to use the GMAP name
-                        id = "{0}.{1}".format(name,re.search(regex_for_gmap_name,ele[8]).group(1))
+                    id = "{0}.{1}".format(name,re.search(regex_for_gmap_name,ele[8]).group(1))
 
                     combined_vals = "{0}|{1}|{2}|{3}|{4}".format(source,start,stop,strand,id)
                     
