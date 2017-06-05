@@ -29,7 +29,7 @@ def main():
     parser.add_argument('-max_align_len', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
     parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-assmb_type', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
-    parser.add_argument('-priority', type=str, required=False, help='If given, the prefix of the sequence to solelys align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
+    parser.add_argument('-priority', type=str, required=False, default="", help='If given, the prefix of the sequence to solelys align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for all these alignments.')
     args = parser.parse_args()
 
@@ -37,10 +37,6 @@ def main():
     # *STORE IN MEMORY* (careful how big the reference genome used is.
     # We need this to generate small FASTA files for Needle alignment. 
     seq_dict = SeqIO.to_dict(SeqIO.parse(args.ref_genome,"fasta"))
-
-    priority = ""
-    if args.priority:
-        priority = args.priority
 
     # In order to access these seqs efficiently, rebuild the DS created 
     # in extract_alleles.py. This is a dictionary where the key is the 
@@ -94,14 +90,14 @@ def main():
             contigs = ""
             if args.assmb_type == "SPAdes":
                 contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
-                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,priority))
+                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,args.priority))
                 jobs.append(job)
             else:
                 contigs  = "{0}/{1}/f_Scaffold.fasta".format(args.assmb_path,loc_dir)
-                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,priority))
+                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,args.priority))
                 jobs.append(job)
                 contigs  = "{0}/{1}/r_Scaffold.fasta".format(args.assmb_path,loc_dir)
-                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,priority))
+                job = pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,args.priority))
                 jobs.append(job)
 
     # Get all the returns from the apply_async function.

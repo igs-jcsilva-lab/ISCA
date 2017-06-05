@@ -38,7 +38,7 @@ def main():
     parser.add_argument('-cpus', type=int, required=True, help='Number of cores to use.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
-    parser.add_argument('-priority', type=str, required=False, help='Optional prefix for prioritizing one isolate over the others.')
+    parser.add_argument('-priority', type=str, required=False, default="", help='Optional prefix for prioritizing one isolate over the others.')
     args = parser.parse_args()
 
     # Set up the multiprocessing manager, pool, and queue
@@ -47,11 +47,6 @@ def main():
     pool = mp.Pool(args.cpus)
     pool.apply_async(listener, (q,args.out))
     jobs = []
-
-    # If priority is provided, set that value here
-    priority = ""
-    if args.priority:
-        priority = args.priority
 
     # Need to iterate over the map generated from HGA+SB step.
     with open(args.assmb_map,'r') as loc_map:
@@ -62,7 +57,7 @@ def main():
 
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
 
-            job = pool.apply_async(worker, (algn_dir,locus,priority,q))
+            job = pool.apply_async(worker, (algn_dir,locus,args.priority,q))
             jobs.append(job)
 
     # Get all the returns from the apply_async function.
