@@ -182,7 +182,7 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_t
             # don't perform any alignments automatically. Note that short
             # is relative to a proportion of the original sequence.
             if len(record) < int(len(seq)*min_len):
-                print("{0}\twas not aligned. Assembled sequence too short.".format(locus))
+                print("{0}\twas not aligned. Assembled sequence too short.".format(record.id))
                 continue
 
             # Process forward alignment
