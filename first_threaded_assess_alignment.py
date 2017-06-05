@@ -14,7 +14,7 @@
 # %ID coverage(reference/assembled) reference path_to_best_alignment
 #
 # Run the script using a command like this:
-# python3 first_threaded_assess_alignment.py -assmb_map /path/to/format_for_assembly.tsv -ga_stdout threaded_global_alignment_stdout.txt -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
+# python3 first_threaded_assess_alignment.py -assmb_map /path/to/format_for_assembly.tsv -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
 #
 # Author: James Matsumura
 
@@ -27,7 +27,6 @@ def main():
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
     parser.add_argument('-assmb_map', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or final_verdict.py.')
     parser.add_argument('-cpus', type=int, required=True, help='Number of cores to use.')
-    parser.add_argument('-ga_stdout', type=str, required=True, help='Path to where the STDOUT of global_alignment.py went.')
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-out', type=str, required=True, help='Path to output directory for these stats.')
     parser.add_argument('-priority', type=str, required=False, help='Optional prefix for prioritizing one isolate over the others.')
@@ -40,22 +39,10 @@ def main():
     pool.apply_async(listener, (q,args.out))
     jobs = []
 
-    # A set that will specify which directories of alignments to skip over.
-    unassembled = set()
-
     # If priority is provided, set that value here
     priority = ""
     if args.priority:
         priority = args.priority
-
-    # First identify which assemblies could not align. This is captured by the 
-    # STDOUT of global_alignment.py
-    if args.ga_stdout:
-        with open(args.ga_stdout,'r') as align_map:
-            for line in align_map:
-                line = line.rstrip()
-                ele = line.split('\t')
-                unassembled.add(ele[0])
 
     # Need to iterate over the map generated from SPAdes step.
     with open(args.assmb_map,'r') as loc_map:
@@ -63,10 +50,6 @@ def main():
             line = line.rstrip()
             ele = line.split('\t')
             locus = ele[0]
-
-            # Leave early if we know this was unable to be assembled.
-            if locus in unassembled:
-                continue
 
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
 
