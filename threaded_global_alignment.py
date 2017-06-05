@@ -25,8 +25,8 @@ def main():
     parser.add_argument('-assmb_map', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or final_verdict.py.')
     parser.add_argument('-cpus', type=int, required=True, help='Number of cores to use.')
     parser.add_argument('-ref_genome', type=str, required=True, help='Path to the reference genome file used to build Bowtie2 index.')
-    parser.add_argument('-min_align_len', type=float, required=False, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
-    parser.add_argument('-max_align_len', type=int, required=False, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
+    parser.add_argument('-min_align_len', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
+    parser.add_argument('-max_align_len', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
     parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-assmb_type', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
     parser.add_argument('-priority', type=str, required=False, help='If given, the prefix of the sequence to solelys align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
@@ -70,15 +70,8 @@ def main():
 
     pool.apply_async(listener, (q,args.out))
 
-    # If a minimum length is present, set it as the length to ignore 
-    # alignment on. 
-    min_len = 1.0
-    if args.min_align_len:
-        min_len = args.min_align_len
-
-    max_len = 75000
-    if args.max_align_len:
-        max_len = args.max_align_len
+    min_len = args.min_align_len
+    max_len = args.max_align_len
 
     # Build a jobs array to make sure these all finish. 
     jobs = []
