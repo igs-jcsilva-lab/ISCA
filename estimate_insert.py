@@ -33,7 +33,7 @@ def main():
     subprocess.call("rm {0}".format(bam_file),shell=True)
 
     # use Picard tools to estimate insert
-    estimate_insert = '{0} -jar {1}/CollectInsertSizeMetrics.jar I={2} O={3}/insert.stats VALIDATION_STRINGENCY=LENIENT HISTOGRAM_file={3}/histo.out'.format(args.java,args.picard,sorted_bam_file,args.out)
+    estimate_insert = '{0} -jar {1}/CollectInsertSizeMetrics.jar I={2}.bam O={3}/insert.stats VALIDATION_STRINGENCY=LENIENT HISTOGRAM_file={3}/histo.out'.format(args.java,args.picard,sorted_bam_file,args.out)
     subprocess.call(estimate_insert,shell=True)
 
 if __name__ == '__main__':
