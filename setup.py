@@ -10,13 +10,13 @@
 #
 # Author: James Matsumura
 
-import argparse
+import argparse, urllib.request
 from shared_fxns import make_directory
 
 def main():
 
     parser = argparse.ArgumentParser(description='Script to establish the necessary directory structures for the pipelines output.')
-    parser.add_argument('-output_location', type=str, help='Path to build directories at.')
+    parser.add_argument('-output_location', type=str, default='.', help='Path to build directories at.')
     args = parser.parse_args()
 
     # directories for the grid to output logs and errors
@@ -30,6 +30,19 @@ def main():
     make_directory("{0}/spades_assemblies".format(args.output_location)) # assembly method 1 results
     make_directory("{0}/hga_assemblies".format(args.output_location)) # assembly method 2 results
     make_directory("{0}/alignments".format(args.output_location)) # alignment results
+
+    make_directory("{0}/second_round_data".format(args.output_location)) # files for HGA assemblies
+
+    # Pull HGA and SB from their own repos
+    hga_url = 'https://raw.githubusercontent.com/jmatsumura/Hierarchical-Genome-Assembly-HGA/master/HGA.py'
+    with urllib.request.urlopen(hga_url) as response, open("{0}/../HGA.py".format(args.output_location), 'wb') as out_file:
+        data = response.read() # a `bytes` object
+        out_file.write(data)
+
+    sb_url = 'https://raw.githubusercontent.com/jmatsumura/Scaffold_builder/master/scaffold_builder.py'
+    with urllib.request.urlopen(sb_url) as response, open("{0}/../scaffold_builder.py".format(args.output_location), 'wb') as out_file:
+        data = response.read() # a `bytes` object
+        out_file.write(data)
 
 if __name__ == '__main__':
     main()
