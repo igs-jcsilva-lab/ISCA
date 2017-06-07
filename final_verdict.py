@@ -69,9 +69,10 @@ def main():
             else:
                 aligned.add(locus)
 
-    not_assembled = "{0}/not_assembled.fsa".format(args.new_files)
-    not_aligned = "{0}/not_aligned.fsa".format(args.new_files)
-    extract_sequences(args.original_fsa,assembled,not_assembled,aligned,not_aligned)
+    not_assembled = "{0}/not_assembled.fasta".format(args.new_files)
+    not_aligned = "{0}/not_aligned.fasta".format(args.new_files)
+    leftovers = "{0}/total_leftovers.fasta".format(args.new_files)
+    extract_sequences(args.original_fsa,assembled,not_assembled,aligned,not_aligned,leftovers)
 
     new_assmb_map = "{0}/new_assmb_map.tsv".format(args.new_files)
     new_id = 1 # start a counter for new SGE ID for this assembly
@@ -93,7 +94,8 @@ def main():
 # loci2 = set of loci that at least aligned and tried to assemble.
 # outfile1 = output file to write unassembled to. 
 # outfile2 = output file to write unaligned to. 
-def extract_sequences(file,assembled,outfile1,aligned,outfile2):
+# outfile3 = both contents of outfile1 and outfile2
+def extract_sequences(file,assembled,outfile1,aligned,outfile2,outfile3):
 
     regex_for_contig_id = ">([a-zA-Z0-9_\.]+)"
 
@@ -125,9 +127,11 @@ def extract_sequences(file,assembled,outfile1,aligned,outfile2):
 
     for allele in not_assembled:
         write_fasta(outfile1,allele,contigs[allele])
+        write_fasta(outfile3,allele,contigs[allele])
 
     for allele in not_aligned:
         write_fasta(outfile2,allele,contigs[allele])
+        write_fasta(outfile3,allele,contigs[allele])
 
 
 if __name__ == '__main__':
