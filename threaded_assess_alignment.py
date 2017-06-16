@@ -30,7 +30,7 @@ def main():
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-outfile', type=str, required=True, help='Name of output file.')
     parser.add_argument('-priority', type=str, required=False, default="", help='Optional prefix for prioritizing one isolate over the others.')
-    parser.add_argument('-assembler', type=str, required=True, help='Either "SPAdes" or "scaffolds" for which type of sequences to align.')
+    parser.add_argument('-assmb_type', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
     args = parser.parse_args()
 
     # Set up the multiprocessing manager, pool, and queue
@@ -51,7 +51,7 @@ def main():
 
             if args.assembler == "SPAdes":
                 jobs.append(pool.apply_async(spades_worker, (algn_dir,locus,args.priority,q)))
-            elif args.assembler == "scaffolds":
+            elif args.assembler == "HGA":
                 jobs.append(pool.apply_async(scaffold_worker, (algn_dir,locus,args.priority,q)))
 
     # Get all the returns from the apply_async function.
