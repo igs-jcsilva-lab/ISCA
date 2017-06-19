@@ -14,7 +14,7 @@
 # %ID coverage(reference/assembled) reference path_to_best_alignment
 #
 # Run the script using a command like this:
-# python3 first_threaded_assess_alignment.py -assmb_map /path/to/format_for_assembly.tsv -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
+# python3 threaded_assess_alignment.py -assmb_map /path/to/format_for_assembly.tsv -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
 #
 # Author: James Matsumura
 
@@ -49,9 +49,9 @@ def main():
 
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
 
-            if args.assembler == "SPAdes":
+            if args.assmb_type == "SPAdes":
                 jobs.append(pool.apply_async(spades_worker, (algn_dir,locus,args.priority,q)))
-            elif args.assembler == "HGA":
+            elif args.assmb_type == "HGA":
                 jobs.append(pool.apply_async(scaffold_worker, (algn_dir,locus,args.priority,q)))
 
     # Get all the returns from the apply_async function.
