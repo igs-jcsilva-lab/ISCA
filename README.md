@@ -22,8 +22,8 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
   * `format_for_assembly.py`
 8. SPAdes
   * http://spades.bioinf.spbau.ru/release3.5.0/manual.html
-9. Run global alignment 
-  * `threaded_global_alignment.py`
+9. Run alignment 
+  * `threaded_alignment.py`
 10. Run assessment to isolate the best assemblies and overall stats
   * `threaded_assess_alignment.py`
 11. If there are any remaining loci that could not assemble at a desired minimum threshold, can isolate these reference sequences to another round of the pipeline and use a different aligner/sensitivity. Note that using this step will essentially format the data similar to the end of step 3. 
@@ -31,8 +31,8 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 12. Assemble those that SPAdes could not using HGA+Scaffold Builder.
   * `wrap_HGA.py`
   * `wrap_Scaffold_Builder.py`
-13. Rerun global alignment using these new assemblies.
-  * `threaded_global_alignment.py`
+13. Rerun alignment using these new assemblies.
+  * `threaded_alignment.py`
 14. Assess these new assemblies.
   * `threaded_assess_alignment.py`
 15. Build a dataset for those that cannot align
