@@ -270,22 +270,33 @@ def align(out,allele,contig,aseq,bseq,f_or_r,assmb_type,emboss_tool):
         # Once two sequences are extracted, refine and align trimming the 
         # outside extended blank sequence.  
         if a != None and b != None:
+
             refined_align = "{0}/{1}.WITH.{2}.{3}.trimmed_align.txt".format(out,allele,contig,f_or_r)
-            a_fsa = "{0}/{1}.WITH.{2}.{3}.a.fsa".format(out,allele,contig,f_or_r) # filename
-            b_fsa = "{0}/{1}.WITH.{2}.{3}.b.fsa".format(out,allele,contig,f_or_r) # will be different since alignments will be different
+            
+            seqs = trim_extensions(a,b)
+
             a_trim = "{0}.a.trimmed".format(f_or_r) # sequence header, file name makes distinction
             b_trim = "{0}.b.trimmed".format(f_or_r)
 
-            seqs = trim_extensions(a,b)
-            write_fasta(a_fsa,a_trim,seqs['a'])
-            write_fasta(b_fsa,b_trim,seqs['b'])
+            if 'needle' in emboss_tool:
+                a_fsa = "{0}/{1}.WITH.{2}.{3}.a.fsa".format(out,allele,contig,f_or_r) # filename
+                b_fsa = "{0}/{1}.WITH.{2}.{3}.b.fsa".format(out,allele,contig,f_or_r) # will be different since alignments will be different
 
-            call_emboss(emboss_tool,a_fsa,b_fsa,refined_align)
+                write_fasta(a_fsa,a_trim,seqs['a'])
+                write_fasta(b_fsa,b_trim,seqs['b'])
 
-            # No need to keep the initial align at this point as the trimmed
-            # should be better. If really needed, can use the original untrimmed
-            # sequences and manually re-perform needle alignment.
-            os.remove(initial_align)
+                call_emboss(emboss_tool,a_fsa,b_fsa,refined_align)
+
+                # No need to keep the initial align at this point as the trimmed
+                # should be better. If really needed, can use the original untrimmed
+                # sequences and manually re-perform needle alignment.
+                os.remove(initial_align)
+
+            elif 'water' in emboss_tool:
+                write_fasta(a_fsa,a_trim,a.replace('-',''))
+                write_fasta(b_fsa,b_trim,b.replace('-',''))
+
+                os.rename(initial_align,refined_align)
 
             return seqs
 
@@ -306,7 +317,7 @@ def call_emboss(emboss_tool,aseq,bseq,outfile):
                                     outfile=outfile)
         
 
-    elif 'water' in emboss_tool:
+    elif 'water' in emboss_tool: # local alignment
         tool = WaterCommandline(emboss_tool,
                                     asequence=aseq,
                                     bsequence=bseq,
