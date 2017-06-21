@@ -5,7 +5,7 @@
 # sequences. 
 #
 # Run the script using a command like this:
-# python3 first_threaded_global_alignment.py -ea_map /path/to/extract_alleles_map.tsv -assmb_map /path/to/format_for_assembly.tsv -ref_genome /path/to/ref_genome.fsa -assmb_path -/path/to/assemblies_out -assmb_type (HGA|SPAdes) -out /path/to/alignment_out -priority 3D7
+# python3 threaded_alignment.py -ea_map /path/to/extract_alleles_map.tsv -assmb_map /path/to/format_for_assembly.tsv -ref_genome /path/to/ref_genome.fsa -assmb_path -/path/to/assemblies_out -assmb_type (HGA|SPAdes) -out /path/to/alignment_out -priority 3D7 -emboss_tool /pkgs/emboss/bin/needle
 #
 # Author: James Matsumura
 

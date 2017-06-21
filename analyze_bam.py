@@ -22,7 +22,7 @@
 # check for which reference contigs were able to recruit the most reads. 
 #
 # Run the script using a command like this:
-# python3 analyze_bam.py -bam /path/to/bowtie_out.bam (-threshold 90) -o /path/to/out_prefix
+# python3 analyze_bam.py -bam /path/to/bowtie_out.bam (-threshold 90) -o /path/to/out_prefix -ea_map /path/to/out_from_extract_alleles.tsv 
 #
 # Author: James Matsumura
 
@@ -34,7 +34,8 @@ def main():
     parser = argparse.ArgumentParser(description='Script to isolate all reads and where they aligned to given a BAM file.')
     parser.add_argument('-bam', type=str, help='Path to a BAM file derived from Bowtie2/GSNAP.')
     parser.add_argument('-sam', type=str, help='Path to a SAM file derived from Bowtie2/GSNAP.')
-    parser.add_argument('-threshold', type=str, required=False, help='Minimum %ID threshold to retain (entering 95 means %95 minimum %ID). Defaults to %80.')
+    parser.add_argument('-ea_map', type=str, help='Path to map.tsv output from extract_alleles.py.')
+    parser.add_argument('-threshold', type=int, default=80, required=False, help='Minimum %ID threshold to retain (entering 95 means %95 minimum %ID). Defaults to %80.')
     parser.add_argument('-o', type=str, required=True, help='Path to prefix of where the two output TSV files should go.')
     args = parser.parse_args()
 
@@ -48,14 +49,22 @@ def main():
     if args.bam is not None:
         i = pysam.AlignmentFile(args.bam,'rb')
 
+    # Collect the lengths from each reference gene
+    ref_lengths = defaultdict(list)
+    with open(args.ea_map,'r') as loc_map:
+
+        for line in loc_map:
+            line = line.rstrip()
+            ele = line.split('\t')
+
+            for j in range(1,len(ele)): # only care about alleles info
+                allele_info = ele[j].split('|')
+                length = (int(allele_info[2])-int(allele_info[1])+1) # include starting base
+                ref_lengths[allele_info[4]] = length
+
     rd_map,rf_map = (defaultdict(list) for j in range(2)) # establish these dicts as holding lists
 
-    threshold = 80  # minimum cutoff to include a read
-    if args.threshold: # user specificying threshold
-        threshold = float(args.threshold)
-
     for read in i.fetch(until_eof=True): # iterate over all reads in the [S|B]AM file.
-        que,ref = ("" for j in range(2))
 
         cigar = read.cigartuples # extract a tuple for the CIGAR string
 
@@ -65,19 +74,22 @@ def main():
             continue
 
         if cigar is not None: # only act if a CIGAR string is present
-            length = read.query_alignment_length # grab length of alignment
-            percent_id = calculate_percent_id(cigar,length)
-            
-            if percent_id >= threshold: # good enough %ID? go on...
-                rea = read.query_name # grab read ID
-                ref = read.reference_name # grab ID of what the ID aligned to
-                rd_map[rea].append("{0}|{1}|{2}".format(percent_id,length,ref))
+
+            rea = read.query_name # grab read ID
+            ref = read.reference_name # grab ID of what the ID aligned to
+
+            percent_id = calculate_percent_id(cigar,ref_lengths[ref])
+  
+            if percent_id >= float(args.threshold): # good enough %ID? go on...
+                
+                # Write out the number of match alignment
+                rd_map[rea].append("{0}|{1}|{2}".format(percent_id,read.query_alignment_length,ref))
 
                 # For the reference map, consolidate all GMAP values to a single locus,
                 # e.g. make NF54.1.1 and 3D7.1.1 just 1.1
                 ele = ref.split('.')
                 ref = ele[1]
-                rf_map[ref].append("{0}|{1}|{2}".format(percent_id,length,rea))
+                rf_map[ref].append("{0}|{1}|{2}".format(percent_id,read.query_alignment_length,rea))
 
     i.close()
 
@@ -109,13 +121,21 @@ def main():
 # length = length of the alignment (needed to calculate %ID)
 def calculate_percent_id(cigar,length):
     
-    matches,percent_id = (0 for j in range(2))
+    matches,percent_id,total = (0 for j in range(3))
     
+    # If we are using the read length, establish this length dynamically using 
+    # all the counts found in the CIGAR
     for x in cigar: # iterate over each tuple found
         if x[0] == 0:
             matches += x[1] # only increment match value when 0/M found
-    
-    percent_id = (100 * (matches/length))
+            total += x[1]
+        else:
+            total += x[1]
+
+    if length < total:
+        percent_id = (100 * (matches/length))
+    else:
+        percent_id = (100 * (matches/total))
 
     return float("{0:.2f}".format(percent_id))
 
