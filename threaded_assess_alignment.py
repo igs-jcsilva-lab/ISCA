@@ -1,6 +1,6 @@
 
 
-# This script parses through the output directories of threaded_global_alignment.py
+# This script parses through the output directories of threaded_alignment.py
 # to extract the best alignment for each assembled sequence. Note the 'priority' 
 # parameter which prefers that isolate set which was used to map from via GMAP. 
 # When the desired reference priority is not the best hit, brief stats on what %ID 
@@ -30,6 +30,7 @@ def main():
     parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('-outfile', type=str, required=True, help='Name of output file.')
     parser.add_argument('-priority', type=str, required=False, default="", help='Optional prefix for prioritizing one isolate over the others.')
+    parser.add_argument('-best_only', type=str, required=True, help='Either "yes" or "no" for whether to report stats of only the best alignment or all alignments.')
     parser.add_argument('-assmb_type', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
     args = parser.parse_args()
 
@@ -50,9 +51,9 @@ def main():
             algn_dir = "{0}/{1}".format(args.algn_path,locus)
 
             if args.assmb_type == "SPAdes":
-                jobs.append(pool.apply_async(spades_worker, (algn_dir,locus,args.priority,q)))
+                jobs.append(pool.apply_async(spades_worker, (algn_dir,locus,args.priority,args.best_only,q)))
             elif args.assmb_type == "HGA":
-                jobs.append(pool.apply_async(scaffold_worker, (algn_dir,locus,args.priority,q)))
+                jobs.append(pool.apply_async(scaffold_worker, (algn_dir,locus,args.priority,args.best_only,q)))
 
     # Get all the returns from the apply_async function.
     for job in jobs:
@@ -67,8 +68,9 @@ def main():
 # algn_dir = the locus that SPAdes attempted to assemble
 # locus = particular locus being assessed right now
 # priority = if provided, same as args.priority
+# best_only = "yes" or "no" for whether or not to report just the best or all alignments
 # queue = queue used to send writes to the outfile
-def spades_worker(algn_dir,locus,priority,queue):
+def spades_worker(algn_dir,locus,priority,best_only,queue):
     isos,scores,ids,files,cov = ([] for i in range(5)) # reinitialize for every locus
 
     # If the minimum threshold is set high enough, it is possible for
@@ -121,25 +123,30 @@ def spades_worker(algn_dir,locus,priority,queue):
         print("The locus {0} could assemble but none of the contigs passed the minimum threshold chosen when running global_alignment.py".format(locus))
         return
 
-    best = ids.index(max(ids))
+    if best_only == 'yes':
+        best = ids.index(max(ids))
 
-    # This block is not needed for the current set of test cases but likely
-    # will be needed in the future. 
-    # Make sure a tie goes to the prioritized isolate.
-    #if priority != "":
-    #    m = max(ids)
-    #    x = [i for i, j in enumerate(ids) if j == m]
-    #    if len(x) > 1: # only a concern in the case of a tie
-    #        for i in x:
-    #            if isos[i] == priority:
-    #                best = i
+        # This block is not needed for the current set of test cases but likely
+        # will be needed in the future. 
+        # Make sure a tie goes to the prioritized isolate.
+        #if priority != "":
+        #    m = max(ids)
+        #    x = [i for i, j in enumerate(ids) if j == m]
+        #    if len(x) > 1: # only a concern in the case of a tie
+        #        for i in x:
+        #            if isos[i] == priority:
+        #                best = i
 
-    best_iso = isos[best]
-    best_id = ids[best]
-    best_cov = cov[best]
-    best_file = files[best]
+        best_iso = isos[best]
+        best_id = ids[best]
+        best_cov = cov[best]
+        best_file = files[best]
 
-    queue.put("{0}\t{1}\t{2}\t{3}\n".format(best_id,best_cov,best_iso,best_file))
+        queue.put("{0}\t{1}\t{2}\t{3}\n".format(best_id,best_cov,best_iso,best_file))
+    
+    elif best_only == 'no':
+        for x in range(0,len(files)):
+            queue.put("{0}\t{1}\t{2}\t{3}\n".format(ids[x],cov[x],isos[x],files[x]))
 
     # This block is not needed for the current set of test cases but likely
     # will be needed in the future. 
@@ -165,8 +172,9 @@ def spades_worker(algn_dir,locus,priority,queue):
 # algn_dir = the locus that HGA+SB attempted to assemble
 # locus = particular locus being assessed right now
 # priority = if provided, same as args.priority
+# best_only = "yes" or "no" for whether or not to report just the best or all alignments
 # queue = queue used to send writes to the outfile
-def scaffold_worker(algn_dir,locus,priority,queue):
+def scaffold_worker(algn_dir,locus,priority,best_only,queue):
     isos,scores,ids,files,cov,nogap_id = ([] for i in range(6)) # reinitialize for every locus
 
     # If the minimum threshold is set high enough, it is possible for
@@ -233,28 +241,33 @@ def scaffold_worker(algn_dir,locus,priority,queue):
         print("The locus {0} could build a scaffold but failed to find an alignment.".format(locus))
         return
 
-    # We want to find the best ID regardless of GAPs (meaning how many of the
-    # reference bases can be covered).
-    best = nogap_id.index(max(nogap_id))
-    
-    # This block is not needed for the current set of test cases but likely
-    # will be needed in the future. 
-    # Make sure a tie goes to the prioritized isolate.
-    #if priority != "":
-    #    m = max(ids)
-    #    x = [i for i, j in enumerate(ids) if j == m]
-    #    if len(x) > 1: # only a concern in the case of a tie
-    #        for i in x:
-    #            if isos[i] == priority:
-    #                best = i
+    if best_only == 'yes':
+        # We want to find the best ID regardless of GAPs (meaning how many of the
+        # reference bases can be covered).
+        best = nogap_id.index(max(nogap_id))
+        
+        # This block is not needed for the current set of test cases but likely
+        # will be needed in the future. 
+        # Make sure a tie goes to the prioritized isolate.
+        #if priority != "":
+        #    m = max(ids)
+        #    x = [i for i, j in enumerate(ids) if j == m]
+        #    if len(x) > 1: # only a concern in the case of a tie
+        #        for i in x:
+        #            if isos[i] == priority:
+        #                best = i
 
-    best_iso = isos[best]
-    best_id = ids[best]
-    best_cov = cov[best]
-    best_file = files[best]
-    best_nogap_id = nogap_id[best]
+        best_iso = isos[best]
+        best_id = ids[best]
+        best_cov = cov[best]
+        best_file = files[best]
+        best_nogap_id = nogap_id[best]
 
-    queue.put("{0}\t{1}\t{2}\t{3}\t{4}\n".format(best_id,best_cov,best_iso,best_file,best_nogap_id))
+        queue.put("{0}\t{1}\t{2}\t{3}\t{4}\n".format(best_id,best_cov,best_iso,best_file,best_nogap_id))
+
+    elif best_only == 'no':
+        for x in range(0,len(files)):
+            queue.put("{0}\t{1}\t{2}\t{3}\t{4}\n".format(ids[x],cov[x],isos[x],files[x],nogap_id[x]))
 
     # This block is not needed for the current set of test cases but likely
     # will be needed in the future. 
