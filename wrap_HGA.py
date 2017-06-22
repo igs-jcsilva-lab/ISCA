@@ -58,7 +58,7 @@ def main():
     remove_partitions = "{0}/part*assembly".format(hga_assmb_path)
 
     command = ("{0} {1} -velvet {2} -spades {3} -PA SPAdes -P12 {4} -R12 {5}"
-         " -ins {6} -std {7} -Pkmer 21 -Rkmer 81 -t {8} -P {12} -out {9}"
+         " -ins {6} -std {7} -Pkmer 31 -Rkmer 81 -t {8} -P {12} -out {9}"
          " && rm {10} && rm -rf {11}"
          .format(args.python,args.hga,args.velvet,args.spades,reads_loc,reads_loc,args.ins,args.std,args.threads,hga_assmb_path,remove_fastqs,remove_partitions,args.partitions)
     )

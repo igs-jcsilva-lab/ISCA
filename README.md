@@ -1,7 +1,7 @@
 # targeted_assembly
 A pipeline to perform targeted assembly of individual loci given WGS reads, reference genome assemblies, and a primary reference annotation (GFF3)
 
-* Note that this is a work in progress and this tutorial will be updated once it has passed the stage of proof-of-concept.
+* Note that this is a work in progress and this tutorial will be updated with more detail once it has passed the stage of proof-of-concept.
 
 # Complete steps:
 1. Map an annotated reference genome to other assembled genomes
@@ -47,7 +47,7 @@ be used to analyze the results of this final step.
 
 
 Dependencies:
-- Python 3
+- Python 3.5
   * [Biopython](https://pypi.python.org/pypi/biopython/1.66)
     * [EMBOSS](http://emboss.open-bio.org/)
   * [pysam](https://pypi.python.org/pypi/pysam)
@@ -60,4 +60,4 @@ Dependencies:
 - [MUMmer](http://mummer.sourceforge.net/manual/)
 - [Hierarchical Genome Assembly Tool](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
 - [Scaffold Builder](https://github.com/metageni/Scaffold_builder)
-  * Note a slight, but necessary, modification to the default script needs to be made for this pipline. The new NUCmer call can be found [here](https://github.com/jmatsumura/Scaffold_builder/blob/master/scaffold_builder.py)
+  * A slight, but necessary, modification to the default script needs to be made for this pipline. The new NUCmer call can be found [here](https://github.com/jmatsumura/Scaffold_builder/blob/master/scaffold_builder.py)
