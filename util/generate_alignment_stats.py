@@ -16,52 +16,68 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to generate basic stats from the output of threaded_assess_alignment.py.')
     parser.add_argument('-i', type=str, required=True, help='Path to ids_v_cov.tsv output from threaded_assess_alignment.py.')
+    parser.add_argument('-l_or_a', type=str, required=True, help='Get best %s by loci or alleles (could also be exons if extracted at ea_map step), choose either "l" or "a".')
+    parser.add_argument('-ea_map', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('-o', type=str, required=True, help='Name of an outfile.')
     args = parser.parse_args()
 
-    # dict for counting which isolates have the best alignments
-    isolate_counts = {} 
+    best_id = {} # dict for capturing best ID per locus/exon
 
     # dict for counting how strong the %ID is for the best alignment
     percent_id = {"0<=x<10":0,"10<=x<20":0,"20<=x<30":0,"30<=x<40":0,
                 "40<=x<50":0,"50<=x<60":0,"60<=x<70":0,"70<=x<80":0,
-                "80<=x<90":0,"90<=x<100":0,"x=100":0}  
-    
+                "80<=x<90":0,"90<=x<100":0,"x=100":0} 
+
     with open(args.i,'r') as infile:
         for line in infile:
             line = line.rstrip()
             elements = line.split('\t')
 
-            # Sort the %ID into bins
-            id = ""
-            if len(elements) == 4:
-                id = elements[0]
+            entity = ""
+            if args.l_or_a == 'l':
+                entity = elements[3].split('.')[1]
             else:
-                id = elements[4]
-            percent_id = bin_percent_id(percent_id,id)
+                entity = elements[3].split('/')[-1].split('.WITH')[0]
 
-            # Count how many times a ref is found to have the best alignment
-            ref = elements[2]
-            if ref in isolate_counts:
-                isolate_counts[ref] += 1
+            # Sort the %ID into bins
+            id = 0.0
+            if len(elements) == 4:
+                id = float(elements[0])
             else:
-                isolate_counts[ref] = 1
+                id = float(elements[4])
+
+            if entity in best_id:
+                if id > best_id[entity]:
+                    best_id[entity] = id
+
+            else:
+                best_id[entity] = id
+
+    for k,v in best_id.items():
+        percent_id = bin_percent_id(percent_id,v)
+
+    tot,entity_count = (0 for i in range(2))
+
+    with open(args.ea_map,'r') as infile:
+        for line in infile:
+            if args.l_or_a == 'l':
+                entity_count += 1 # count unique loci
+            else:
+                tot = (len(line.split('\t'))-1) # count number of alleles/exons
 
     # Write out the overall alignment stats here. 
     with open(args.o,'w') as out:
 
-        out.write("Number of times a given isolate was best aligned to (if an isolate doesn't appear, never was the best alignment):\n")
-        tot = 0
-        for k,v in isolate_counts.items():
-            tot += v # calculate a total to get relative percentage
-        for k,v in isolate_counts.items():
-            rel = float("{0:.2f}".format(100*v/tot)) 
-            out.write("{0}\t\t{1} ({2}%)\n".format(k,v,rel))
-
-        out.write("\nNumber of times a given percent identity was found for the best alignment:\n")
-        tot = 0
         for k,v in percent_id.items():
             tot += v
+
+        entity = "loci"
+        if args.l_or_a == 'a':
+            entity = "alleles"
+
+        out.write("\nTotal number of {0}:\t{1}\n".format(entity,entity_count))
+
+        out.write("\nNumber of times a given percent identity was found for the best alignment:\n")
 
         sorted_bins = collections.OrderedDict(sorted(percent_id.items(),reverse=True))
 
@@ -75,6 +91,9 @@ def main():
                 out.write("{0}\t\t{1} ({2}%)\n".format(bin,percent_id[bin],rel))
             else:
                 out.write("{0}\t\t\t{1} ({2}%)\n".format(bin,percent_id[bin],rel))
+
+        failures = entity_count-tot
+        out.write("{0}\t\t\t{1} ({2}%)\n".format("Failed to align/assemble",failures,float("{0:.2f}".format(100*failures/tot))))
 
 
 # Function to house what is essentially a switch statement for grouping together
