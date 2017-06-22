@@ -126,8 +126,8 @@ def parse_gff3(file,allele_map,ref_or_iso,name,insert,gene_or_exon,out_dir):
                         max_intron_length[attr_name] = {'max_list':[],'start_pos':0}
                         max_intron_length[attr_name]['start_pos'] = ele[3]
 
-                    else: # must be exon
-                        if ref_or_iso == "reference":
+                    elif gene_or_exon == 'exon': 
+                        if ele[8].startswith('ID=exon'):
                             attr_name = re.search(regex_for_ref_exon_name,ele[8]).group(1)
                         else:
                             attr_name = re.search(regex_for_name,ele[8]).group(1)
