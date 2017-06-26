@@ -27,7 +27,7 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 10. Run assessment to isolate the best assemblies and overall stats
   * `threaded_assess_alignment.py`
 11. If there are any remaining loci that could not assemble at a desired minimum threshold, can isolate these reference sequences to another round of the pipeline and use a different aligner/sensitivity. Note that using this step will essentially format the data similar to the end of step 3. 
-  * `final_verdict.py`
+  * `assembly_verdict.py`
 12. Assemble those that SPAdes could not using HGA+Scaffold Builder.
   * `wrap_HGA.py`
   * `wrap_Scaffold_Builder.py`
@@ -36,7 +36,7 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 14. Assess these new assemblies.
   * `threaded_assess_alignment.py`
 15. Build a dataset for those that cannot align
-  * `final_verdict.py`
+  * `assembly_verdict.py`
 16. Repeat steps 4-15 using the SMALT aligner
 
 Within the util/~ directory there are a number of other post-processing scripts that can
