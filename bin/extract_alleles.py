@@ -33,21 +33,24 @@
 
 import re,argparse
 from collections import defaultdict
+from shared_fxns import make_directory
 
 def main():
 
     parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
-    parser.add_argument('-list', type=str, required=True, help='Path to a TSV list for references and isolates.')
+    parser.add_argument('-ea_input', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('-insert', type=int, required=False, default=0, help='Insert size from SRA for the reads that will be used as input.')
     parser.add_argument('-gene_or_exon', type=str, required=True, help='Either "gene" or "exon" for which sequences to pull.')
     parser.add_argument('-out_dir', type=str, required=True, help='Directory for where the output should go.')
     args = parser.parse_args()
 
+    make_directory(args.out_dir)
+
     # dictionary where the key is the ID and the value is a list for ref/loc/coords 
     allele_map = {} 
 
     # Iterate over each reference/isolate
-    with open(args.list,'r') as i:
+    with open(args.ea_input,'r') as i:
         for entry in i:
             entry = entry.rstrip()
             vals = entry.split('\t')

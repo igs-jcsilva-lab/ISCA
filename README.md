@@ -51,6 +51,8 @@ Dependencies:
   * [Biopython](https://pypi.python.org/pypi/biopython/1.66)
     * [EMBOSS](http://emboss.open-bio.org/)
   * [pysam](https://pypi.python.org/pypi/pysam)
+  * [cwlref-runner](https://pypi.python.org/pypi/cwlref-runner)
+  * [pyyaml](https://pypi.python.org/pypi/PyYAML)
 - Python 2.7
   * Primarily needed for the externally developed scripts (HGA and Scaffold Builder)
 - [GSNAP](http://research-pub.gene.com/gmap/)
