@@ -8,8 +8,9 @@
 #
 # Author: James Matsumura
 
-import argparse,collections
+import argparse,collections,sys
 from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
 from collections import defaultdict
 
@@ -20,6 +21,7 @@ def main():
     parser.add_argument('-threshold', type=int, default=0, required=False, help='Cutoff for pulling a sequence or not. Can set to 0 to get anything.')
     parser.add_argument('-groupby', type=str, required=True, help='Get sequences by loci, alleles/exons, or CDS (could also be exons if extracted at ea_map step), choose either "l", "ae", or "cds".')
     parser.add_argument('-outfile', type=str, required=True, help='Name of an outfile.')
+    parser.add_argument('-ea_map', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
     args = parser.parse_args()
 
     best_id,cds_map = (defaultdict(list) for i in range(2)) 
@@ -32,13 +34,10 @@ def main():
             elements = line.split('\t')
 
             entity = ""
-            if args.groupby == 'l':
-                if 'exon_' in elements[3]:
-                    entity = elements[3].split('/')[-2]
-                else:
-                    entity = elements[3].split('.')[1]
-            else:
+            if args.groupby != 'l':
                 entity = elements[3].split('/')[-1].split('.WITH')[0]
+            else:
+                entity = elements[3].split('.')[1]
 
             # Sort the %ID into bins
             id = 0.0
@@ -64,21 +63,66 @@ def main():
             parent = get_exon_parent(k)
             cds_map[parent].append(v)
 
+        with open(args.ea_map,'r') as infile:
+            for line in infile:
+                elements = line.split('\t')
+                for x in range(1,len(elements)):
+                    parent = get_exon_parent(elements[x].split('|')[-1]).strip()
+                    if parent in cds_lengths:
+                        cds_lengths[parent] += 1
+                    else:
+                        cds_lengths[parent] = 1
+
+        # sort the keys to output exons in order and make joining for CDS easy
+        delete_us = set()
+        for k in cds_map:
+            if len(cds_map[k]) != cds_lengths[k]:
+                print("CDS for {0} is incomplete, will not be present in FASTA file".format(k))
+                delete_us.add(k)
+
+            elif len(cds_map[k]) > 1: # only sort if multiple exons
+                if 'mrna' in cds_map[k][0][1]:
+                    cds_map[k].sort(key = lambda x: int(x[1].rsplit('exon',1)[1].split('.')[0]))   
+                else:
+                    cds_map[k].sort(key = lambda x: int(x[1].split('-')[1].split('.')[0]))
+
+        for incomplete in delete_us:
+            del cds_map[incomplete]
+
     final_sequences = []
-    for k,v in best_id.items():
-        new_id = "assembled_{0}".format(k)
 
-        file = v[1].replace('trimmed_align.txt','b.fsa')
-        record = SeqIO.read(file, "fasta")
+    if args.groupby != 'cds': # treat individual loci/alleles/exons differently than CDS
+        for k,v in best_id.items():
+            new_id = "assembled_{0}".format(k)
 
-        record.id = new_id
-        record.description = ''
-        record.name = ''
-        if '.r.trimmed' in v[1]:
-            tmp_seq = Seq(str(record.seq))
-            record.seq = tmp_seq.reverse_complement() 
+            file = v[1].replace('trimmed_align.txt','b.fsa')
+            record = SeqIO.read(file, "fasta")
 
-        final_sequences.append(record)
+            record.id = new_id
+            record.description = ''
+            record.name = ''
+            if '.r.trimmed' in v[1]:
+                tmp_seq = Seq(str(record.seq))
+                record.seq = tmp_seq.reverse_complement() 
+
+            final_sequences.append(record)
+
+    else:
+        for k,v in cds_map.items():
+            sequence = ''
+            for exon in v:
+                file = exon[1].replace('trimmed_align.txt','b.fsa')
+                record = SeqIO.read(file, "fasta")
+                if '.r.trimmed' in exon[1]:
+                    tmp_seq = Seq(str(record.seq))
+                    sequence += str(tmp_seq.reverse_complement() )
+
+                else:
+                    sequence += str(record.seq)
+
+            record = SeqRecord(Seq(sequence),id="cds_{0}".format(k),description='')
+           
+            final_sequences.append(record)
 
     SeqIO.write(final_sequences, args.outfile, 'fasta')
             
