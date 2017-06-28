@@ -1,0 +1,3 @@
+gsnap_genome: "test"
+gsnap_dir: "./gsnap_idx"
+sequences: "/local/scratch/matsu_pf_work/testing.fasta"
