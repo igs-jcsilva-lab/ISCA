@@ -14,13 +14,9 @@ inputs:
     label: Name of the "genome" for GSNAP, really just a unique identifier for this index
     type: string
 
-  gsnap_dir:
-    label: Path to the output directory to write the GSNAP genome files to
-    type: string
-
   sequences:
     label: Path to the sequence file built from extract_sequences.py
-    type: string
+    type: File
 
   threads:
     label: Number of threads to use for alignment
@@ -46,7 +42,6 @@ steps:
     run: gsnap_index.cwl
     in:
       gsnap_genome: gsnap_genome
-      gsnap_dir: gsnap_dir
       sequences: sequences
     out: [gsnap_index_dir]
 

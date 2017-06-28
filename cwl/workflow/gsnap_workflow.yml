@@ -1,6 +1,7 @@
 gsnap_genome: "test"
-gsnap_dir: "./gsnap_idx"
-sequences: "/local/scratch/matsu_pf_work/testing.fasta"
+sequences: 
+    class: File
+    path: /local/scratch/matsu_pf_work/testing.fasta
 threads: 2
 reads1:
     class: File

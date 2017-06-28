@@ -22,10 +22,11 @@ inputs:
     inputBinding:
       prefix: "-D"
       position: 2
+    default: "./gsnap_idx"
 
   sequences:
     label: Path to the sequence file built from extract_sequences.py
-    type: string
+    type: File
     inputBinding:
       position: 3
 
