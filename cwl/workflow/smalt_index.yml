@@ -1,0 +1,4 @@
+smalt_prefix: "smalt"
+sequences: 
+    class: File
+    path: /local/scratch/matsu_pf_work/testing.fasta
