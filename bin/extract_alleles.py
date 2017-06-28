@@ -38,10 +38,10 @@ from shared_fxns import make_directory
 def main():
 
     parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
-    parser.add_argument('-ea_input', type=str, required=True, help='Path to a TSV list for references and isolates.')
-    parser.add_argument('-insert', type=int, required=False, default=0, help='Insert size from SRA for the reads that will be used as input.')
-    parser.add_argument('-gene_or_exon', type=str, required=True, help='Either "gene" or "exon" for which level of sequences to pull.')
-    parser.add_argument('-out_dir', type=str, required=True, help='Directory for where the output should go.')
+    parser.add_argument('--ea_input', '-eai', type=str, required=True, help='Path to a TSV list for references and isolates.')
+    parser.add_argument('--insert', '-i',type=int, required=False, default=0, help='Insert size from SRA for the reads that will be used as input.')
+    parser.add_argument('--gene_or_exon', '-ge',type=str, required=True, help='Either "gene" or "exon" for which level of sequences to pull.')
+    parser.add_argument('--out_dir', '-o', type=str, required=False, default='.', help='Directory for where the output should go.')
     args = parser.parse_args()
 
     make_directory(args.out_dir)
@@ -63,7 +63,7 @@ def main():
             allele_map = parse_gff3(gff3,allele_map,type,name,args.insert,args.gene_or_exon,args.out_dir)
 
     # Iterate over the final hash of lists and print out a TSV
-    out = "{0}/ea_map.tsv".format(args.out_dir)
+    out = "ea_map.tsv"
     with open(out,'w') as o:
         for key,value in allele_map.items():
             vals = ('\t').join(value)

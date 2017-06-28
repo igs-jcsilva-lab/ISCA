@@ -17,10 +17,10 @@ from shared_fxns import make_directory
 def main():
 
     parser = argparse.ArgumentParser(description='Script to set up for SPAdes alignment on a grid.')
-    parser.add_argument('-ref_map', type=str, required=True, help='Path to *_ref_map.tsv output from analyze_bam.py.')
-    parser.add_argument('-path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
-    parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory to initialize directories for all the assembly output.')
-    parser.add_argument('-outfile', type=str, required=True, help='Path to output map (maps the ref to the SGE ID)).')
+    parser.add_argument('--ref_map', '-rm', type=str, required=True, help='Path to *_ref_map.tsv output from analyze_bam.py.')
+    parser.add_argument('--path', '-p', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--assmb_path', '-ap', type=str, required=True, help='Path to the the directory to initialize directories for all the assembly output.')
+    parser.add_argument('--outfile', '-o', type=str, required=True, help='Path to output map (maps the ref to the SGE ID)).')
     args = parser.parse_args()
 
     ref_map = {} # dict to hold the ref and its arbitrary ID starting at 1

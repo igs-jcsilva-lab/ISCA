@@ -22,17 +22,17 @@ from shared_fxns import make_directory,write_fasta
 def main():
 
     parser = argparse.ArgumentParser(description='Script to generate EMBOSS Needle alignments given output from format_for_assembly.py.')
-    parser.add_argument('-ea_map', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
-    parser.add_argument('-assmb_map', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or final_verdict.py.')
-    parser.add_argument('-cpus', type=int, required=True, help='Number of cores to use.')
-    parser.add_argument('-ref_genome', type=str, required=True, help='Path to the reference genome file used to build Bowtie2 index.')
-    parser.add_argument('-min_align_len', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
-    parser.add_argument('-max_align_len', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
-    parser.add_argument('-assmb_path', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
-    parser.add_argument('-assmb_type', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
-    parser.add_argument('-priority', type=str, required=False, default="", help='If given, the prefix of the sequence to solelys align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
-    parser.add_argument('-out', type=str, required=True, help='Path to output directory for all these alignments.')
-    parser.add_argument('-emboss_tool', type=str, required=True, help='Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water]).')
+    parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
+    parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or final_verdict.py.')
+    parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use.')
+    parser.add_argument('--ref_genome', '-r', type=str, required=True, help='Path to the reference genome file used to build Bowtie2 index.')
+    parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
+    parser.add_argument('--max_align_len', '-maxl', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
+    parser.add_argument('--assmb_path', '-ap', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--assmb_type', '-at', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
+    parser.add_argument('--priority', '-p', type=str, required=False, default="", help='If given, the prefix of the sequence to solelys align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
+    parser.add_argument('--out_dir', '-o', type=str, required=True, help='Path to output directory for all these alignments.')
+    parser.add_argument('--emboss_tool', '-e', type=str, required=True, help='Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water]).')
     args = parser.parse_args()
 
     # First, extract the sequences from the reference file and 
@@ -66,7 +66,7 @@ def main():
     q = manager.Queue()
     pool = mp.Pool(args.cpus)
 
-    pool.apply_async(listener, (q,args.out))
+    pool.apply_async(listener, (q,args.out_dir))
 
     min_len = args.min_align_len
     max_len = args.max_align_len
@@ -83,7 +83,7 @@ def main():
             ele = line.split('\t')
             locus = ele[0] # reference/locus that maps to directory number
             loc_dir = ele[1] # the directory number from assembly for grid submission
-            out_dir = "{0}/{1}".format(args.out,locus) # alignment output goes here
+            out_dir = "{0}/{1}".format(args.out_dir,locus) # alignment output goes here
             make_directory(out_dir)
 
             # Split out the contigs if more than one is present and have to do

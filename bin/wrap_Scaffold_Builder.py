@@ -19,13 +19,13 @@ from Bio import SeqIO
 def main():
 
     parser = argparse.ArgumentParser(description='Script to run HGA.py on SGE.')
-    parser.add_argument('-python', type=str, required=True, help='Path to Python 2.7 install.')
-    parser.add_argument('-sb', type=str, required=True, help='Path to scaffold_builder.py.')
-    parser.add_argument('-final_verdict_map', type=str, required=True, help='Path to output from final_verdict.py.')
-    parser.add_argument('-ea_map', type=str, required=True, help='Path to output from extract_alleles.py.')
-    parser.add_argument('-fasta', type=str, required=True, help='Path to original FASTA file (these should not have buffered regions).')
-    parser.add_argument('-hga_dir', type=str, required=True, help='Base path to where the HGA assemblies can be found.')
-    parser.add_argument('-sge_id', type=int, required=True, help='Newest assigned SGE ID of this particular assembly.')
+    parser.add_argument('--python', '-pyt', type=str, required=True, help='Path to Python 2.7 install.')
+    parser.add_argument('--sb', '-sb', type=str, required=True, help='Path to scaffold_builder.py.')
+    parser.add_argument('--assembly_verdict_map', '-avm', type=str, required=True, help='Path to output from assembly_verdict.py.')
+    parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to output from extract_alleles.py.')
+    parser.add_argument('--fasta', '-f', type=str, required=True, help='Path to original FASTA file (these should not have buffered regions).')
+    parser.add_argument('--hga_dir', '-hd', type=str, required=True, help='Base path to where the HGA assemblies can be found.')
+    parser.add_argument('--sge_id', '-si', type=int, required=True, help='Newest assigned SGE ID of this particular assembly.')
     args = parser.parse_args()
 
     original_sge_id = 0 # find the previous SGE grid value for where the reads are stored

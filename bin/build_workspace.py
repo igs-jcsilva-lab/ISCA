@@ -16,7 +16,7 @@ from shared_fxns import make_directory
 def main():
 
     parser = argparse.ArgumentParser(description='Script to establish the necessary directory structures for the pipelines output.')
-    parser.add_argument('-workspace_location', type=str, default='.', help='Path to build directories at.')
+    parser.add_argument('--workspace_location', '-wl', type=str, default='.', help='Path to build directories at.')
     args = parser.parse_args()
 
     # directories for the grid to output logs and errors

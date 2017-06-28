@@ -25,13 +25,13 @@ from Bio import AlignIO
 def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
-    parser.add_argument('-assmb_map', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or final_verdict.py.')
-    parser.add_argument('-cpus', type=int, required=True, help='Number of cores to use.')
-    parser.add_argument('-algn_path', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
-    parser.add_argument('-outfile', type=str, required=True, help='Name of output file.')
-    parser.add_argument('-priority', type=str, required=False, default="", help='Optional prefix for prioritizing one isolate over the others.')
-    parser.add_argument('-best_only', type=str, required=True, help='Either "yes" or "no" for whether to report stats of only the best alignment or all alignments.')
-    parser.add_argument('-assmb_type', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
+    parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or final_verdict.py.')
+    parser.add_argument('--cpus', '-c', required=True, help='Number of cores to use.')
+    parser.add_argument('--algn_path', '-ap', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--outfile', '-o', type=str, required=True, help='Name of output file.')
+    parser.add_argument('--priority', '-p', type=str, required=False, default="", help='Optional prefix for prioritizing one isolate over the others.')
+    parser.add_argument('--best_only', '-bo', type=str, required=True, help='Either "yes" or "no" for whether to report stats of only the best alignment or all alignments.')
+    parser.add_argument('--assmb_type', '-at', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
     args = parser.parse_args()
 
     # Set up the multiprocessing manager, pool, and queue

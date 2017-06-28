@@ -13,11 +13,11 @@ import re,argparse,subprocess,sys
 def main():
 
     parser = argparse.ArgumentParser(description='Script to automate samtools+picard for insert size estimation of paired reads.')
-    parser.add_argument('-samtools', type=str, required=True, help='Path to SAMtools install.')
-    parser.add_argument('-java', type=str, required=True, help='Path to Java install.')
-    parser.add_argument('-picard', type=str, required=True, help='Path to Picard tools install.')
-    parser.add_argument('-sam_file', type=str, required=True, help='Alignment file (must end in .sam).')
-    parser.add_argument('-out', type=str, required=True, help='Location to place the insert.stats results file')
+    parser.add_argument('--samtools', '-s', type=str, required=True, help='Path to SAMtools install.')
+    parser.add_argument('--java', '-j', type=str, required=True, help='Path to Java install.')
+    parser.add_argument('--picard', '-p', type=str, required=True, help='Path to Picard tools install.')
+    parser.add_argument('--sam_file', '-sf', type=str, required=True, help='Alignment file (must end in .sam).')
+    parser.add_argument('--out_dir', '-o', type=str, required=True, help='Location to place the insert.stats results file')
     args = parser.parse_args()
 
     # compress and then remove SAM for the sake of space

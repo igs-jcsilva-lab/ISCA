@@ -32,19 +32,19 @@ from collections import defaultdict
 def main():
 
     parser = argparse.ArgumentParser(description='Script to isolate all reads and where they aligned to given a BAM file.')
-    parser.add_argument('-bam', type=str, help='Path to a BAM file derived from Bowtie2/GSNAP.')
-    parser.add_argument('-sam', type=str, help='Path to a SAM file derived from Bowtie2/GSNAP.')
-    parser.add_argument('-ea_map', type=str, help='Path to map.tsv output from extract_alleles.py.')
-    parser.add_argument('-threshold', type=int, default=80, required=False, help='Minimum %ID threshold to retain (entering 95 means %95 minimum %ID). Defaults to %80.')
-    parser.add_argument('-o', type=str, required=True, help='Path to prefix of where the two output TSV files should go.')
+    parser.add_argument('--bam', '-b', type=str, help='Path to a BAM file derived from Bowtie2/GSNAP.')
+    parser.add_argument('--sam', '-s', type=str, help='Path to a SAM file derived from Bowtie2/GSNAP.')
+    parser.add_argument('--ea_map', '-eam', type=str, help='Path to map.tsv output from extract_alleles.py.')
+    parser.add_argument('--threshold', '-t', type=int, default=80, required=False, help='Minimum %ID threshold to retain (entering 95 means %95 minimum %ID). Defaults to %80.')
+    parser.add_argument('--prefix', '-p', type=str, required=True, help='Name of the prefix of where the two output TSV files should go.')
     args = parser.parse_args()
 
     if args.sam is None and args.bam is None:
-        parser.error("Either -sam or -bam input is required.")
+        parser.error("Either --sam or --bam input is required.")
     
     i = None # will be the input file
 
-    if args.sam is not None:
+    if args.sam is not None: # separate file handlers for noncompressed/compressed
         i = pysam.AlignmentFile(args.sam,'r')
     if args.bam is not None:
         i = pysam.AlignmentFile(args.bam,'rb')
@@ -94,8 +94,8 @@ def main():
     i.close()
 
     # Time to generate the output
-    read_map = args.o + "_read_map.tsv"
-    ref_map = args.o + "_ref_map.tsv"
+    read_map = args.prefix + "_read_map.tsv"
+    ref_map = args.prefix + "_ref_map.tsv"
 
     with open(read_map,'w') as o1:
         write_tsv(rd_map,o1)

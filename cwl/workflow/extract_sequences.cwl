@@ -11,25 +11,25 @@ requirements:
 inputs:
   ea_input:
     inputBinding:
-      prefix: "-ea_input"
+      prefix: "--ea_input"
     label: Path to a TSV list for references and isolates
     type: File
 
   ea_map:
     inputBinding:
-      prefix: "-ea_map"
+      prefix: "--ea_map"
     label: Path to the output from extract_alleles.py
     type: File
 
   buffer:
     inputBinding:
-      prefix: "-buffer"
+      prefix: "--buffer"
     label: How much of a buffer to add to each end of the gene/exon, defaults to 0
     type: int
 
   outfile:
     inputBinding:
-      prefix: "-outfile"
+      prefix: "--outfile"
     label: Name of the output FASTA file to generate in current or existing directory
     type: string
 

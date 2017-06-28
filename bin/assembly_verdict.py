@@ -19,7 +19,7 @@
 # a new set of assemblies for these particular loci.  
 #
 # Run the script using a command like this:
-# python3 final_verdict.py -ivc /path/to/ids_v_cov.tsv -threshold 80 -original_assmb_map /path/to/assmb_map.tsv -original_fsa /path/to/old.fsa -new_files /path/to/new.fsa
+# python3 final_verdict.py -ivc /path/to/ids_v_cov.tsv -threshold 80 -original_assmb_map /path/to/assmb_map.tsv -original_fsa /path/to/old.fsa -out_dir /path/to/new.fsa
 #
 # Author: James Matsumura
 
@@ -29,11 +29,11 @@ from shared_fxns import write_fasta
 def main():
 
     parser = argparse.ArgumentParser(description='Script to assess the results of the base Targeted Assembly pipeline.')
-    parser.add_argument('-ivc', type=str, required=True, help='Path to an ids_v_cov.tsv file from the previous run.')
-    parser.add_argument('-threshold', type=float, required=True, help='Minimum threshold of %ID that needs to be met to pass final assembly.')
-    parser.add_argument('-original_fsa', type=str, required=True, help='Path to where the initial FASTA file generated from the pipeline is.')
-    parser.add_argument('-original_assmb_map', type=str, required=True, help='Path to where the output from format_for_assembly.py is located.')
-    parser.add_argument('-new_files', type=str, required=True, help='Path to where the unaligned/unassembled FASTA entries and the new alignments map should go.')
+    parser.add_argument('--ivc', '-i', type=str, required=True, help='Path to an ids_v_cov.tsv file from the previous run.')
+    parser.add_argument('--threshold', '-t', type=float, required=True, help='Minimum threshold of %ID that needs to be met to pass final assembly.')
+    parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the initial FASTA file generated from the pipeline is.')
+    parser.add_argument('--original_assmb_map', '-oam', type=str, required=True, help='Path to where the output from format_for_assembly.py is located.')
+    parser.add_argument('--out_dir', '-o', type=str, required=True, help='Path to where the unaligned/unassembled FASTA entries and the new alignments map should go.')
     args = parser.parse_args()
 
     assembled,aligned = (set() for i in range(2))
@@ -69,12 +69,12 @@ def main():
             else:
                 aligned.add(locus)
 
-    not_assembled = "{0}/not_assembled.fasta".format(args.new_files)
-    not_aligned = "{0}/not_aligned.fasta".format(args.new_files)
-    leftovers = "{0}/total_leftovers.fasta".format(args.new_files)
+    not_assembled = "{0}/not_assembled.fasta".format(args.out_dir)
+    not_aligned = "{0}/not_aligned.fasta".format(args.out_dir)
+    leftovers = "{0}/total_leftovers.fasta".format(args.out_dir)
     extract_sequences(args.original_fsa,assembled,not_assembled,aligned,not_aligned,leftovers)
 
-    new_assmb_map = "{0}/new_assmb_map.tsv".format(args.new_files)
+    new_assmb_map = "{0}/new_assmb_map.tsv".format(args.out_dir)
     new_id = 1 # start a counter for new SGE ID for this assembly
     with open(new_assmb_map,'w') as o:
         with open(args.original_assmb_map,'r') as i:

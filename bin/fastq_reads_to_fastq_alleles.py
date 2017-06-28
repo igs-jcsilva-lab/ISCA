@@ -32,16 +32,16 @@ from shared_fxns import make_directory
 def main():
 
     parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTQ reads.')
-    parser.add_argument('-ab_read_map', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
-    parser.add_argument('-fastq', type=str, required=True, help='Path to the original FASTQ file prefix of paired-end reads (e.g., enter ABC.123 for pairs ABC.123.1+ABC.123.2). MUST be gunzipped.')
-    parser.add_argument('-filter', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
-    parser.add_argument('-paired_suffixes', type=str, required=True, help='Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly.')
-    parser.add_argument('-out', type=str, required=True, help='Path to where the output directory for the FASTQs to go.')
+    parser.add_argument('--ab_read_map', '-ab', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
+    parser.add_argument('--fastq', '-fq', type=str, required=True, help='Path to the original FASTQ file prefix of paired-end reads (e.g., enter ABC.123 for pairs ABC.123.1+ABC.123.2). MUST be gunzipped.')
+    parser.add_argument('--filter', '-f', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
+    parser.add_argument('--paired_suffixes', '-ps', type=str, required=True, help='Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly.')
+    parser.add_argument('--out_dir', '-o', type=str, required=True, help='Path to where the output directory for the FASTQs to go.')
     args = parser.parse_args()
 
     filename = args.fastq 
     filter = args.filter
-    output = args.out
+    output = args.out_dir
 
     counts = {'single_map':0,'multi_map':0,'discrepancy':0} # count these stats as they are processed. 
 
