@@ -31,12 +31,7 @@ inputs:
 
 
 outputs:
-  gsnap_out:
-    type: Directory
-    outputBinding:
-      glob: $(inputs.gsnap_dir + '/' + inputs.gsnap_genome)
-
-  gsnap_base_dir:
+  gsnap_index_dir:
     type: Directory
     outputBinding:
       glob: $(inputs.gsnap_dir)

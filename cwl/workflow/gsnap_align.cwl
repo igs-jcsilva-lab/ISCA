@@ -22,7 +22,7 @@ inputs:
     inputBinding:
       prefix: "-D"
       position: 2
-      
+
   threads:
     label: Number of threads to use for alignment
     type: int
@@ -61,7 +61,7 @@ inputs:
 
 
 outputs:
-  sam:
+  gsnap_sam:
     type: stdout
 
 stdout: 'gsnap.sam'
