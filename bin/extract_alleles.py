@@ -27,7 +27,7 @@
 # ref_id_0001   ref_loc   1-8888  iso1.ref_id_0001  iso1_loc    2-7999  iso2.ref_id_0001    iso2_loc    3-8000
 # 
 # Run the script using a command like this:
-# python3 extract_alleles.py -list /path/to/list_input.tsv -insert 500 -out /path/to/outfile.tsv
+# python3 extract_alleles.py -list /path/to/list_input.tsv -gene_or_exon gene -insert 500 -out_dir /path/to/outfile.tsv
 #
 # Author: James Matsumura
 
@@ -40,7 +40,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to map alleles across GFF3 file. Read the top of the file for more details.')
     parser.add_argument('-ea_input', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('-insert', type=int, required=False, default=0, help='Insert size from SRA for the reads that will be used as input.')
-    parser.add_argument('-gene_or_exon', type=str, required=True, help='Either "gene" or "exon" for which sequences to pull.')
+    parser.add_argument('-gene_or_exon', type=str, required=True, help='Either "gene" or "exon" for which level of sequences to pull.')
     parser.add_argument('-out_dir', type=str, required=True, help='Directory for where the output should go.')
     args = parser.parse_args()
 

@@ -3,8 +3,10 @@ cwlVersion: v1.0
 label: Targeted Assembly -- Generate allele map
 class: CommandLineTool
 
+
 requirements:
   - class: InlineJavascriptRequirement
+
 
 inputs:
   ea_input:
@@ -24,10 +26,12 @@ inputs:
     label: Either "gene" or "exon" for which sequences to pull
     type: string
 
+
 outputs:
   ea_map:
     type: File
     outputBinding:
       glob: $(inputs.out_dir + '/ea_map.tsv')
+
 
 baseCommand: ["/Library/Frameworks/Python.framework/Versions/3.5/bin/python3","/Users/jmatsumura/targeted_assembly/bin/extract_alleles.py"]
