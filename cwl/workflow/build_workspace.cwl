@@ -33,25 +33,25 @@ outputs:
     outputBinding:
       glob: $(inputs.workspace_location + '/sam')
 
-  reads:
+  first_reads:
     type: Directory
     outputBinding:
-      glob: $(inputs.workspace_location + '/reads')
+      glob: $(inputs.workspace_location + '/first_reads')
 
-  spades_assemblies:
+  first_spades_assemblies:
     type: Directory
     outputBinding:
-      glob: $(inputs.workspace_location + '/spades_assemblies')
+      glob: $(inputs.workspace_location + '/first_spades_assemblies')
 
-  hga_assemblies:
+  first_hga_assemblies:
     type: Directory
     outputBinding:
-      glob: $(inputs.workspace_location + '/hga_assemblies')
+      glob: $(inputs.workspace_location + '/first_hga_assemblies')
 
-  alignments:
+  first_alignments:
     type: Directory
     outputBinding:
-      glob: $(inputs.workspace_location + '/alignments')
+      glob: $(inputs.workspace_location + '/first_alignments')
 
   second_reads:
     type: Directory

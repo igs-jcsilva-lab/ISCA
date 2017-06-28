@@ -13,7 +13,7 @@
 # that lack a buffer when it comes to the alignment steps.  
 # 
 # Run the script using a command like this:
-# python3 extract_sequences.py -list /path/to/list_input.tsv -ea_map /path/to/out_from_extract_alleles.tsv -out /path/to/out.fsa -buffer 20
+# python3 extract_sequences.py -ea_input /path/to/list_input.tsv -ea_map /path/to/out_from_extract_alleles.tsv -out /path/to/out.fsa -buffer 20
 #
 # Author: James Matsumura
 
@@ -23,10 +23,10 @@ from shared_fxns import write_fasta
 def main():
 
     parser = argparse.ArgumentParser(description='Script to extract sequences from each allele across GFF3/FASTA files. Read the top of the file for more details.')
-    parser.add_argument('-list', type=str, required=True, help='Path to a TSV list for references and isolates.')
+    parser.add_argument('-ea_input', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('-ea_map', type=str, required=True, help='Path to the output from extract_alleles.py.')
     parser.add_argument('-buffer', type=int, default=0, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
-    parser.add_argument('-outfile', type=str, required=True, help='Path to where the output FASTA should go.')
+    parser.add_argument('-outfile', type=str, required=True, help='Name of the output FASTA file to generate in current or existing directory.')
     args = parser.parse_args()
 
     extract_us = {}
@@ -48,7 +48,7 @@ def main():
                 extract_us[name].append(indv_allele[j])
 
     # Iterate over the input list and extract sequences per FASTA file.
-    with open(args.list,'r') as l:
+    with open(args.ea_input,'r') as l:
         for entry in l:
             entry = entry.rstrip()
             vals = entry.split('\t')

@@ -27,7 +27,7 @@
 # ref_id_0001   ref_loc   1-8888  iso1.ref_id_0001  iso1_loc    2-7999  iso2.ref_id_0001    iso2_loc    3-8000
 # 
 # Run the script using a command like this:
-# python3 extract_alleles.py -list /path/to/list_input.tsv -gene_or_exon gene -insert 500 -out_dir /path/to/outfile.tsv
+# python3 extract_alleles.py -ea_input /path/to/list_input.tsv -gene_or_exon gene -insert 500 -out_dir /path/to/outfile.tsv
 #
 # Author: James Matsumura
 

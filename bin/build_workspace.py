@@ -28,10 +28,10 @@ def main():
     make_directory("{0}/sam".format(args.workspace_location)) # alignment output
 
     # Aligner 1
-    make_directory("{0}/reads".format(args.workspace_location)) # individual read sets per locus
-    make_directory("{0}/spades_assemblies".format(args.workspace_location)) # assembly method 1 results
-    make_directory("{0}/hga_assemblies".format(args.workspace_location)) # assembly method 2 results
-    make_directory("{0}/alignments".format(args.workspace_location)) # alignment results
+    make_directory("{0}/first_reads".format(args.workspace_location)) # individual read sets per locus
+    make_directory("{0}/first_spades_assemblies".format(args.workspace_location)) # assembly method 1 results
+    make_directory("{0}/first_hga_assemblies".format(args.workspace_location)) # assembly method 2 results
+    make_directory("{0}/first_alignments".format(args.workspace_location)) # alignment results
 
     # Aligner 2
     make_directory("{0}/second_reads".format(args.workspace_location)) 
