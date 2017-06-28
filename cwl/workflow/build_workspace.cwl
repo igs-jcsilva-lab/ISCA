@@ -10,12 +10,11 @@ requirements:
 
 inputs:
   workspace_location:
-    inputBinding:
-      prefix: "--workspace_location"
     label: Path to build the workspace at, will write directories and pull new Python scripts here
     type: string
+    inputBinding:
+      prefix: "--workspace_location"
     default: '.'
-
 
 outputs:
   gsnap_idx:

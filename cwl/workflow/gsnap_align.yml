@@ -1,0 +1,11 @@
+gsnap_genome: "test"
+gsnap_dir: 
+    class: Directory
+    path: ./gsnap_idx
+threads: 2
+reads1:
+    class: File
+    path: /local/scratch/matsu_pf_work/reads1.fastq.gz
+reads2: 
+    class: File
+    path: /local/scratch/matsu_pf_work/reads2.fastq.gz

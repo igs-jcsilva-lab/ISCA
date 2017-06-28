@@ -10,16 +10,16 @@ requirements:
 
 inputs:
   ea_input:
-    inputBinding:
-      prefix: "--ea_input"
     label: Path to a TSV list for references and isolates
     type: File
+    inputBinding:
+      prefix: "--ea_input"
 
   gene_or_exon:
-    inputBinding:
-      prefix: "--gene_or_exon"
     label: Either "gene" or "exon" for which sequences to pull
     type: string
+    inputBinding:
+      prefix: "--gene_or_exon"
 
 
 outputs:
