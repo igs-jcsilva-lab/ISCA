@@ -11,7 +11,7 @@
 # the output directory for HGA to write to, and the SGE ID. 
 #
 # Run the script using a command like this:
-# python3 wrap_HGA.py --python /path/to/python-2.7 --assembly_verdict_map /path/to/final_verdict_out.tsv --hga /path/to/HGA.py --velvet /path/to/velvet --spades /path/to/spades --insert insert_size -std standard_deviation --threads num_of_threads --reads_dir /path/to/reads_dir --out_dir /path/to/out_dir --sge_id 1
+# python3 wrap_HGA.py --python /path/to/python-2.7 --assembly_verdict_map /path/to/final_verdict_out.tsv --hga /path/to/HGA.py --velvet /path/to/velvet --spades /path/to/spades --insert insert_size -std standard_deviation --threads num_of_threads 6 --reads_dir /path/to/reads_dir --out_dir /path/to/out_dir --sge_id 1 -m 18
 #
 # Author: James Matsumura
 
@@ -28,6 +28,7 @@ def main():
     parser.add_argument('--insert', '-ins', type=int, required=True, help='Insert size.')
     parser.add_argument('--std', '-std', type=int, required=True, help='Standard deviation of insert size.')
     parser.add_argument('--threads', '-t', type=int, required=True, help='Number of threads to use.')
+    parser.add_argument('--memory', '-m', type=int, required=True, help='How much memory, in GB, to request from SPAdes.')
     parser.add_argument('--partitions', '-p', type=int, required=True, help='Number of partitions to split into HGA.')
     parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Base path to where the reads are stored.')
     parser.add_argument('--out_dir', '-o', type=str, required=True, help='Base path to where HGA.py should write the new assemblies out to.')
@@ -58,9 +59,9 @@ def main():
     remove_partitions = "{0}/part*assembly".format(hga_assmb_path)
 
     command = ("{0} {1} -velvet {2} -spades {3} -PA SPAdes -P12 {4} -R12 {5}"
-         " -ins {6} -std {7} -Pkmer 31 -Rkmer 81 -t {8} -P {12} -out {9}"
+         " -ins {6} -std {7} -Pkmer 31 -Rkmer 81 -t {8} -P {12} -out {9} -m {13}"
          " && rm {10} && rm -rf {11}"
-         .format(args.python,args.hga,args.velvet,args.spades,reads_loc,reads_loc,args.ins,args.std,args.threads,hga_assmb_path,remove_fastqs,remove_partitions,args.partitions)
+         .format(args.python,args.hga,args.velvet,args.spades,reads_loc,reads_loc,args.ins,args.std,args.threads,hga_assmb_path,remove_fastqs,remove_partitions,args.partitions,args.memory)
     )
 
     subprocess.call(command,shell=True)
