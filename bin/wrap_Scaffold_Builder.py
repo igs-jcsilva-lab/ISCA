@@ -88,9 +88,9 @@ def main():
         r_out = "{0}/{1}/r".format(args.hga_dir,original_sge_id)
 
         command = "{0} {1} -q {2} -r {3} -p {4}".format(args.python,args.sb,query,f_fasta,f_out)
-        subprocess.call(command,shell=True)
+        subprocess.call(command.split())
         command = "{0} {1} -q {2} -r {3} -p {4}".format(args.python,args.sb,query,r_fasta,r_out)
-        subprocess.call(command,shell=True)
+        subprocess.call(command.split())
 
     else:
         print("HGA could not assemble locus:{0}\n".format(locus_of_interest))

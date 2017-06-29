@@ -23,18 +23,18 @@ def main():
     # compress and then remove SAM for the sake of space
     bam_file = args.sam_file.replace(".sam",".bam")
     sam_to_bam = '{0} view -bS {1} > {2}'.format(args.samtools,args.sam_file,bam_file)
-    subprocess.call(sam_to_bam,shell=True)
-    subprocess.call("rm {0}".format(args.sam_file),shell=True)
+    subprocess.call(sam_to_bam.split())
+    subprocess.call("rm {0}".format(args.sam_file).split())
 
     # sort the BAM file and remove non sorted
     sorted_bam_file = bam_file.replace(".bam","_sorted")
     sort_bam = '{0} sort {1} {2}'.format(args.samtools,bam_file,sorted_bam_file)
-    subprocess.call(sort_bam,shell=True)
-    subprocess.call("rm {0}".format(bam_file),shell=True)
+    subprocess.call(sort_bam.split())
+    subprocess.call("rm {0}".format(bam_file).split())
 
     # use Picard tools to estimate insert
     estimate_insert = '{0} -jar {1}/CollectInsertSizeMetrics.jar I={2}.bam O={3}/insert.stats VALIDATION_STRINGENCY=LENIENT HISTOGRAM_file={3}/histo.out'.format(args.java,args.picard,sorted_bam_file,args.out)
-    subprocess.call(estimate_insert,shell=True)
+    subprocess.call(estimate_insert.split())
 
 if __name__ == '__main__':
     main()

@@ -51,7 +51,7 @@ def main():
 
     reads_loc = "{0}/{1}/reads.fastq".format(args.reads_dir,original_sge_id)
     # By default, the reads are gunzipped so need to uncompress. 
-    subprocess.call("gunzip {0}.gz".format(reads_loc),shell=True)
+    subprocess.call("gunzip {0}.gz".format(reads_loc).split())
 
     hga_assmb_path = "{0}/{1}".format(args.out_dir,original_sge_id)
     # Cleanup a bit of the unnecessary files. 
@@ -64,7 +64,7 @@ def main():
          .format(args.python,args.hga,args.velvet,args.spades,reads_loc,reads_loc,args.ins,args.std,args.threads,hga_assmb_path,remove_fastqs,remove_partitions,args.partitions,args.memory)
     )
 
-    subprocess.call(command,shell=True)
+    subprocess.call(command.split())
 
 if __name__ == '__main__':
     main()

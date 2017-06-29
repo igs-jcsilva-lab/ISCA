@@ -82,7 +82,7 @@ def spades_assemble(spades,reads,memory,threads,assmb_dir):
 
     command = "{0} -m {1} -t {2} --careful --pe1-12 {3} -o {4}".format(spades_exe,memory,threads,reads,assembly_out)
 
-    subprocess.call(command,shell=True)
+    subprocess.call(command.split())
 
 
 if __name__ == '__main__':
