@@ -120,7 +120,7 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
     # If no trimmed_align.txt files found, no alignments were performed
     # even though contigs were present.
     if aligned == False:
-        print("The locus {0} could assemble but none of the contigs passed the minimum threshold chosen when running global_alignment.py".format(locus))
+        #print("The locus {0} could assemble but none of the contigs passed the minimum threshold chosen when running global_alignment.py".format(locus))
         return
 
     if best_only == 'yes':
@@ -200,7 +200,7 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
 
             # Make sure the file is actually populated and EMBOSS didn't fail
             if os.stat(full_path).st_size == 0:
-                print("{0} is empty.".format(full_path))
+                #print("{0} is empty.".format(full_path))
                 continue
 
 
@@ -238,7 +238,7 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
     # If no trimmed_align.txt files found, no alignments were performed
     # even though contigs were present.
     if aligned == False:
-        print("The locus {0} could build a scaffold but failed to find an alignment.".format(locus))
+        #print("The locus {0} could build a scaffold but failed to find an alignment.".format(locus))
         return
 
     if best_only == 'yes':

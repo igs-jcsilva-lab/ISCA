@@ -123,7 +123,7 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_t
     # Cannot assemble all the reads, often this seems 
     # to be due to low coverage. Output this to STDOUT. 
     if not os.path.isfile(contigs):
-        print("{0}\tcould not assemble.".format(locus))
+        #print("{0}\tcould not assemble.".format(locus))
         return
 
     scaffold_built = False # only relevant to HGA alignments
@@ -158,7 +158,7 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_t
             SeqIO.write(record,bfsa,"fasta")
 
         if len(record) > int(max_len):
-            print("{0}\tcould not align. Sequence too long.".format(locus))
+            #print("{0}\tcould not align. Sequence too long.".format(locus))
             continue
         
         # Iterate over each distinct ref sequence (or allele) associated
@@ -177,7 +177,7 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_t
             # don't perform any alignments automatically. Note that short
             # is relative to a proportion of the original sequence.
             if len(record) < int(len(seq)*min_len):
-                print("{0}\twas not aligned. Assembled sequence too short.".format(record.id))
+                #print("{0}\twas not aligned. Assembled sequence too short.".format(record.id))
                 continue
 
             # Process forward alignment
@@ -222,7 +222,8 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_t
     # check whether it was actually able to build any. 
     if assmb_type == 'HGA':
         if scaffold_built == False: 
-            print("{0}\tcould not assemble.".format(locus))
+            #print("{0}\tcould not assemble.".format(locus))
+            pass
 
 # This will act as the sole writer to the output file. This way there is no 
 # concern with locks and what not. 
