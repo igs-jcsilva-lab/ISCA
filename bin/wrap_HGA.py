@@ -11,7 +11,7 @@
 # the output directory for HGA to write to, and the SGE ID. 
 #
 # Run the script using a command like this:
-# python3 wrap_HGA.py -python /path/to/python-2.7 -final_verdict_map /path/to/final_verdict_out.tsv -hga /path/to/HGA.py -velvet /path/to/velvet -spades /path/to/spades -ins insert_size -std standard_deviation -threads num_of_threads -reads_dir /path/to/reads_dir -out_dir /path/to/out_dir -sge_id 1
+# python3 wrap_HGA.py --python /path/to/python-2.7 --assembly_verdict_map /path/to/final_verdict_out.tsv --hga /path/to/HGA.py --velvet /path/to/velvet --spades /path/to/spades --insert insert_size -std standard_deviation --threads num_of_threads --reads_dir /path/to/reads_dir --out_dir /path/to/out_dir --sge_id 1
 #
 # Author: James Matsumura
 
@@ -25,11 +25,11 @@ def main():
     parser.add_argument('--hga', '-hga', type=str, required=True, help='Path to HGA.py.')
     parser.add_argument('--velvet', '-vel', type=str, required=True, help='Path to Velvet installation.')
     parser.add_argument('--spades', '-spa', type=str, required=True, help='Path to SPAdes installation.')
-    parser.add_argument('--ins', '-ins', type=int, required=True, help='Insert size.')
+    parser.add_argument('--insert', '-ins', type=int, required=True, help='Insert size.')
     parser.add_argument('--std', '-std', type=int, required=True, help='Standard deviation of insert size.')
     parser.add_argument('--threads', '-t', type=int, required=True, help='Number of threads to use.')
     parser.add_argument('--partitions', '-p', type=int, required=True, help='Number of partitions to split into HGA.')
-    parser.add_argument('--reads_dir', '-r', type=str, required=True, help='Base path to where the reads are stored.')
+    parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Base path to where the reads are stored.')
     parser.add_argument('--out_dir', '-o', type=str, required=True, help='Base path to where HGA.py should write the new assemblies out to.')
     parser.add_argument('--sge_id', '-si', type=int, required=True, help='Newest assigned SGE ID of this particular assembly.')
     args = parser.parse_args()

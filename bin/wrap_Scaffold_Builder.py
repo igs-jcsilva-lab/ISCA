@@ -8,7 +8,7 @@
 # all the HGA assemblies have gone, and the SGE ID. 
 #
 # Run the script using a command like this:
-# python3 wrap_Scaffold_builder.py -python /path/to/python-2.7 -sb /path/to/scaffold_builder.py -final_verdict_map /path/to/final_verdict_out.tsv -ea_map /path/to/ea_map.tsv -fasta /path/to/original.fasta  -hga_dir /path/to/hga/assemblie /path/to/out_dir -sge_id 1
+# python3 wrap_Scaffold_builder.py --python /path/to/python-2.7 -sb /path/to/scaffold_builder.py --assembly_verdict_map /path/to/final_verdict_out.tsv --ea_map /path/to/ea_map.tsv --fasta /path/to/original.fasta  --hga_dir /path/to/hga/assemblies --sge_id 1
 #
 # Author: James Matsumura
 

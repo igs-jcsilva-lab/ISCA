@@ -7,7 +7,7 @@
 # be arbitrary and start at 1 climbing until it hits the number of directories made.
 #
 # Run the script using a command like this:
-# python3 format_for_assembly.py -ref_map /path/to/ref_map.tsv -path /path/to/ref_dirs -assmb_path /path/to/assmb/dirs -out /path/to/out_map.tsv
+# python3 format_for_assembly.py --ref_map /path/to/ref_map.tsv --path /path/to/ref_dirs --assmb_path /path/to/assmb/dirs --outfile /path/to/out_map.tsv
 #
 # Author: James Matsumura
 

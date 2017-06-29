@@ -22,7 +22,7 @@
 # check for which reference contigs were able to recruit the most reads. 
 #
 # Run the script using a command like this:
-# python3 analyze_bam.py -bam /path/to/bowtie_out.bam (-threshold 90) -o /path/to/out_prefix -ea_map /path/to/out_from_extract_alleles.tsv 
+# python3 analyze_bam.py --bam /path/to/bowtie_out.bam (-threshold 90) -p /path/to/out_prefix --ea_map /path/to/out_from_extract_alleles.tsv 
 #
 # Author: James Matsumura
 

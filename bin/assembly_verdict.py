@@ -19,7 +19,7 @@
 # a new set of assemblies for these particular loci.  
 #
 # Run the script using a command like this:
-# python3 final_verdict.py -ivc /path/to/ids_v_cov.tsv -threshold 80 -original_assmb_map /path/to/assmb_map.tsv -original_fsa /path/to/old.fsa -out_dir /path/to/new.fsa
+# python3 final_verdict.py --ivc /path/to/ids_v_cov.tsv --threshold 80 --original_assmb_map /path/to/assmb_map.tsv --original_fsa /path/to/old.fsa --out_dir /path/to/new.fsa
 #
 # Author: James Matsumura
 

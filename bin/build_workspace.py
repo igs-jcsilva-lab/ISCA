@@ -6,7 +6,7 @@
 # the specified location. 
 #
 # Run the script using a command like this:
-# python3 build_workspace.py -workspace_location /path/to/build_directories
+# python3 build_workspace.py --workspace_location /path/to/build_directories
 #
 # Author: James Matsumura
 

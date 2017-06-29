@@ -13,7 +13,7 @@
 # that lack a buffer when it comes to the alignment steps.  
 # 
 # Run the script using a command like this:
-# python3 extract_sequences.py -ea_input /path/to/list_input.tsv -ea_map /path/to/out_from_extract_alleles.tsv -out /path/to/out.fsa -buffer 20
+# python3 extract_sequences.py --ea_input /path/to/list_input.tsv --ea_map /path/to/out_from_extract_alleles.tsv --out /path/to/out.fsa --buffer 20
 #
 # Author: James Matsumura
 

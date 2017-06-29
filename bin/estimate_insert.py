@@ -4,7 +4,7 @@
 # running the second assembly method.  
 #
 # Run the script using a command like this:
-# python3 estimate_insert.py -samtools /path/to/samtools -java /path/to/java -picard /path/to/picard -sam_file /path/to/original/sam 
+# python3 estimate_insert.py --samtools /path/to/samtools --java /path/to/java --picard /path/to/picard --sam_file /path/to/original/sam 
 #
 # Author: James Matsumura
 

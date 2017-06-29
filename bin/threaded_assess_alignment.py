@@ -14,7 +14,7 @@
 # %ID coverage(reference/assembled) reference path_to_best_alignment
 #
 # Run the script using a command like this:
-# python3 threaded_assess_alignment.py -assmb_map /path/to/format_for_assembly.tsv -algn_path /path/to/alignments -out /path/to/output_dir -priority 3D7
+# python3 threaded_assess_alignment.py --assmb_map /path/to/format_for_assembly.tsv --algn_path /path/to/alignments --outfile /path/to/output_dir --priority 3D7
 #
 # Author: James Matsumura
 
