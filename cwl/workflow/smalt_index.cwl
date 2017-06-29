@@ -9,11 +9,6 @@ requirements:
 
 
 inputs:
-  smalt_str:
-    label: SMALT directory for the two stored files
-    type: string
-    default: "./smalt_idx"
-
   smalt_dir:
     label: SMALT directory for the two stored files
     type: Directory
@@ -54,7 +49,8 @@ inputs:
 
 
 outputs:
-  smalt_index_dir:
+
+  smalt_index_files:
     type:
       type: array
       items: File

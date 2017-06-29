@@ -9,7 +9,6 @@ requirements:
 
 
 inputs:
-# Shared values
   gsnap_genome:
     label: Name of the "genome" for GSNAP, really just a unique identifier for this index
     type: string
@@ -32,7 +31,7 @@ inputs:
 
 
 outputs:
-  gsnap_gsnap:
+  gsnap_sam:
     type: File
     outputSource: gsnap_align/gsnap_sam
 

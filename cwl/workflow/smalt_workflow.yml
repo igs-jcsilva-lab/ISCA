@@ -1,0 +1,14 @@
+smalt_prefix: "smalt"
+smalt_dir: 
+    class: Directory
+    path: ./smalt_idx
+sequences: 
+    class: File
+    path: /local/scratch/matsu_pf_work/testing.fasta
+threads: 2
+reads1:
+    class: File
+    path: /local/scratch/matsu_pf_work/reads1.fastq.gz
+reads2: 
+    class: File
+    path: /local/scratch/matsu_pf_work/reads2.fastq.gz

@@ -8,4 +8,4 @@ reads2:
     path: /local/scratch/matsu_pf_work/reads2.fastq.gz
 smalt_dir: 
     class: Directory
-    path: /local/scratch/matsu_pf_work/smalt_idx
+    path: ./smalt_idx
