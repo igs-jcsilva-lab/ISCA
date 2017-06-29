@@ -9,6 +9,19 @@ requirements:
 
 
 inputs:
+  smalt_str:
+    label: SMALT directory for the two stored files
+    type: string
+    default: "./smalt_idx"
+
+  smalt_dir:
+    label: SMALT directory for the two stored files
+    type: Directory
+
+  smalt_prefix:
+    label: Path to directory to build the SMALT index
+    type: string
+
   kmer:
     label: kmer size to break the reference sequences into
     type: int
@@ -25,11 +38,13 @@ inputs:
       position: 2
     default: 2
 
-  smalt_prefix:
-    label: Path to directory to build the SMALT index
+  smalt_indices:
+    label: Path of the prefix for the indices built by smalt_index.cwl
     type: string
     inputBinding:
       position: 3
+      valueFrom: $(inputs.smalt_dir.path + '/' + inputs.smalt_prefix)
+    default: './smalt'
 
   sequences:
     label: Path to the sequence file built from extract_sequences.py (or assembly_verdict.py)
