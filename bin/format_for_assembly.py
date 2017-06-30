@@ -7,7 +7,7 @@
 # be arbitrary and start at 1 climbing until it hits the number of directories made.
 #
 # Run the script using a command like this:
-# python3 format_for_assembly.py --ref_map /path/to/ref_map.tsv --path /path/to/ref_dirs --assmb_path /path/to/assmb/dirs --outfile /path/to/out_map.tsv
+# python3 format_for_assembly.py --ref_map /path/to/ref_map.tsv --reads_dir /path/to/reads_dir --assmb_path /path/to/assmb/dirs --outfile /path/to/out_map.tsv
 #
 # Author: James Matsumura
 
@@ -18,7 +18,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to set up for SPAdes alignment on a grid.')
     parser.add_argument('--ref_map', '-rm', type=str, required=True, help='Path to *_ref_map.tsv output from analyze_bam.py.')
-    parser.add_argument('--path', '-p', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Path to where the output directory for the FASTQs to go, same as what was used for fastq_reads_to_fastq_alleles.py.')
     parser.add_argument('--assmb_path', '-ap', type=str, required=True, help='Path to the the directory to initialize directories for all the assembly output.')
     parser.add_argument('--outfile', '-o', type=str, required=True, help='Path to output map (maps the ref to the SGE ID)).')
     args = parser.parse_args()
@@ -35,8 +35,8 @@ def main():
 
             # Now rename the original directory so that it can be iterated over in a grid
             # job. 
-            old_dir = "{0}/{1}".format(args.path,ref[0])
-            new_dir = "{0}/{1}".format(args.path,id)
+            old_dir = "{0}/{1}".format(args.reads_dir,ref[0])
+            new_dir = "{0}/{1}".format(args.reads_dir,id)
 
             try:
                 os.rename(old_dir,new_dir)
