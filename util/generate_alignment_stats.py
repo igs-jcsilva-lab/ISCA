@@ -20,11 +20,13 @@ def main():
     parser.add_argument('-i', type=str, required=True, help='Path to ids_v_cov.tsv output from threaded_assess_alignment.py.')
     parser.add_argument('-groupby', type=str, required=True, help='Get best %s by loci, alleles/exons, or CDS (could also be exons if extracted at ea_map step), choose either "l", "ae", or "cds".')
     parser.add_argument('-ea_map', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
+    parser.add_argument('-l', type=str, required=False, help='Optional file where each line has one locus to subset the final results by.')
     parser.add_argument('-o', type=str, required=True, help='Name of an outfile.')
     args = parser.parse_args()
 
     best_id = {} # dict for capturing best ID per locus/exon
     cds_map = defaultdict(list)
+    relevant_entities = set()
     cds_lengths = {} # count how many exons in a CDS from ea_map
 
     # dict for counting how strong the %ID is for the best alignment
@@ -32,10 +34,19 @@ def main():
                 "40<=x<50":0,"50<=x<60":0,"60<=x<70":0,"70<=x<80":0,
                 "80<=x<90":0,"90<=x<100":0,"x=100":0} 
 
+    if args.l:
+        with open(args.l,'r') as rel_list:
+            for line in rel_list:
+                relevant_entities.add(line.strip())
+
     with open(args.i,'r') as infile:
         for line in infile:
             line = line.rstrip()
             elements = line.split('\t')
+
+            if args.l:
+                if elements[3].split('/')[-2] not in relevant_entities:
+                    continue
 
             entity = ""
             if args.groupby == 'l':
