@@ -27,7 +27,7 @@ outputs:
     outputBinding:
       glob: $(inputs.workspace_location + '/smalt_idx')
 
-  sam:
+  sam_dir:
     type: Directory
     outputBinding:
       glob: $(inputs.workspace_location + '/sam')

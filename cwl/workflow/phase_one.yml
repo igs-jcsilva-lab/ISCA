@@ -1,0 +1,8 @@
+workspace_location: "."
+out_dir: "output"
+gene_or_exon: "gene"
+outfile: "first_sequences.fsa"
+buffer: 0
+ea_input:
+    class: File
+    path: /Users/jmatsumura/targeted_assembly/solo_runs/3D7/ea_input.tsv

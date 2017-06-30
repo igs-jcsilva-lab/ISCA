@@ -13,7 +13,7 @@ inputs:
     label: Path to a TSV list for references and isolates
     type: File
     inputBinding:
-      prefix: "--outfile"
+      prefix: "--ea_input"
 
   ea_map:
     label: Path to the output from extract_alleles.py
