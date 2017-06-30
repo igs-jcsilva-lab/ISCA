@@ -4,7 +4,7 @@ reads_dir:
 assmb_path:
     class: Directory
     path: ./first_assemblies
-ref_map:
+ab_ref_map:
     class: File
     path: /Users/jmatsumura/cwl_tests/first_ref_map.tsv
 outfile: "first_assmb_map.tsv"

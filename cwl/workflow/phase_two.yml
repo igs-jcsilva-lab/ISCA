@@ -1,0 +1,23 @@
+sam:
+    class: File
+    path: /Users/jmatsumura/cwl_tests/little.sam
+ea_map:
+    class: File
+    path: /Users/jmatsumura/targeted_assembly/solo_runs/3D7/ea_map.tsv
+threshold: 50
+prefix: "first"
+reads_dir:
+    class: Directory
+    path: ./first_reads
+reads1:
+    class: File
+    path: /Users/jmatsumura/cwl_tests/reads1.fastq.gz
+reads2: 
+    class: File
+    path: /Users/jmatsumura/cwl_tests/reads2.fastq.gz
+filter: "no"
+paired_suffixes: "no"
+assmb_path:
+    class: Directory
+    path: ./first_assemblies
+outfile: "first_assmb_map.tsv"

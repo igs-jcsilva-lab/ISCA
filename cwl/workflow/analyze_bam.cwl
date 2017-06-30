@@ -41,12 +41,15 @@ inputs:
 
 
 outputs:
-  analyze_bam_files:
-    type:
-      type: array
-      items: File
+  read_map:
+    type: File
     outputBinding:
-      glob: $(inputs.prefix + "*")
+      glob: $(inputs.prefix + "*read*")
+
+  ref_map:
+    type: File
+    outputBinding:
+      glob: $(inputs.prefix + "*ref*")
 
 
 baseCommand: ["/Library/Frameworks/Python.framework/Versions/3.5/bin/python3","/Users/jmatsumura/dev/targeted_assembly/bin/analyze_bam.py"]

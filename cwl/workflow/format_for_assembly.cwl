@@ -21,7 +21,7 @@ inputs:
     inputBinding:
       prefix: "--assmb_path"
 
-  ref_map:
+  ab_ref_map:
     label: Path to *_ref_map.tsv output from analyze_bam.cwl
     type: File
     inputBinding:
