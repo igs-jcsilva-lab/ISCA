@@ -32,8 +32,8 @@ from collections import defaultdict
 def main():
 
     parser = argparse.ArgumentParser(description='Script to isolate all reads and where they aligned to given a BAM file.')
-    parser.add_argument('--bam', '-b', type=str, help='Path to a BAM file derived from Bowtie2/GSNAP.')
-    parser.add_argument('--sam', '-s', type=str, help='Path to a SAM file derived from Bowtie2/GSNAP.')
+    parser.add_argument('--bam', '-b', type=str, help='Path to a BAM file.')
+    parser.add_argument('--sam', '-s', type=str, help='Path to a SAM file.')
     parser.add_argument('--ea_map', '-eam', type=str, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('--threshold', '-t', type=int, default=80, required=False, help='Minimum %ID threshold to retain (entering 95 means %95 minimum %ID). Defaults to %80.')
     parser.add_argument('--prefix', '-p', type=str, required=True, help='Name of the prefix of where the two output TSV files should go.')

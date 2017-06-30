@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
-label: Targeted Assembly -- Generate allele map
+label: Targeted Assembly -- Generate sequences from the allele map
 class: CommandLineTool
 
 

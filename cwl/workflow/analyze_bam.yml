@@ -1,0 +1,8 @@
+sam:
+    class: File
+    path: /Users/jmatsumura/cwl_tests/little.sam
+ea_map:
+    class: File
+    path: /Users/jmatsumura/targeted_assembly/solo_runs/3D7/ea_map.tsv
+threshold: 50
+prefix: "first"

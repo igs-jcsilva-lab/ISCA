@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
-label: GSNAP - complete workflow for building a GSNAP index and then aligning the reads to the index
+label: Phase one of the workflow consists of build_workspace.cwl, extract_alleles.cwl, and extract_sequences.cwl
 class: Workflow
 
 

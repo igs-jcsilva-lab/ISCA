@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
-label: SMALT - Build an index
+label: SMALT - Align to the index
 class: CommandLineTool
 
 
