@@ -59,6 +59,10 @@ outputs:
     type: Directory
     outputSource: build_workspace/first_alignments
 
+  first_end_results:
+    type: Directory
+    outputSource: build_workspace/first_end_results
+
   second_reads:
     type: Directory
     outputSource: build_workspace/second_reads
@@ -74,7 +78,11 @@ outputs:
   second_alignments:
     type: Directory
     outputSource: build_workspace/second_alignments
-  
+
+  second_end_results:
+    type: Directory
+    outputSource: build_workspace/second_end_results
+
   HGA:
     type: File
     outputSource: build_workspace/HGA

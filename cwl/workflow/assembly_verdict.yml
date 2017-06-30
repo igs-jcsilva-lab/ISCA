@@ -1,0 +1,13 @@
+ivc:
+    class: File
+    path: /Users/jmatsumura/cwl_tests/total.tsv
+threshold: 90
+original_fsa:
+    class: File
+    path: /Users/jmatsumura/cwl_tests/sequences.fasta
+original_assmb_map:
+    class: File
+    path: /Users/jmatsumura/cwl_tests/first_ref_map.tsv
+out_dir:
+    class: Directory
+    path: ./end_results

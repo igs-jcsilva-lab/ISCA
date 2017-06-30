@@ -32,12 +32,14 @@ def main():
     make_directory("{0}/first_spades_assemblies".format(args.workspace_location)) # assembly method 1 results
     make_directory("{0}/first_hga_assemblies".format(args.workspace_location)) # assembly method 2 results
     make_directory("{0}/first_alignments".format(args.workspace_location)) # alignment results
+    make_directory("{0}/first_end_results".format(args.workspace_location)) # results from assembly_verdict.py
 
     # Aligner 2
     make_directory("{0}/second_reads".format(args.workspace_location)) 
     make_directory("{0}/second_spades_assemblies".format(args.workspace_location)) 
     make_directory("{0}/second_hga_assemblies".format(args.workspace_location)) 
     make_directory("{0}/second_alignments".format(args.workspace_location)) 
+    make_directory("{0}/second_end_results".format(args.workspace_location))
 
     # Pull HGA and SB from their own repos, note these are modified from their original implementations for this pipeline
     hga_url = 'https://raw.githubusercontent.com/jmatsumura/Hierarchical-Genome-Assembly-HGA/master/HGA.py'

@@ -52,6 +52,11 @@ outputs:
     outputBinding:
       glob: $(inputs.workspace_location + '/first_alignments')
 
+  first_end_results:
+    type: Directory
+    outputBinding:
+      glob: $(inputs.workspace_location + '/first_end_results')
+
   second_reads:
     type: Directory
     outputBinding:
@@ -71,6 +76,11 @@ outputs:
     type: Directory
     outputBinding:
       glob: $(inputs.workspace_location + '/second_alignments')
+
+  second_end_results:
+    type: Directory
+    outputBinding:
+      glob: $(inputs.workspace_location + '/second_end_results')
 
   HGA:
     type: File
