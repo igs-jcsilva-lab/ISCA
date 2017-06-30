@@ -1,0 +1,14 @@
+reads_dir:
+    class: Directory
+    path: ./first_reads
+ab_read_map:
+    class: File
+    path: /Users/jmatsumura/cwl_tests/first_read_map.tsv
+reads1:
+    class: File
+    path: /Users/jmatsumura/cwl_tests/reads1.fastq.gz
+reads2: 
+    class: File
+    path: /Users/jmatsumura/cwl_tests/reads2.fastq.gz
+filter: "no"
+paired_suffixes: "no"

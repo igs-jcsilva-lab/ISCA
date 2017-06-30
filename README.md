@@ -1,9 +1,33 @@
 # targeted_assembly
 A pipeline to perform targeted assembly of individual loci given WGS reads, reference genome assemblies, and a primary reference annotation (GFF3)
 
-* Note that this is a work in progress and this tutorial will be updated with more detail once it has passed the stage of proof-of-concept.
+## Dependencies:
+- Python 3.5
+  * [Biopython](https://pypi.python.org/pypi/biopython/1.66)
+    * [EMBOSS](http://emboss.open-bio.org/)
+  * [pysam](https://pypi.python.org/pypi/pysam)
+- Python 2.7
+  * Primarily needed for the externally developed scripts (HGA and Scaffold Builder)
+  * [cwlref-runner](https://pypi.python.org/pypi/cwlref-runner)
+  * [pyyaml](https://pypi.python.org/pypi/PyYAML)
+- [GSNAP](http://research-pub.gene.com/gmap/)
+- [SMALT](http://www.sanger.ac.uk/science/tools/smalt-0)
+- [SPAdes](http://bioinf.spbau.ru/spades)
+- [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/)
+- [MUMmer](http://mummer.sourceforge.net/manual/)
+- [Hierarchical Genome Assembly Tool](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
+- [Scaffold Builder](https://github.com/metageni/Scaffold_builder)
+  * A slight, but necessary, modification to the default script needs to be made for this pipline. The new NUCmer call can be found [here](https://github.com/jmatsumura/Scaffold_builder/blob/master/scaffold_builder.py)
 
-# Complete steps:
+## Invoking a CWL workflow
+```
+cwl-runner <cwl tool/workflow script> <input parameter yml/json>
+```
+The first parameter is a valid cwl tool or workflow script.  These have the extension __.cwl__.
+
+The second parameter is a YAML or JSON file consisting of input parameters for the CWL script. YAML examples are provided and are listed with the extension __.yml__.
+
+## Complete steps:
 1. Map an annotated reference genome to other assembled genomes
   * `GMAP`
 2. Build a map for the alleles extracted from GFF3
@@ -38,28 +62,3 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 15. Build a dataset for those that cannot align
   * `assembly_verdict.py`
 16. Repeat steps 4-15 using the SMALT aligner
-
-Within the util/~ directory there are a number of other post-processing scripts that can
-be used to analyze the results of this final step. 
-* `generate_alignment_stats.py` - will give an overview of the output of threaded_assess_alignment.py
-* `generate_histogram.py` - will generate a histogram plot of the coverage found from the output of threaded_assess_alignment.py
-* `generate_scatterplot.py` - will generate a scatter plot (%ID v coverage) from the output of threaded_assess_alignment.py
-
-
-Dependencies:
-- Python 3.5
-  * [Biopython](https://pypi.python.org/pypi/biopython/1.66)
-    * [EMBOSS](http://emboss.open-bio.org/)
-  * [pysam](https://pypi.python.org/pypi/pysam)
-  * [cwlref-runner](https://pypi.python.org/pypi/cwlref-runner)
-  * [pyyaml](https://pypi.python.org/pypi/PyYAML)
-- Python 2.7
-  * Primarily needed for the externally developed scripts (HGA and Scaffold Builder)
-- [GSNAP](http://research-pub.gene.com/gmap/)
-- [SMALT](http://www.sanger.ac.uk/science/tools/smalt-0)
-- [SPAdes](http://bioinf.spbau.ru/spades)
-- [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/)
-- [MUMmer](http://mummer.sourceforge.net/manual/)
-- [Hierarchical Genome Assembly Tool](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
-- [Scaffold Builder](https://github.com/metageni/Scaffold_builder)
-  * A slight, but necessary, modification to the default script needs to be made for this pipline. The new NUCmer call can be found [here](https://github.com/jmatsumura/Scaffold_builder/blob/master/scaffold_builder.py)

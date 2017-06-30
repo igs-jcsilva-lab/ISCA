@@ -1,4 +1,7 @@
 gsnap_genome: "test"
+gsnap_dir:
+    class: Directory
+    path: ./gsnap_idx
 sequences: 
     class: File
     path: /local/scratch/matsu_pf_work/testing.fasta

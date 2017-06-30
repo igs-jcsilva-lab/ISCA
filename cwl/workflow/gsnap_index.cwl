@@ -18,11 +18,10 @@ inputs:
 
   gsnap_dir:
     label: Path to the output directory to write the GSNAP genome files to
-    type: string
+    type: Directory
     inputBinding:
       prefix: "-D"
       position: 2
-    default: "./gsnap_idx"
 
   sequences:
     label: Path to the sequence file built from extract_sequences.py
@@ -35,7 +34,7 @@ outputs:
   gsnap_index_dir:
     type: Directory
     outputBinding:
-      glob: $(inputs.gsnap_dir)
+      outputEval: $(inputs.gsnap_dir)
 
 
 baseCommand: ["/usr/local/packages/gmap-gsnap/bin/gmap_build"]

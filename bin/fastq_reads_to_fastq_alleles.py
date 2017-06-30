@@ -21,7 +21,7 @@
 # originated from.
 #
 # Run the script using a command like this:
-# python3 analyze_bam.py --ab_read_map /path/to/analyze_bam.out --fastq /path/to/reads.fsa --filter (yes|no) -reads_dir /path/to/read_dir
+# python3 fastq_reads_to_fastq_alleles.py --ab_read_map /path/to/analyze_bam.out --fastq1 /path/to/reads1.fastq.gz --fastq2 /path/to/reads2.fastq.gz --filter (yes|no) -reads_dir /path/to/read_dir
 #
 # Author: James Matsumura
 
@@ -33,13 +33,13 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to generate stats given output from analyze_bam.py and filter a set of paired-end FASTQ reads.')
     parser.add_argument('--ab_read_map', '-ab', type=str, required=True, help='Path to *_read_map.tsv output from analyze_bam.py.')
-    parser.add_argument('--fastq', '-fq', type=str, required=True, help='Path to the original FASTQ file prefix of paired-end reads (e.g., enter ABC.123 for pairs ABC.123.1+ABC.123.2). MUST be gunzipped.')
+    parser.add_argument('--fastq1', '-1', type=str, required=True, help='Path to the first paired fastq.gz file.')
+    parser.add_argument('--fastq2', '-2', type=str, required=True, help='Path to the second paired fastq.gz file.')
     parser.add_argument('--filter', '-f', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
     parser.add_argument('--paired_suffixes', '-ps', type=str, required=True, help='Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly.')
     parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Path to where the output directory for the FASTQs to go.')
     args = parser.parse_args()
 
-    filename = args.fastq 
     filter = args.filter
     output = args.reads_dir
 
@@ -167,7 +167,7 @@ def main():
 
     # Regardless of filtering based on alignment single/multiple/discrepancies or not, still
     # need to filter all the FASTQ reads to just those that aligned to a gene region.
-    filter_fastq(ids_to_keep,filename,output)
+    filter_fastq(ids_to_keep,args.fastq1,args.fastq2,output)
 
 
 # Function to compare where the two mates in a pair mapped to. Returns 
@@ -204,12 +204,11 @@ def verify_alignment(list1,list2):
 # of IDs, per locus, found to be valid by the alignment and this script.
 # Arguments:
 # ids = set of IDs to be checked against while parsing the FASTQ file.
-# fastq = prefix for the input FASTQ files. 
+# file1 = path to first paired fastq file
+# file2 = path to second paired fastq file
 # outdir = directory prefix for where the output will be written. 
-def filter_fastq(ids,fastq,outdir):
+def filter_fastq(ids,file1,file2,outdir):
 
-    file1 = fastq + "1.fastq.gz"
-    file2 = fastq + "2.fastq.gz"
     entry1,entry2 = ([] for j in range(2))
     lineno = 0
     seen = 0 # count the reads to potentially leave the files early if all found
