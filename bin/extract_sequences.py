@@ -36,8 +36,7 @@ def main():
     if args.subset_list:
         with open(args.subset_list,'r') as i:
             for locus in i:
-                locus = locus.rstrip()
-                subset_by.add(locus.split('.')[0])
+                subset_by.add(locus.rstrip())
 
     # Iterate over the output from extract_alleles.py and build a dict of lists
     # for all the regions from each FASTA file that need to be extracted. 
@@ -47,7 +46,7 @@ def main():
             indv_allele = allele.split('\t')
 
             if args.subset_list:
-                locus = indv_allele[0].split('.')[0]
+                locus = indv_allele[0]
                 if locus not in subset_by:
                     continue
 
