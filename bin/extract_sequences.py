@@ -25,11 +25,19 @@ def main():
     parser = argparse.ArgumentParser(description='Script to extract sequences from each allele across GFF3/FASTA files. Read the top of the file for more details.')
     parser.add_argument('--ea_input', '-eai', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to the output from extract_alleles.py.')
+    parser.add_argument('--subset_list', '-sl', type=str, required=False, help='Path to a list of loci to subset by.')
     parser.add_argument('--buffer', '-b', type=int, default=0, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
     parser.add_argument('--outfile', '-o', type=str, required=True, help='Name of the output FASTA file to generate in current or existing directory.')
     args = parser.parse_args()
 
     extract_us = {}
+    subset_by = set()
+
+    if args.subset_list:
+        with open(args.subset_list,'r') as i:
+            for locus in i:
+                locus = locus.rstrip()
+                subset_by.add(locus.split('.')[0])
 
     # Iterate over the output from extract_alleles.py and build a dict of lists
     # for all the regions from each FASTA file that need to be extracted. 
@@ -37,6 +45,11 @@ def main():
         for allele in i: 
             allele = allele.rstrip()
             indv_allele = allele.split('\t')
+
+            if args.subset_list:
+                locus = indv_allele[0].split('.')[0]
+                if locus not in subset_by:
+                    continue
 
             for j in range(1,len(indv_allele)): # iterate over all alleles identified
                 vals = indv_allele[j].split('|')
