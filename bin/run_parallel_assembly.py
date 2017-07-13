@@ -36,13 +36,17 @@ def main():
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
     parser.add_argument('--assmb_step', '-as', type=str, required=True, help='Either "SPAdes","HGA", or "SB".q')
     parser.add_argument('--assmb_dir', '-ap', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
-    parser.add_argument('--number_of_jobs', '-n', required=True, help='Number of cores to call for individual processes.')
-    parser.add_argument('--threads_per_job', '-t', required=True, help='Number of threads to invoke for each job.')
-    parser.add_argument('--memory_per_job', '-m', required=True, help='Number of threads to invoke for each job.')
+    parser.add_argument('--number_of_jobs', '-n', type=int, required=True, help='Number of cores to call for individual processes.')
+    parser.add_argument('--threads_per_job', '-t', type=int, required=True, help='Number of threads to invoke for each job.')
+    parser.add_argument('--memory_per_job', '-m', required=True, help='Memory, in GB, to use per job.')
     parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Base path to where the reads are stored.')
     parser.add_argument('--spades_install', '-si', type=str, required=True, help='Path to the the location of the SPAdes install.')
 
     args = parser.parse_args()
+
+    if (args.number_of_jobs * args.threads_per_job) >= mp.cpu_count():
+        print("Number of CPUs*threads requested will consume everything. You will want to allow at least one core to be used by processes outside this program.")
+        sys.exit(0)
 
     # Set up the multiprocessing manager, pool, and queue
     manager = mp.Manager()
@@ -56,10 +60,10 @@ def main():
             ele = line.split('\t')
             locus = ele[1] # no matter the map (SPAdes or HGA), the second column is what we want
 
-            reads = "{0}/{1}/reads.fastq".format(args.reads_dir,locus)
+            reads = "{0}/{1}/reads.fastq.gz".format(args.reads_dir,locus)
             assembly_out = "{0}/{1}".format(args.assmb_dir,locus)
 
-            if args.assmb_type == "SPAdes":
+            if args.assmb_step == "SPAdes":
                 jobs.append(pool.apply_async(spades_assemble, (args.spades_install,reads,args.memory_per_job,args.threads_per_job,assembly_out)))
 
     # Get all the returns from the apply_async function.
@@ -78,9 +82,9 @@ def main():
 # assmb_dir = where to place these assemblies
 def spades_assemble(spades,reads,memory,threads,assmb_dir):
     
-    spades_exe = "{0}/spades.py".format(spades)
+    spades_exe = "{0}/bin/spades.py".format(spades)
 
-    command = "{0} -m {1} -t {2} --careful --pe1-12 {3} -o {4}".format(spades_exe,memory,threads,reads,assembly_out)
+    command = "{0} -m {1} -t {2} --careful --pe1-12 {3} -o {4}".format(spades_exe,memory,threads,reads,assmb_dir)
 
     subprocess.call(command.split())
 
