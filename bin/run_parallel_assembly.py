@@ -93,7 +93,8 @@ def spades_assemble(spades,reads,memory,threads,assmb_dir):
             shutil.rmtree(os.path.join(path,name))
         for name in files:
             if 's.fasta' not in name:
-                os.remove(os.path.join(path,name))
+                if 'spades.log' not in name:
+                    os.remove(os.path.join(path,name))
 
 
 if __name__ == '__main__':
