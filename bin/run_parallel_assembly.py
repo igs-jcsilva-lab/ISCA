@@ -27,7 +27,7 @@
 #
 # Author: James Matsumura
 
-import re,argparse,os,subprocess
+import re,argparse,os,subprocess,shutil
 import multiprocessing as mp
 
 def main():
@@ -35,7 +35,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
     parser.add_argument('--assmb_step', '-as', type=str, required=True, help='Either "SPAdes","HGA", or "SB".q')
-    parser.add_argument('--assmb_dir', '-ap', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--assmb_path', '-ap', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--number_of_jobs', '-n', type=int, required=True, help='Number of cores to call for individual processes.')
     parser.add_argument('--threads_per_job', '-t', type=int, required=True, help='Number of threads to invoke for each job.')
     parser.add_argument('--memory_per_job', '-m', required=True, help='Memory, in GB, to use per job.')
@@ -61,7 +61,7 @@ def main():
             locus = ele[1] # no matter the map (SPAdes or HGA), the second column is what we want
 
             reads = "{0}/{1}/reads.fastq.gz".format(args.reads_dir,locus)
-            assembly_out = "{0}/{1}".format(args.assmb_dir,locus)
+            assembly_out = "{0}/{1}".format(args.assmb_path,locus)
 
             if args.assmb_step == "SPAdes":
                 jobs.append(pool.apply_async(spades_assemble, (args.spades_install,reads,args.memory_per_job,args.threads_per_job,assembly_out)))
@@ -87,6 +87,13 @@ def spades_assemble(spades,reads,memory,threads,assmb_dir):
     command = "{0} -m {1} -t {2} --careful --pe1-12 {3} -o {4}".format(spades_exe,memory,threads,reads,assmb_dir)
 
     subprocess.call(command.split())
+
+    for path,dirs,files in os.walk(assmb_dir):
+        for name in dirs: # directories need to go first
+            shutil.rmtree(os.path.join(path,name))
+        for name in files:
+            if 's.fasta' not in name:
+                os.remove(os.path.join(path,name))
 
 
 if __name__ == '__main__':
