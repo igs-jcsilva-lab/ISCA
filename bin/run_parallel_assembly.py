@@ -27,25 +27,29 @@
 #
 # Author: James Matsumura
 
-import re,argparse,os,subprocess,shutil
+import re,argparse,os,subprocess,shutil,sys
 import multiprocessing as mp
+from Bio import SeqIO
 
 def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
+    # All are required, but different combinations for SPAdes, HGA, or SB.
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
     parser.add_argument('--assmb_step', '-as', type=str, required=True, help='Either "SPAdes","HGA", or "SB".q')
     parser.add_argument('--assmb_path', '-ap', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--number_of_jobs', '-n', type=int, required=True, help='Number of cores to call for individual processes.')
-    parser.add_argument('--threads_per_job', '-t', type=int, required=True, help='Number of threads to invoke for each job.')
-    parser.add_argument('--memory_per_job', '-m', required=True, help='Memory, in GB, to use per job.')
-    parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Base path to where the reads are stored.')
-    parser.add_argument('--spades_install', '-si', type=str, required=True, help='Path to the the location of the SPAdes install.')
-    # making all HGA options optional as to not flood SPAdes only assembly with reqs
+    parser.add_argument('--threads_per_job', '-t', default=1, type=int, required=False, help='Number of threads to invoke for each job.')
+    parser.add_argument('--memory_per_job', '-m', required=False, help='Memory, in GB, to use per job.')
+    parser.add_argument('--reads_dir', '-rd', type=str, required=False, help='Base path to where the reads are stored.')
+    parser.add_argument('--spades_install', '-si', type=str, required=False, help='Path to the the location of the SPAdes install.')
     parser.add_argument('--HGA_install', '-hi', type=str, required=False, help='Path to the the location of HGA.py.')
+    parser.add_argument('--SB_install', '-sbi', type=str, required=False, help='Path to the the location of scaffold_builder.py.')
     parser.add_argument('--python2_install', '-pi', type=str, required=False, help='Path to the the location of the Python2 executable.')
     parser.add_argument('--velvet_install', '-vi', type=str, required=False, help='Path to the the location of the velvet install.')
-    parser.add_argument('--partitions', '-p', type=int, required=True, help='Number of partitions to split on during HGA.')
+    parser.add_argument('--partitions', '-p', type=int, required=False, help='Number of partitions to split on during HGA.')
+    parser.add_argument('--ea_map', '-eam', type=str, required=False, help='Path to the output from extract_alleles.py.')
+    parser.add_argument('--fasta', '-f', type=str, required=False, help='File that holds all the reference sequences to build scaffolds off of.')
 
     args = parser.parse_args()
 
@@ -64,6 +68,7 @@ def main():
             line = line.rstrip()
             ele = line.split('\t')
             locus = ele[1] # no matter the map (SPAdes or HGA), the second column is what we want
+            locus_id = ele[0] # for SB, we care about the locus ID not the mapped number
 
             assembly_out = "{0}/{1}".format(args.assmb_path,locus)
 
@@ -74,6 +79,9 @@ def main():
             elif args.assmb_step == "HGA":
                 reads = "{0}/{1}/reads.fastq".format(args.reads_dir,locus)
                 jobs.append(pool.apply_async(hga_assemble, (args.HGA_install,reads,assembly_out,args.python2_install,args.velvet_install,args.spades_install,args.threads_per_job,args.partitions,args.memory_per_job)))
+
+            elif args.assmb_step == "SB":
+                jobs.append(pool.apply_async(sb_align, (args.SB_install,assembly_out,locus_id,args.python2_install,args.ea_map,args.fasta)))
 
     # Get all the returns from the apply_async function.
     for job in jobs:
@@ -137,6 +145,65 @@ def hga_assemble(HGA,reads,assmb_dir,python2,velvet,spades,threads,partitions,me
     )
 
     subprocess.call(command.split())
+
+# Worker for assembling via HGA
+# Arguments:
+# SB = path to scaffold_builder.py
+# assmb_dir = location to output the assemblies
+# locus = reference locus to build scaffolds based on 
+# python2 = location of python2 executable
+# ea_map = output from extract_alleles.py
+# fasta = file that contains the sequences referenced by ea_map
+def sb_align(SB,assmb_dir,locus,python2,ea_map,fasta):
+
+    # Now that we know where to do work, build the reference file for just the
+    # relevant locus. First need to get all the correct sequences.
+    allele_list = []
+    with open(ea_map,'r') as i:
+        for line in i:
+            line = line.rstrip()
+            elements = line.split('\t')
+
+            # Need to handle the case where the reference locus is 
+            # split into multiple like ABC123.1,ABC123.2,etc.
+            if '.' in elements[0]:
+                ea_locus = elements[0].split('.')[0]
+            else:
+                ea_locus = elements[0]
+
+            if ea_locus == locus:
+                for x in range(1,len(elements)): # grab all the alleles
+                    allele_list.append(elements[x].split('|')[4])
+
+    # Extract and write out the sequences. 
+    seq_dict = SeqIO.to_dict(SeqIO.parse(fasta,"fasta"))
+
+    # First check if HGA worked
+    query = "{0}/HGA_combined/contigs.fasta".format(assmb_dir)
+
+    # If HGA built contigs, build both F/R scaffolds to align to
+    if os.path.isfile(query):
+
+        f_fasta = "{0}/f_locus.fasta".format(assmb_dir)
+        with open(f_fasta,'w') as out:
+            for allele in allele_list:
+                seq = seq_dict[allele]
+                SeqIO.write(seq,out,"fasta")
+
+        r_fasta = "{0}/r_locus.fasta".format(assmb_dir)
+        with open(r_fasta,'w') as out:
+            for allele in allele_list:
+                seq = seq_dict[allele]
+                seq.seq = seq.seq.reverse_complement()
+                SeqIO.write(seq,out,"fasta")
+
+        f_out = "{0}/f".format(assmb_dir)
+        r_out = "{0}/r".format(assmb_dir)
+
+        command = "{0} {1} -q {2} -r {3} -p {4}".format(python2,SB,query,f_fasta,f_out)
+        subprocess.call(command.split())
+        command = "{0} {1} -q {2} -r {3} -p {4}".format(python2,SB,query,r_fasta,r_out)
+        subprocess.call(command.split())
 
 
 if __name__ == '__main__':
