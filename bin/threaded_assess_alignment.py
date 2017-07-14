@@ -14,7 +14,7 @@
 # %ID coverage(reference/assembled) reference path_to_best_alignment
 #
 # Run the script using a command like this:
-# python3 threaded_assess_alignment.py --assmb_map /path/to/format_for_assembly.tsv --algn_dir /path/to/alignments --outfile /path/to/output_dir --priority 3D7
+# python3 threaded_assess_alignment.py --assmb_map /path/to/format_for_assembly.tsv --align_path /path/to/alignments --outfile /path/to/output_dir --priority 3D7
 #
 # Author: James Matsumura
 
@@ -26,8 +26,8 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
-    parser.add_argument('--cpus', '-c', required=True, help='Number of cores to use.')
-    parser.add_argument('--algn_dir', '-ap', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use.')
+    parser.add_argument('--align_path', '-ap', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--outfile', '-o', type=str, required=True, help='Name of output file.')
     parser.add_argument('--priority', '-p', type=str, required=False, default="", help='Optional prefix for prioritizing one isolate over the others.')
     parser.add_argument('--best_only', '-bo', type=str, required=True, help='Either "yes" or "no" for whether to report stats of only the best alignment or all alignments.')
@@ -48,7 +48,7 @@ def main():
             ele = line.split('\t')
             locus = ele[0]
 
-            algn_dir = "{0}/{1}".format(args.algn_dir,locus)
+            algn_dir = "{0}/{1}".format(args.align_path,locus)
 
             if args.assmb_type == "SPAdes":
                 jobs.append(pool.apply_async(spades_worker, (algn_dir,locus,args.priority,args.best_only,q)))

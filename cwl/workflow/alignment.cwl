@@ -67,11 +67,11 @@ inputs:
     inputBinding:
       prefix: "--priority"
 
-  out_dir:
+  align_path:
     label: Path to output directory for all these alignments.
     type: Directory
     inputBinding:
-      prefix: "--out_dir"
+      prefix: "--align_path"
 
   emboss_tool:
     label: Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water])

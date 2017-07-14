@@ -1,0 +1,11 @@
+assmb_map:
+    class: File
+    path: /local/scratch/matsu_cwl_tests/new_map.tsv
+align_path:
+    class: Directory
+    path: ./first_alignments
+number_of_jobs: 2
+assmb_type: "SPAdes"
+outfile: "ivc.tsv"
+best_only: "no"
+python3_lib: "/usr/local/packages/python-3.5.2/lib"

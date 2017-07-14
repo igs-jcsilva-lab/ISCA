@@ -5,7 +5,7 @@
 # sequences. 
 #
 # Run the script using a command like this:
-# python3 threaded_alignment.py --ea_map /path/to/extract_alleles_map.tsv --assmb_map /path/to/format_for_assembly.tsv --ref_genome /path/to/ref_genome.fsa --assmb_path -/path/to/assemblies_out --assmb_type (HGA|SPAdes) --out_dir /path/to/alignment_out --priority 3D7 --emboss_tool /pkgs/emboss/bin/needle
+# python3 threaded_alignment.py --ea_map /path/to/extract_alleles_map.tsv --assmb_map /path/to/format_for_assembly.tsv --ref_genome /path/to/ref_genome.fsa --assmb_path -/path/to/assemblies_out --assmb_type (HGA|SPAdes) --align_path /path/to/alignment_out --priority 3D7 --emboss_tool /pkgs/emboss/bin/needle
 #
 # Author: James Matsumura
 
@@ -28,10 +28,10 @@ def main():
     parser.add_argument('--ref_genome', '-r', type=str, required=True, help='Path to the reference genome file used to build aligner index.')
     parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
     parser.add_argument('--max_align_len', '-maxl', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
-    parser.add_argument('--assmb_path', '-ad', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--assmb_path', '-asp', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--assmb_type', '-at', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
     parser.add_argument('--priority', '-p', type=str, required=False, default="", help='If given, the prefix of the sequence to solelys align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
-    parser.add_argument('--out_dir', '-o', type=str, required=True, help='Path to output directory for all these alignments.')
+    parser.add_argument('--align_path', '-alp', type=str, required=True, help='Path to output directory for all these alignments.')
     parser.add_argument('--emboss_tool', '-e', type=str, required=True, help='Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water]).')
     args = parser.parse_args()
 
@@ -66,7 +66,7 @@ def main():
     q = manager.Queue()
     pool = mp.Pool(args.cpus)
 
-    pool.apply_async(listener, (q,args.out_dir))
+    pool.apply_async(listener, (q,args.align_path))
 
     min_len = args.min_align_len
     max_len = args.max_align_len
@@ -83,7 +83,7 @@ def main():
             ele = line.split('\t')
             locus = ele[0] # reference/locus that maps to directory number
             loc_dir = ele[1] # the directory number from assembly for grid submission
-            out_dir = "{0}/{1}".format(args.out_dir,locus) # alignment output goes here
+            out_dir = "{0}/{1}".format(args.align_path,locus) # alignment output goes here
             make_directory(out_dir)
 
             # Split out the contigs if more than one is present and have to do

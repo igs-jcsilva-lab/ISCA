@@ -13,7 +13,7 @@ assmb_path:
 emboss_tool: 
     class: File
     path: /usr/local/packages/emboss/bin/needle
-out_dir:
+align_path:
     class: Directory
     path: ./first_alignments
 number_of_jobs: 2
