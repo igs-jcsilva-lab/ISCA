@@ -1,0 +1,13 @@
+ivc:
+    class: File
+    path: /local/scratch/matsu_cwl_tests/ivc.tsv
+align_path:
+    class: Directory
+    path: ./first_alignments
+groupby: "l"
+threshold: 90
+outfile: "final_seq.fsa"
+ea_map:
+    class: File
+    path: /local/scratch/matsu_cwl_tests/ea_map.tsv
+python3_lib: "/usr/local/packages/python-3.5.2/lib"
