@@ -1,0 +1,27 @@
+python3_lib: "/usr/local/packages/python-3.5.2/lib"
+reads_dir:
+    class: Directory
+    path: ./first_reads
+assmb_path:
+    class: Directory
+    path: ./first_assemblies
+spades_install:
+    class: Directory
+    path: /usr/local/packages/spades
+velvet_install:
+    class: Directory
+    path: /usr/local/packages/velvet
+HGA_exe:
+    class: File
+    path: /local/scratch/matsu_pf_work/HGA.py
+python2_exe:
+    class: File
+    path: /usr/local/packages/python-2.7.12/bin/python
+assmb_map:
+    class: File
+    path: /local/scratch/matsu_cwl_tests/new_map.tsv
+assmb_step: "HGA"
+number_of_jobs: 2
+threads_per_job: 6
+memory_per_job: 13
+partitions: 2

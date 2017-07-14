@@ -1,0 +1,24 @@
+python3_lib: "/usr/local/packages/python-3.5.2/lib"
+reads_dir:
+    class: Directory
+    path: ./first_reads
+assmb_path:
+    class: Directory
+    path: ./first_assemblies
+SB_exe:
+    class: File
+    path: /local/scratch/matsu_pf_work/scaffold_builder.py
+python2_exe:
+    class: File
+    path: /usr/local/packages/python-2.7.12/bin/python
+assmb_map:
+    class: File
+    path: /local/scratch/matsu_cwl_tests/new_map.tsv
+ea_map:
+    class: File
+    path: /local/scratch/matsu_cwl_tests/ea_map.tsv
+sequences: 
+    class: File
+    path: /local/scratch/matsu_pf_work/7G8/sequences.fasta
+assmb_step: "SB"
+number_of_jobs: 2

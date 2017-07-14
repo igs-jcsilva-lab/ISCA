@@ -42,21 +42,21 @@ inputs:
     inputBinding:
       prefix: "--spades_install"
 
-  HGA_install:
+  HGA_exe:
     label: Location of the HGA installation
-    type: Directory?
+    type: File?
     inputBinding:
       prefix: "--HGA_install"
 
-  SB_install:
+  SB_exe:
     label: Location of the HGA installation
-    type: Directory?
+    type: File?
     inputBinding:
       prefix: "--SB_install"
 
-  python2_install:
+  python2_exe:
     label: Location of the Python2 installation
-    type: Directory?
+    type: File?
     inputBinding:
       prefix: "--python2_install"
 
