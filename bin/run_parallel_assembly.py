@@ -41,6 +41,11 @@ def main():
     parser.add_argument('--memory_per_job', '-m', required=True, help='Memory, in GB, to use per job.')
     parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Base path to where the reads are stored.')
     parser.add_argument('--spades_install', '-si', type=str, required=True, help='Path to the the location of the SPAdes install.')
+    # making all HGA options optional as to not flood SPAdes only assembly with reqs
+    parser.add_argument('--HGA_install', '-hi', type=str, required=False, help='Path to the the location of HGA.py.')
+    parser.add_argument('--python2_install', '-pi', type=str, required=False, help='Path to the the location of the Python2 executable.')
+    parser.add_argument('--velvet_install', '-vi', type=str, required=False, help='Path to the the location of the velvet install.')
+    parser.add_argument('--partitions', '-p', type=int, required=True, help='Number of partitions to split on during HGA.')
 
     args = parser.parse_args()
 
@@ -60,11 +65,15 @@ def main():
             ele = line.split('\t')
             locus = ele[1] # no matter the map (SPAdes or HGA), the second column is what we want
 
-            reads = "{0}/{1}/reads.fastq.gz".format(args.reads_dir,locus)
             assembly_out = "{0}/{1}".format(args.assmb_path,locus)
 
             if args.assmb_step == "SPAdes":
+                reads = "{0}/{1}/reads.fastq.gz".format(args.reads_dir,locus)
                 jobs.append(pool.apply_async(spades_assemble, (args.spades_install,reads,args.memory_per_job,args.threads_per_job,assembly_out)))
+
+            elif args.assmb_step == "HGA":
+                reads = "{0}/{1}/reads.fastq".format(args.reads_dir,locus)
+                jobs.append(pool.apply_async(hga_assemble, (args.HGA_install,reads,assembly_out,args.python2_install,args.velvet_install,args.spades_install,args.threads_per_job,args.partitions,args.memory_per_job)))
 
     # Get all the returns from the apply_async function.
     for job in jobs:
@@ -95,6 +104,39 @@ def spades_assemble(spades,reads,memory,threads,assmb_dir):
             if 's.fasta' not in name:
                 if 'spades.log' not in name:
                     os.remove(os.path.join(path,name))
+
+# Worker for assembling via HGA
+# Arguments:
+# HGA = path to HGA.py
+# reads = paired reads file to assemble
+# assmb_dir = location to output the assemblies
+# python2 = location of python2 executable
+# velvet = location of velvet executable
+# spades = location of spades executable
+# threads = number of threads to run SPAdes with
+# partitions = number of partitions to randomly assign reads from 
+# memory = how much memory to limit SPAdes to 
+def hga_assemble(HGA,reads,assmb_dir,python2,velvet,spades,threads,partitions,memory):
+
+    spades_exe = "{0}/bin".format(spades)
+
+    # By default, the reads are gunzipped so need to uncompress. 
+    subprocess.call("gunzip {0}.gz".format(reads).split())
+
+    # Cleanup a bit of the unnecessary files. 
+    remove_fastqs = "{0}/*.fastq".format(assmb_dir)
+    remove_partitions = "{0}/part*assembly".format(assmb_dir)
+
+    #
+    # NOTE HARDCODED -PA SPAdes #
+    #
+    command = ("{0} {1} -velvet {2} -spades {3} -PA SPAdes -P12 {4} -R12 {5}"
+         " -ins 150 -std 50 -Pkmer 31 -Rkmer 81 -t {6} -P {7} -out {8} -m {9}"
+         " && rm {10} && rm -rf {11}"
+         .format(python2,HGA,velvet,spades_exe,reads,reads,threads,partitions,assmb_dir,memory,remove_fastqs,remove_partitions)
+    )
+
+    subprocess.call(command.split())
 
 
 if __name__ == '__main__':
