@@ -12,13 +12,9 @@ requirements:
         envValue: $(inputs.python3_lib)
 
 inputs:
-  python3_lib:
-    label: Python3 library
-    type: string
-
   reads_dir:
     label: Reads directory made by build_workspace.cwl
-    type: Directory
+    type: Directory?
     inputBinding:
       prefix: "--reads_dir"
 
@@ -42,9 +38,33 @@ inputs:
 
   spades_install:
     label: Location of the SPAdes installation
-    type: Directory
+    type: Directory?
     inputBinding:
       prefix: "--spades_install"
+
+  HGA_install:
+    label: Location of the HGA installation
+    type: Directory?
+    inputBinding:
+      prefix: "--HGA_install"
+
+  SB_install:
+    label: Location of the HGA installation
+    type: Directory?
+    inputBinding:
+      prefix: "--SB_install"
+
+  python2_install:
+    label: Location of the Python2 installation
+    type: Directory?
+    inputBinding:
+      prefix: "--python2_install"
+
+  velvet_install:
+    label: Location of the Velvet installation
+    type: Directory?
+    inputBinding:
+      prefix: "--velvet_install"
 
   number_of_jobs:
     label: Number of assembly jobs to spawn
@@ -52,17 +72,35 @@ inputs:
     inputBinding:
       prefix: "--number_of_jobs"
 
+  partitions:
+    label: Number of partitions to use in HGA
+    type: int?
+    inputBinding:
+      prefix: "--partitions"
+
   threads_per_job:
     label: Number of threads to use for each assembly job
-    type: int
+    type: int?
     inputBinding:
       prefix: "--threads_per_job"
 
   memory_per_job:
     label: How much memory to limit for each individual assembly job
-    type: int
+    type: int?
     inputBinding:
       prefix: "--memory_per_job"
+
+  ea_map:
+    label: Path to the file built from extract_alleles.py
+    type: File?
+    inputBinding:
+      prefix: "--ea_map"
+
+  sequences:
+    label: Path to the sequence file built from extract_sequences.py
+    type: File?
+    inputBinding:
+      prefix: "--fasta"
 
 
 outputs:
