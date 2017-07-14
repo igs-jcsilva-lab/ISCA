@@ -42,7 +42,7 @@ def main():
     # Iterate over the ids_v_cov.tsv file and find those loci which were
     # ABLE to assemble at the minimum threshold. Note that it needs to be
     # done in this manner since not every locus from the original set
-    # may have even produced alignments via Bowtie.  
+    # may have even produced alignments from the recruiter.  
     with open(args.ivc,'r') as i:
         for line in i:
             line = line.rstrip()

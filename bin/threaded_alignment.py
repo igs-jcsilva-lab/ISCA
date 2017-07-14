@@ -5,7 +5,7 @@
 # sequences. 
 #
 # Run the script using a command like this:
-# python3 threaded_alignment.py --ea_map /path/to/extract_alleles_map.tsv --assmb_map /path/to/format_for_assembly.tsv --ref_genome /path/to/ref_genome.fsa --assmb_dir -/path/to/assemblies_out --assmb_type (HGA|SPAdes) --out_dir /path/to/alignment_out --priority 3D7 --emboss_tool /pkgs/emboss/bin/needle
+# python3 threaded_alignment.py --ea_map /path/to/extract_alleles_map.tsv --assmb_map /path/to/format_for_assembly.tsv --ref_genome /path/to/ref_genome.fsa --assmb_path -/path/to/assemblies_out --assmb_type (HGA|SPAdes) --out_dir /path/to/alignment_out --priority 3D7 --emboss_tool /pkgs/emboss/bin/needle
 #
 # Author: James Matsumura
 
@@ -25,10 +25,10 @@ def main():
     parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
     parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use.')
-    parser.add_argument('--ref_genome', '-r', type=str, required=True, help='Path to the reference genome file used to build Bowtie2 index.')
+    parser.add_argument('--ref_genome', '-r', type=str, required=True, help='Path to the reference genome file used to build aligner index.')
     parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
     parser.add_argument('--max_align_len', '-maxl', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
-    parser.add_argument('--assmb_dir', '-ad', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--assmb_path', '-ad', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--assmb_type', '-at', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
     parser.add_argument('--priority', '-p', type=str, required=False, default="", help='If given, the prefix of the sequence to solelys align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
     parser.add_argument('--out_dir', '-o', type=str, required=True, help='Path to output directory for all these alignments.')
@@ -90,12 +90,12 @@ def main():
             # alignment of all refs to all contigs.
             contigs = ""
             if args.assmb_type == "SPAdes":
-                contigs = "{0}/{1}/contigs.fasta".format(args.assmb_dir,loc_dir)
+                contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
                 jobs.append(pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,args.priority,args.emboss_tool)))
             else:
-                contigs  = "{0}/{1}/f_Scaffold.fasta".format(args.assmb_dir,loc_dir)
+                contigs  = "{0}/{1}/f_Scaffold.fasta".format(args.assmb_path,loc_dir)
                 jobs.append(pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,args.priority,args.emboss_tool)))
-                contigs  = "{0}/{1}/r_Scaffold.fasta".format(args.assmb_dir,loc_dir)
+                contigs  = "{0}/{1}/r_Scaffold.fasta".format(args.assmb_path,loc_dir)
                 jobs.append(pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,args.priority,args.emboss_tool)))
 
     # Get all the returns from the apply_async function.

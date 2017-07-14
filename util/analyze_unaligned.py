@@ -1,7 +1,8 @@
 
 
 # This script is supplementary to the pipeline and allows one to view some
-# stats on the reference sequences that recruited no reads during Bowtie. 
+# stats on the reference sequences that recruited no reads.
+# 
 # This will print a TSV for the reference ID, the sequence GC content in
 # a percentage, and the gene name. 
 #
