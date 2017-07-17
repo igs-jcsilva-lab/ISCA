@@ -15,9 +15,11 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 - [SPAdes](http://bioinf.spbau.ru/spades)
 - [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/)
 - [MUMmer](http://mummer.sourceforge.net/manual/)
-- [Hierarchical Genome Assembly Tool](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
-- [Scaffold Builder](https://github.com/metageni/Scaffold_builder)
-  * A slight, but necessary, modification to the default script needs to be made for this pipline. The new NUCmer call can be found [here](https://github.com/jmatsumura/Scaffold_builder/blob/master/scaffold_builder.py)
+- Python Scripts
+  * [Hierarchical Genome Assembly Tool](https://github.com/jmatsumura/Hierarchical-Genome-Assembly-HGA)
+    * [Original for reference](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
+  * [Scaffold Builder](https://github.com/jmatsumura/Scaffold_builder)
+    * [Original for reference](https://github.com/metageni/Scaffold_builder))
 
 ## Invoking a CWL workflow
 ```
