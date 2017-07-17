@@ -84,7 +84,7 @@ outputs:
   aligned_dir:
     type: Directory
     outputBinding:
-      outputEval: $(inputs.out_dir)
+      outputEval: $(inputs.align_path)
 
 
 baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/threaded_alignment.py"]

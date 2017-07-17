@@ -51,4 +51,4 @@ outputs:
       glob: $(inputs.outfile)
 
 
-baseCommand: ["/Library/Frameworks/Python.framework/Versions/3.5/bin/python3","/Users/jmatsumura/dev/targeted_assembly/bin/format_for_assembly.py"]
+baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/format_for_assembly.py"]

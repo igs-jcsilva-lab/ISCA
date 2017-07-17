@@ -1,0 +1,33 @@
+ea_map:
+    class: File
+    path: /local/scratch/matsu_cwl_tests/ea_map.tsv
+assmb_map:
+    class: File
+    path: /local/scratch/matsu_cwl_tests/new_map.tsv
+ref_genome: 
+    class: File
+    path: /local/scratch/matsu_pf_work/testing.fasta
+original_fsa:
+    class: File
+    path: /local/scratch/matsu_pf_work/testing.fasta
+emboss_tool: 
+    class: File
+    path: /usr/local/packages/emboss/bin/needle
+align_path:
+    class: Directory
+    path: ./first_alignments
+assmb_path:
+    class: Directory
+    path: ./first_assemblies
+out_dir:
+    class: Directory
+    path: ./end_results
+assmb_type: "SPAdes"
+python3_lib: "/usr/local/packages/python-3.5.2/lib"
+best_only: "no"
+ivc_outfile: "ivc.tsv"
+sequences_outfile: "final_seq.fsa"
+groupby: "l"
+number_of_jobs: 2
+min_align_len: 0.7
+threshold: 90

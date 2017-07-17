@@ -6,7 +6,10 @@ class: CommandLineTool
 
 requirements:
   - class: InlineJavascriptRequirement
-
+  - class: EnvVarRequirement
+    envDef:
+      - envName: LD_LIBRARY_PATH
+        envValue: $(inputs.python3_lib)
 
 inputs:
   bam:
@@ -52,4 +55,4 @@ outputs:
       glob: $(inputs.prefix + "*ref*")
 
 
-baseCommand: ["/Library/Frameworks/Python.framework/Versions/3.5/bin/python3","/Users/jmatsumura/dev/targeted_assembly/bin/analyze_bam.py"]
+baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/analyze_bam.py"]

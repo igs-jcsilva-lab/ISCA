@@ -6,7 +6,10 @@ class: Workflow
 
 requirements:
   - class: InlineJavascriptRequirement
-
+  - class: EnvVarRequirement
+    envDef:
+      - envName: LD_LIBRARY_PATH
+        envValue: $(inputs.python3_lib)
 
 inputs:
   workspace_location:
