@@ -19,7 +19,7 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
   * [Hierarchical Genome Assembly Tool](https://github.com/jmatsumura/Hierarchical-Genome-Assembly-HGA)
     * [Original for reference](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
   * [Scaffold Builder](https://github.com/jmatsumura/Scaffold_builder)
-    * [Original for reference](https://github.com/metageni/Scaffold_builder))
+    * [Original for reference](https://github.com/metageni/Scaffold_builder)
 
 ## Invoking a CWL workflow
 ```
