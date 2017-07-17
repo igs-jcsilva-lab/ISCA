@@ -4,4 +4,7 @@ buffer: 0
 ea_input:
     class: File
     path: /local/scratch/matsu_cwl_tests/ea_input.tsv
+subset_list:
+    class: File
+    path: /local/scratch/matsu_cwl_tests/subset_list.txt
 python3_lib: "/usr/local/packages/python-3.5.2/lib"

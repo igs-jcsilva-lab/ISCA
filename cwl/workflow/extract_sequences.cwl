@@ -31,6 +31,12 @@ inputs:
     inputBinding:
       prefix: "--buffer"
 
+  subset_list:
+    label: List to subset the sequences by
+    type: File
+    inputBinding:
+      prefix: "--subset_list"
+
   outfile:
     label: Name of the output FASTA file to generate in current or existing directory
     type: string

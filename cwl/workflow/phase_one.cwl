@@ -16,6 +16,10 @@ inputs:
     label: Path to a TSV list for references and isolates
     type: File
 
+  subset_list:
+    label: Path to a file to subset sequences by
+    type: File
+
   gene_or_exon:
     label: Either "gene" or "exon" for which sequences to pull
     type: string
@@ -139,6 +143,7 @@ steps:
     in:
       ea_input: ea_input
       ea_map: extract_alleles/ea_map
+      subset_list: subset_list
       buffer: buffer
       outfile: outfile
       python3_lib: python3_lib

@@ -25,7 +25,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to extract sequences from each allele across GFF3/FASTA files. Read the top of the file for more details.')
     parser.add_argument('--ea_input', '-eai', type=str, required=True, help='Path to a TSV list for references and isolates.')
     parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to the output from extract_alleles.py.')
-    parser.add_argument('--subset_list', '-sl', type=str, required=False, help='Path to a list of loci to subset by.')
+    parser.add_argument('--subset_list', '-sl', type=str, required=True, help='Path to a list of loci to subset by.')
     parser.add_argument('--buffer', '-b', type=int, default=0, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
     parser.add_argument('--outfile', '-o', type=str, required=True, help='Name of the output FASTA file to generate in current or existing directory.')
     args = parser.parse_args()
@@ -33,10 +33,9 @@ def main():
     extract_us = {}
     subset_by = set()
 
-    if args.subset_list:
-        with open(args.subset_list,'r') as i:
-            for locus in i:
-                subset_by.add(locus.rstrip())
+    with open(args.subset_list,'r') as i:
+        for locus in i:
+            subset_by.add(locus.rstrip().split('\t')[0])
 
     # Iterate over the output from extract_alleles.py and build a dict of lists
     # for all the regions from each FASTA file that need to be extracted. 

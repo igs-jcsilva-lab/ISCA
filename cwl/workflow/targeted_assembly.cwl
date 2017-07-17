@@ -13,24 +13,41 @@ requirements:
         envValue: $(inputs.python3_lib)
 
 inputs:
-  python3_lib:
-    label: Path tp allow Python3 to be found in the ENV
-    type: string
   ea_input:
     label: Path to a TSV list for references and isolates
     type: File
+  subset_list:
+    label: File with loci to subset the sequences by, simply include all if all are desired 
+    type: File
+
+  python3_lib:
+    label: Path tp allow Python3 to be found in the ENV
+    type: string
   gene_or_exon:
     label: Either "gene" or "exon" for which sequences to pull
     type: string
-  buffer:
-    label: How much of a buffer to add to each end of the gene/exon, defaults to 0
-    type: int
   outfile:
     label: Name of the output FASTA file to generate in current or existing directory
     type: string
 
+  buffer:
+    label: How much of a buffer to add to each end of the gene/exon, defaults to 0
+    type: int
+
 
 outputs:
+  HGA:
+    type: File
+    outputSource: phase_one/HGA
+  scaffold_builder:
+    type: File
+    outputSource: phase_one/scaffold_builder
+  ea_map:
+    type: File
+    outputSource: phase_one/ea_map
+  sequences:
+    type: File
+    outputSource: phase_one/sequences
   gsnap_idx:
     type: Directory
     outputSource: phase_one/gsnap_idx
@@ -70,18 +87,6 @@ outputs:
   second_end_results:
     type: Directory
     outputSource: phase_one/second_end_results
-  HGA:
-    type: File
-    outputSource: phase_one/HGA
-  scaffold_builder:
-    type: File
-    outputSource: phase_one/scaffold_builder
-  ea_map:
-    type: File
-    outputSource: phase_one/ea_map
-  sequences:
-    type: File
-    outputSource: phase_one/sequences
 
 
 steps:
@@ -92,6 +97,7 @@ steps:
       gene_or_exon: gene_or_exon
       buffer: buffer
       outfile: outfile
+      subset_list: subset_list
       python3_lib: python3_lib
     out: [
       gsnap_idx,
