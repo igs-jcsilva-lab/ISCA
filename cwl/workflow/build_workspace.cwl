@@ -18,7 +18,7 @@ inputs:
     type: string
     inputBinding:
       prefix: "--workspace_location"
-    default: '.'
+    default: "."
 
 outputs:
   gsnap_idx:
