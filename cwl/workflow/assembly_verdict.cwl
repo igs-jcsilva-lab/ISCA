@@ -25,7 +25,7 @@ inputs:
       prefix: "--threshold"
 
   original_fsa:
-    label: Path to where the initial FASTA file generated from the pipeline is
+    label: Path to where the unbuffered FASTA file generated from extract_sequences is
     type: File
     inputBinding:
       prefix: "--original_fsa"

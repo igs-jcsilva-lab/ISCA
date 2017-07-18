@@ -31,7 +31,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to assess the results of the base Targeted Assembly pipeline.')
     parser.add_argument('--ivc', '-i', type=str, required=True, help='Path to an ids_v_cov.tsv file from the previous run.')
     parser.add_argument('--threshold', '-t', type=float, required=True, help='Minimum threshold of %ID that needs to be met to pass final assembly.')
-    parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the initial FASTA file generated from the pipeline is.')
+    parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
     parser.add_argument('--original_assmb_map', '-oam', type=str, required=True, help='Path to where the output from format_for_assembly.py is located.')
     parser.add_argument('--out_dir', '-o', type=str, required=True, help='Path to where the unaligned/unassembled FASTA entries and the new alignments map should go.')
     args = parser.parse_args()

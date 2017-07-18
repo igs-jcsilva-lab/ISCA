@@ -5,7 +5,7 @@
 # sequences. 
 #
 # Run the script using a command like this:
-# python3 threaded_alignment.py --ea_map /path/to/extract_alleles_map.tsv --assmb_map /path/to/format_for_assembly.tsv --ref_genome /path/to/ref_genome.fsa --assmb_path -/path/to/assemblies_out --assmb_type (HGA|SPAdes) --align_path /path/to/alignment_out --priority 3D7 --emboss_tool /pkgs/emboss/bin/needle
+# python3 threaded_alignment.py --ea_map /path/to/extract_alleles_map.tsv --assmb_map /path/to/format_for_assembly.tsv --original_fsa /path/to/ref_genome.fsa --assmb_path -/path/to/assemblies_out --assmb_type (HGA|SPAdes) --align_path /path/to/alignment_out --priority 3D7 --emboss_tool /pkgs/emboss/bin/needle
 #
 # Author: James Matsumura
 
@@ -25,7 +25,7 @@ def main():
     parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
     parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use.')
-    parser.add_argument('--ref_genome', '-r', type=str, required=True, help='Path to the reference genome file used to build aligner index.')
+    parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
     parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
     parser.add_argument('--max_align_len', '-maxl', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
     parser.add_argument('--assmb_path', '-asp', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')

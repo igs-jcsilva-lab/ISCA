@@ -43,11 +43,11 @@ inputs:
     inputBinding:
       prefix: "--max_align_len"
 
-  ref_genome:
-    label: Path to the reference genome file used to build aligner index
+  original_fsa:
+    label: Path to where the unbuffered FASTA file generated from extract_sequences is
     type: File
     inputBinding:
-      prefix: "--ref_genome"
+      prefix: "--original_fsa"
 
   assmb_path:
     label: Path to the the directory to initialize directories for all the assembly output

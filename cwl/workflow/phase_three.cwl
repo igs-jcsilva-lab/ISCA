@@ -102,7 +102,7 @@ steps:
     in:
       ea_map: ea_map
       assmb_map: assmb_map
-      ref_genome: ref_genome
+      original_fsa: original_fsa
       assmb_path: assmb_path
       emboss_tool: emboss_tool
       align_path: align_path
