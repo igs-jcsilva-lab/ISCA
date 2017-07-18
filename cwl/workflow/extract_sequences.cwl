@@ -37,11 +37,11 @@ inputs:
     inputBinding:
       prefix: "--subset_list"
 
-  outfile:
-    label: Name of the output FASTA file to generate in current or existing directory
+  prefix:
+    label: Prefix for the output FASTA files to generate in current or existing directory
     type: string
     inputBinding:
-      prefix: "--outfile"
+      prefix: "--prefix"
 
   python3_lib:
     label: Path to allow Python3 to be found in the ENV
@@ -49,10 +49,15 @@ inputs:
 
 
 outputs:
-  sequences:
+  buffered_sequences:
     type: File
     outputBinding:
-      glob: $(inputs.outfile)
+      glob: $(inputs.prefix + "*_buffered*")
+
+  unbuffered_sequences:
+    type: File
+    outputBinding:
+      glob: $(inputs.prefix + "*_unbuffered*")
 
 
 baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/extract_sequences.py"]

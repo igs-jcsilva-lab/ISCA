@@ -51,7 +51,7 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
   * `threaded_assess_alignment.py`
 11. If there are any remaining loci that could not assemble at a desired minimum threshold, can isolate these reference sequences to another round of the pipeline and use a different aligner/sensitivity. Note that using this step will essentially format the data similar to the end of step 3
   * `assembly_verdict.py`
-12. Try assemble those that the previous assembler could notSPAdes could not
+12. Try assemble those that the previous assembler could not
   * `run_parallel_assembly.py`
 13. Rerun alignment using these new assemblies.
   * `threaded_alignment.py`

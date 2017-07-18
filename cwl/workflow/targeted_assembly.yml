@@ -15,7 +15,7 @@ spades_install:
     path: /usr/local/packages/spades
 python3_lib: "/usr/local/packages/python-3.5.2/lib"
 gene_or_exon: "gene"
-outfile: "first_sequences.fsa"
+prefix: "original_seqs"
 gsnap_genome: "gsnap"
 filter: "no"
 first_paired_suffixes: "no"

@@ -13,7 +13,7 @@
 # that lack a buffer when it comes to the alignment steps.  
 # 
 # Run the script using a command like this:
-# python3 extract_sequences.py --ea_input /path/to/list_input.tsv --ea_map /path/to/out_from_extract_alleles.tsv --out /path/to/out.fsa --buffer 20
+# python3 extract_sequences.py --ea_input /path/to/list_input.tsv --ea_map /path/to/out_from_extract_alleles.tsv --prefix /path/to/my_seqs --buffer 20
 #
 # Author: James Matsumura
 
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to the output from extract_alleles.py.')
     parser.add_argument('--subset_list', '-sl', type=str, required=True, help='Path to a list of loci to subset by.')
     parser.add_argument('--buffer', '-b', type=int, default=0, required=False, help='How much of a buffer to add to each end of the gene. Defaults to 0.')
-    parser.add_argument('--outfile', '-o', type=str, required=True, help='Name of the output FASTA file to generate in current or existing directory.')
+    parser.add_argument('--prefix', '-p', type=str, required=True, help='Prefix of the output FASTA file to generate in current or existing directory.')
     args = parser.parse_args()
 
     extract_us = {}
@@ -66,7 +66,7 @@ def main():
             fasta_file = vals[2]
             gene_list = extract_us[vals[3]]
 
-            extract_sequences(fasta_file,gene_list,args.buffer,args.outfile)
+            extract_sequences(fasta_file,gene_list,args.buffer,args.prefix)
 
 
 # Arguments:
@@ -74,8 +74,8 @@ def main():
 # genes = list of genes associated with the particular FASTA file. Noted by the
 # name in the fourth column of the input list file.
 # buffer = amount of bases to pad the surrounding regions of the gene by.  
-# outfile = output file to write to. 
-def extract_sequences(file,genes,buffer,outfile):
+# prefix = base prefix to write unbuffered/buffered files to 
+def extract_sequences(file,genes,buffer,prefix):
 
     regex_for_contig_id = ">([a-zA-Z0-9_]+)"
 
@@ -116,23 +116,37 @@ def extract_sequences(file,genes,buffer,outfile):
         if stop > lengths[source]:
             stop = lengths[source]
 
-        sequence = contigs[source][start:stop]
-        sequence = sequence.upper() # remove any lowercase
+        # Generate both a buffered and unbuffered sequence. These files will
+        # be exactly the same if buffer==0
+        sequence1 = contigs[source][start:stop]
+        sequence1 = sequence1.upper() 
+
+        sequence2 = contigs[source][(int(vals[1]) - 1):int(vals[2])]
+        sequence2 = sequence2.upper() 
 
         if strand == "-": # if reverse strand, swap the bases
-            complement = {"A":"T","T":"A","G":"C","C":"G"}
-            mod_seq = ""
-            for base in sequence:
-                if base in complement:
-                    mod_seq += complement[base]
-                else: # just add Ns
-                    mod_seq += base
-
-            sequence = mod_seq
-            sequence = sequence[::-1]
+            sequence1 = rev_comp(sequence1)
+            sequence2 = rev_comp(sequence2)
 
         # Print out in standard FASTA format
-        write_fasta(outfile,id,sequence)
+        write_fasta("{0}_buffered.fsa".format(prefix),id,sequence1)
+        write_fasta("{0}_unbuffered.fsa".format(prefix),id,sequence2)
+
+# Function to build the reverse complement of a sequence
+def rev_comp(sequence):
+
+    complement = {"A":"T","T":"A","G":"C","C":"G"}
+    mod_seq = ""
+    for base in sequence:
+        if base in complement:
+            mod_seq += complement[base]
+        else: # just add Ns
+            mod_seq += base
+
+    sequence = mod_seq
+    sequence = sequence[::-1]
+
+    return sequence
 
 
 if __name__ == '__main__':

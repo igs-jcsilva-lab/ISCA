@@ -1,5 +1,5 @@
 gene_or_exon: "gene"
-outfile: "first_sequences.fsa"
+prefix: "test"
 buffer: 0
 ea_input:
     class: File

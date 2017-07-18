@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
-label: Encapsulates the entirety of the targeted assembly pipeline. This means phase_one -> (gsnap/smalt_workflow -> phase_two -> run_parallel_assembly -> phase_three) -- section wrapped in parentheses can do iterations
+label: Encapsulates the entirety of the targeted assembly pipeline. This means phase_one -> (gsnap/smalt_workflow -> phase_two -> run_parallel_assembly -> phase_three  -> run_parallel_assembly -> phase_three) -- section wrapped in parentheses can do iterations
 class: Workflow
 
 
@@ -36,8 +36,8 @@ inputs:
   gene_or_exon:
     label: Either "gene" or "exon" for which sequences to pull
     type: string
-  outfile:
-    label: Name of the output FASTA file to generate in current or existing directory
+  prefix:
+    label: Prefix of the output FASTA file to generate in current or existing directory
     type: string
   gsnap_genome:
     label: Name of the "genome" for GSNAP, really just a unique identifier for this index
@@ -88,9 +88,12 @@ outputs:
   ea_map:
     type: File
     outputSource: phase_one/ea_map
-  sequences:
+  buffered_sequences:
     type: File
-    outputSource: phase_one/sequences
+    outputSource: phase_one/buffered_sequences
+  unbuffered_sequences:
+    type: File
+    outputSource: phase_one/unbuffered_sequences
   gsnap_idx:
     type: Directory
     outputSource: phase_one/gsnap_idx
@@ -162,7 +165,7 @@ steps:
       ea_input: ea_input
       gene_or_exon: gene_or_exon
       buffer: buffer
-      outfile: outfile
+      prefix: prefix
       subset_list: subset_list
       python3_lib: python3_lib
     out: [
@@ -182,7 +185,8 @@ steps:
       HGA,
       scaffold_builder,
       ea_map,
-      sequences
+      buffered_sequences,
+      unbuffered_sequences
     ]
 
   gsnap:
@@ -192,7 +196,7 @@ steps:
       reads1: reads1
       reads2: reads2
       gsnap_genome: gsnap_genome
-      sequences: phase_one/sequences
+      sequences: phase_one/buffered_sequences
       gsnap_dir: phase_one/gsnap_idx
       python3_lib: python3_lib
     out: [

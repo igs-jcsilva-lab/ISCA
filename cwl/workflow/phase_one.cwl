@@ -28,8 +28,8 @@ inputs:
     label: How much of a buffer to add to each end of the gene/exon, defaults to 0
     type: int
 
-  outfile:
-    label: Name of the output FASTA file to generate in current or existing directory
+  prefix:
+    label: Prefix of the output FASTA file to generate in current or existing directory
     type: string
 
   python3_lib:
@@ -102,9 +102,13 @@ outputs:
     type: File
     outputSource: extract_alleles/ea_map
 
-  sequences:
+  buffered_sequences:
     type: File
-    outputSource: extract_sequences/sequences
+    outputSource: extract_sequences/buffered_sequences
+
+  unbuffered_sequences:
+    type: File
+    outputSource: extract_sequences/unbuffered_sequences
 
 
 steps:
@@ -145,6 +149,9 @@ steps:
       ea_map: extract_alleles/ea_map
       subset_list: subset_list
       buffer: buffer
-      outfile: outfile
+      prefix: prefix
       python3_lib: python3_lib
-    out: [sequences]
+    out: [
+      buffered_sequences,
+      unbuffered_sequences
+    ]

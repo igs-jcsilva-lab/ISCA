@@ -5,4 +5,4 @@ ea_map:
     class: File
     path: /Users/jmatsumura/targeted_assembly/solo_runs/3D7/ea_map.tsv
 buffer: 0
-outfile: "first_sequences.fsa"
+outfile: "test"
