@@ -47,6 +47,10 @@ inputs:
     inputBinding:
       position: 4
 
+  python3_lib:
+    label: Path tp allow Python3 to be found in the ENV
+    type: string?
+
 
 outputs:
 

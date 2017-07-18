@@ -52,6 +52,10 @@ inputs:
     inputBinding:
       position: 5
 
+  python3_lib:
+    label: Path tp allow Python3 to be found in the ENV
+    type: string?
+
 
 outputs:
   smalt_sam:

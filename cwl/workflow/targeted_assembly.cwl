@@ -19,6 +19,12 @@ inputs:
   subset_list:
     label: File with loci to subset the sequences by, simply include all if all are desired 
     type: File
+  reads1:
+    label: Path to the first read pair file
+    type: File
+  reads2:
+    label: Path to the second read pair file
+    type: File
 
   python3_lib:
     label: Path tp allow Python3 to be found in the ENV
@@ -29,9 +35,15 @@ inputs:
   outfile:
     label: Name of the output FASTA file to generate in current or existing directory
     type: string
+  gsnap_genome:
+    label: Name of the "genome" for GSNAP, really just a unique identifier for this index
+    type: string
 
   buffer:
     label: How much of a buffer to add to each end of the gene/exon, defaults to 0
+    type: int
+  aligner_threads:
+    label: Number of threads to use for alignment
     type: int
 
 
@@ -88,6 +100,10 @@ outputs:
     type: Directory
     outputSource: phase_one/second_end_results
 
+  gsnap_sam:
+    type: File
+    outputSource: gsnap/gsnap_sam
+
 
 steps:
   phase_one:
@@ -117,4 +133,18 @@ steps:
       scaffold_builder,
       ea_map,
       sequences
+    ]
+
+  gsnap:
+    run: gsnap_workflow.cwl
+    in:
+      threads: aligner_threads
+      reads1: reads1
+      reads2: reads2
+      gsnap_genome: gsnap_genome
+      sequences: phase_one/sequences
+      gsnap_dir: phase_one/gsnap_idx
+      python3_lib: python3_lib
+    out: [
+      gsnap_sam
     ]

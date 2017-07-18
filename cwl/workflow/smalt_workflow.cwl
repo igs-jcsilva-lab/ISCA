@@ -33,6 +33,10 @@ inputs:
     label: Path to the second read pair file
     type: File
 
+  python3_lib:
+    label: Path tp allow Python3 to be found in the ENV
+    type: string?
+
 
 outputs:
   smalt_files:
