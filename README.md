@@ -4,7 +4,6 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 ## Dependencies:
 - Python 3.5
   * [Biopython](https://pypi.python.org/pypi/biopython/1.66)
-    * [EMBOSS](http://emboss.open-bio.org/)
   * [pysam](https://pypi.python.org/pypi/pysam)
 - Python 2.7
   * Primarily needed for the externally developed scripts (HGA and Scaffold Builder)
@@ -15,6 +14,7 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 - [SPAdes](http://bioinf.spbau.ru/spades)
 - [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/)
 - [MUMmer](http://mummer.sourceforge.net/manual/)
+- [EMBOSS](http://emboss.open-bio.org/)
 - Python Scripts
   * [Hierarchical Genome Assembly Tool](https://github.com/jmatsumura/Hierarchical-Genome-Assembly-HGA)
     * [Original for reference](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
