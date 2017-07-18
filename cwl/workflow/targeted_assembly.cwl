@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
-label: Encapsulates the entirety of the targeted assembly pipeline. This means phase_one -> (gsnap/smalt_workflow -> phase_two -> run_parallel_assembly -> phase_three  -> run_parallel_assembly -> phase_three) -- section wrapped in parentheses can do iterations
+label: Encapsulates the entirety of the targeted assembly pipeline. This means phase_one -> (gsnap/smalt_workflow -> phase_two -> run_parallel_assembly -> phase_three  -> run_parallel_assembly -> phase_three) -- section wrapped in parentheses performs two iterations with different aligner at the start
 class: Workflow
 
 
@@ -115,9 +115,12 @@ outputs:
   first_alignments:
     type: Directory
     outputSource: phase_one/first_alignments
-  first_end_results:
+  first_intermediary_end_results:
     type: Directory
-    outputSource: phase_one/first_end_results
+    outputSource: phase_one/first_intermediary_end_results
+  first_final_end_results:
+    type: Directory
+    outputSource: phase_one/first_final_end_results
   second_reads:
     type: Directory
     outputSource: phase_one/second_reads
@@ -130,9 +133,12 @@ outputs:
   second_alignments:
     type: Directory
     outputSource: phase_one/second_alignments
-  second_end_results:
+  second_intermediary_end_results:
     type: Directory
-    outputSource: phase_one/second_end_results
+    outputSource: phase_one/second_intermediary_end_results
+  second_final_end_results:
+    type: Directory
+    outputSource: phase_one/second_final_end_results
 
   gsnap_sam:
     type: File
@@ -176,12 +182,14 @@ steps:
       first_spades_assemblies,
       first_hga_assemblies,
       first_alignments,
-      first_end_results,
+      first_intermediary_end_results,
+      first_final_end_results,
       second_reads,
       second_spades_assemblies,
       second_hga_assemblies,
       second_alignments,
-      second_end_results,
+      second_intermediary_end_results,
+      second_final_end_results,
       HGA,
       scaffold_builder,
       ea_map,

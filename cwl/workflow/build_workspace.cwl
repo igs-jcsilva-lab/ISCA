@@ -61,10 +61,15 @@ outputs:
     outputBinding:
       glob: $(inputs.workspace_location + '/first_alignments')
 
-  first_end_results:
+  first_intermediary_end_results:
     type: Directory
     outputBinding:
-      glob: $(inputs.workspace_location + '/first_end_results')
+      glob: $(inputs.workspace_location + '/first_intermediary_end_results')
+
+  first_final_end_results:
+    type: Directory
+    outputBinding:
+      glob: $(inputs.workspace_location + '/first_final_end_results')
 
   second_reads:
     type: Directory
@@ -86,10 +91,15 @@ outputs:
     outputBinding:
       glob: $(inputs.workspace_location + '/second_alignments')
 
-  second_end_results:
+  second_intermediary_end_results:
     type: Directory
     outputBinding:
-      glob: $(inputs.workspace_location + '/second_end_results')
+      glob: $(inputs.workspace_location + '/second_intermediary_end_results')
+
+  second_final_end_results:
+    type: Directory
+    outputBinding:
+      glob: $(inputs.workspace_location + '/second_final_end_results')
 
   HGA:
     type: File

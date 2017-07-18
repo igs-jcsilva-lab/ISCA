@@ -66,9 +66,13 @@ outputs:
     type: Directory
     outputSource: build_workspace/first_alignments
 
-  first_end_results:
+  first_intermediary_end_results:
     type: Directory
-    outputSource: build_workspace/first_end_results
+    outputSource: build_workspace/first_intermediary_end_results
+
+  first_final_end_results:
+    type: Directory
+    outputSource: build_workspace/first_final_end_results
 
   second_reads:
     type: Directory
@@ -86,9 +90,13 @@ outputs:
     type: Directory
     outputSource: build_workspace/second_alignments
 
-  second_end_results:
+  second_intermediary_end_results:
     type: Directory
-    outputSource: build_workspace/second_end_results
+    outputSource: build_workspace/second_intermediary_end_results
+
+  second_final_end_results:
+    type: Directory
+    outputSource: build_workspace/second_final_end_results
 
   HGA:
     type: File
@@ -124,12 +132,14 @@ steps:
       first_spades_assemblies,
       first_hga_assemblies,
       first_alignments,
-      first_end_results,
+      first_intermediary_end_results,
+      first_final_end_results,
       second_reads,
       second_spades_assemblies,
       second_hga_assemblies,
       second_alignments,
-      second_end_results,
+      second_intermediary_end_results,
+      second_final_end_results,
       HGA,
       scaffold_builder
     ]
