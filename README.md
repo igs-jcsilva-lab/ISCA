@@ -23,8 +23,8 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 * Annotated GFF3+FASTA file for a genome (FASTA containing the whole chromosomes/sequence-regions that matches the positions noted in GFF3)
 * OPTIONAL 
   * A mapped (via GMAP) annotated reference genome to any others if one wants to pool together reference loci to recruit reads for one locus' assembly across alleles
-* A TSV file noting the path of the GFF3+FASTA file(s) in the format specified in the top of [extract_alleles.py](https://github.com/jmatsumura/targeted_assembly/blob/master/bin/extract_alleles.py) -- (example)[https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/ea_input.tsv]
-* A list of loci to focus the assembly on -- (example)[https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/subset_list.txt]
+* A TSV file noting the path of the GFF3+FASTA file(s) in the format specified in the top of [extract_alleles.py](https://github.com/jmatsumura/targeted_assembly/blob/master/bin/extract_alleles.py) -- [example](https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/ea_input.tsv)
+* A list of loci to focus the assembly on -- [example](https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/subset_list.txt)
 * Two FASTQ paired reads files from the isolate to perform targeted assembly with
 
 ## Pipeline steps (all scripts found in ./bin)
