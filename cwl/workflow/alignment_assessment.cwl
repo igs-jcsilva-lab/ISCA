@@ -55,6 +55,10 @@ inputs:
     inputBinding:
       prefix: "--priority"
 
+  python3_lib:
+    label: Path to allow Python3 to be found in the ENV
+    type: string?
+    
 
 outputs:
   ids_v_cov:

@@ -1,23 +1,24 @@
 sam:
     class: File
-    path: /Users/jmatsumura/cwl_tests/little.sam
+    path: /local/scratch/matsu_cwl_tests/test/gsnap.sam
 ea_map:
     class: File
-    path: /Users/jmatsumura/targeted_assembly/solo_runs/3D7/ea_map.tsv
+    path: /local/scratch/matsu_cwl_tests/test/ea_map.tsv
 threshold: 50
 prefix: "first"
 reads_dir:
     class: Directory
-    path: ./first_reads
+    path: ./test/first_reads
 reads1:
     class: File
-    path: /Users/jmatsumura/cwl_tests/reads1.fastq.gz
+    path: /local/scratch/matsu_cwl_tests/demo_reads1.fastq.gz
 reads2: 
     class: File
-    path: /Users/jmatsumura/cwl_tests/reads2.fastq.gz
+    path: /local/scratch/matsu_cwl_tests/demo_reads2.fastq.gz
 filter: "no"
 paired_suffixes: "no"
 assmb_path:
     class: Directory
-    path: ./first_assemblies
+    path: ./test/first_spades_assemblies
 outfile: "first_assmb_map.tsv"
+python3_lib: "/usr/local/packages/python-3.5.2/lib"

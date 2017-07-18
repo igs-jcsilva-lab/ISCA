@@ -1,8 +1,9 @@
 sam:
     class: File
-    path: /Users/jmatsumura/cwl_tests/little.sam
+    path: /local/scratch/matsu_cwl_tests/test/gsnap.sam
 ea_map:
     class: File
-    path: /Users/jmatsumura/targeted_assembly/solo_runs/3D7/ea_map.tsv
+    path: /local/scratch/matsu_cwl_tests/test/ea_map.tsv
 threshold: 50
 prefix: "first"
+python3_lib: "/usr/local/packages/python-3.5.2/lib"

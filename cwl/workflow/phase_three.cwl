@@ -62,7 +62,7 @@ inputs:
     type: string
 
   python3_lib:
-    label: Path tp allow Python3 to be found in the ENV
+    label: Path to allow Python3 to be found in the ENV
     type: string
 
   number_of_jobs:

@@ -3,9 +3,12 @@ sequences:
     class: File
     path: /local/scratch/matsu_pf_work/testing.fasta
 threads: 2
+gsnap_dir:
+    class: Directory
+    path: /local/scratch/matsu_cwl_tests/test/gsnap_idx
 reads1:
     class: File
-    path: /local/scratch/matsu_pf_work/reads1.fastq.gz
+    path: /local/scratch/matsu_cwl_tests/demo_reads1.fastq.gz
 reads2: 
     class: File
-    path: /local/scratch/matsu_pf_work/reads2.fastq.gz
+    path: /local/scratch/matsu_cwl_tests/demo_reads2.fastq.gz

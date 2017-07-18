@@ -25,6 +25,10 @@ inputs:
     inputBinding:
       prefix: "--gene_or_exon"
 
+  python3_lib:
+    label: Path to allow Python3 to be found in the ENV
+    type: string?
+
 
 outputs:
   ea_map:

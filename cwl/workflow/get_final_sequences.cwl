@@ -49,6 +49,10 @@ inputs:
     inputBinding:
       prefix: "--outfile"
 
+  python3_lib:
+    label: Path to allow Python3 to be found in the ENV
+    type: string?
+
 
 outputs:
   final_sequences:

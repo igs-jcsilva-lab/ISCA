@@ -6,7 +6,10 @@ class: Workflow
 
 requirements:
   - class: InlineJavascriptRequirement
-
+  - class: EnvVarRequirement
+    envDef:
+      - envName: LD_LIBRARY_PATH
+        envValue: $(inputs.python3_lib)
 
 inputs:
   sam:
@@ -53,6 +56,10 @@ inputs:
     label: Name of the map to create which maps a reference locus to an int ID
     type: string
 
+  python3_lib:
+    label: Path to allow Python3 to be found in the ENV
+    type: string?
+
 
 outputs:
   read_map:
@@ -84,6 +91,7 @@ steps:
       ea_map: ea_map
       threshold: threshold
       prefix: prefix
+      python3_lib: python3_lib
     out: [read_map,ref_map]
 
   fastq_reads_to_fastq_alleles:
@@ -95,6 +103,7 @@ steps:
       ab_read_map: analyze_bam/read_map
       reads1: reads1
       reads2: reads2
+      python3_lib: python3_lib
     out: [assigned_reads_dir]
     
   format_for_assembly:
@@ -104,4 +113,5 @@ steps:
       assmb_path: assmb_path
       ab_ref_map: analyze_bam/ref_map
       outfile: outfile
+      python3_lib: python3_lib
     out: [renamed_reads_dir,renamed_assmb_dir,assmb_map]

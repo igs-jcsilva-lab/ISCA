@@ -1,5 +1,4 @@
 ea_input:
     class: File
-    path: /Users/jmatsumura/targeted_assembly/solo_runs/3D7/ea_input.tsv
-out_dir: "output"
+    path: ../../example_data/ea_input.tsv"
 gene_or_exon: "gene"

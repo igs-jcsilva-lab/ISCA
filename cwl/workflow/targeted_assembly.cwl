@@ -27,7 +27,7 @@ inputs:
     type: File
 
   python3_lib:
-    label: Path tp allow Python3 to be found in the ENV
+    label: Path to allow Python3 to be found in the ENV
     type: string
   gene_or_exon:
     label: Either "gene" or "exon" for which sequences to pull
@@ -38,6 +38,18 @@ inputs:
   gsnap_genome:
     label: Name of the "genome" for GSNAP, really just a unique identifier for this index
     type: string
+  filter:
+    label: Either "yes" or "no" for removing discrepancies + multi-locus mapping reads
+    type: string
+  first_paired_suffixes:
+    label: Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly
+    type: string
+  first_prefix:
+    label: Name of the prefix to yield the two maps (one read-based and one reference-based)
+    type: string
+  first_assmb_map:
+    label: Name of the map to create which maps a reference locus to an int ID
+    type: string
 
   buffer:
     label: How much of a buffer to add to each end of the gene/exon, defaults to 0
@@ -45,7 +57,9 @@ inputs:
   aligner_threads:
     label: Number of threads to use for alignment
     type: int
-
+  recruitment_threshold:
+    label: Percent cut-off for how many matches a read must hit (uses whichever is longer the read or reference as denominator)
+    type: int
 
 outputs:
   HGA:
@@ -104,6 +118,21 @@ outputs:
     type: File
     outputSource: gsnap/gsnap_sam
 
+  first_phase_two_assmb_map:
+    type: File
+    outputSource: first_phase_two/assmb_map
+  first_phase_two_read_map:
+    type: File
+    outputSource: first_phase_two/read_map
+  first_phase_two_ref_map:
+    type: File
+    outputSource: first_phase_two/ref_map
+  first_phase_renamed_reads_dir:
+    type: Directory
+    outputSource: first_phase_two/renamed_reads_dir
+  first_phase_renamed_assmb_dir:
+    type: Directory
+    outputSource: first_phase_two/renamed_assmb_dir
 
 steps:
   phase_one:
@@ -147,4 +176,27 @@ steps:
       python3_lib: python3_lib
     out: [
       gsnap_sam
+    ]
+
+  first_phase_two:
+    run: phase_two.cwl
+    in:
+      threshold: recruitment_threshold
+      prefix: first_prefix
+      filter: filter
+      paired_suffixes: first_paired_suffixes
+      reads1: reads1
+      reads2: reads2
+      outfile: first_assmb_map
+      ea_map: phase_one/ea_map
+      reads_dir: phase_one/first_reads
+      assmb_path: phase_one/first_spades_assemblies
+      sam: gsnap/gsnap_sam
+      python3_lib: python3_lib
+    out: [
+      read_map,
+      ref_map,
+      renamed_reads_dir,
+      renamed_assmb_dir,
+      assmb_map
     ]
