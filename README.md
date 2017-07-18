@@ -5,17 +5,16 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 - Python 3.5
   * [Biopython](https://pypi.python.org/pypi/biopython/1.66)
   * [pysam](https://pypi.python.org/pypi/pysam)
-- Python 2.7
-  * Primarily needed for the externally developed scripts (HGA and Scaffold Builder)
+- Python 2.7 (Needed for the externally developed scripts, HGA+Scaffold Builder, as well as CWL)
   * [cwlref-runner](https://pypi.python.org/pypi/cwlref-runner)
   * [pyyaml](https://pypi.python.org/pypi/PyYAML)
-- [GSNAP](http://research-pub.gene.com/gmap/)
-- [SMALT](http://www.sanger.ac.uk/science/tools/smalt-0)
-- [SPAdes](http://bioinf.spbau.ru/spades)
-- [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/)
-- [EMBOSS](http://emboss.open-bio.org/)
+- [GSNAP](http://research-pub.gene.com/gmap/) - tested with release 2017-01-14
+- [SMALT](http://www.sanger.ac.uk/science/tools/smalt-0) - tested with v0.7.6
+- [SPAdes](http://bioinf.spbau.ru/spades) - tested with v3.10.1
+- [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/) - tested with v1.2.10
+- [EMBOSS](http://emboss.open-bio.org/) - tested with v6.6.0.0
 - Python Scripts (automatically pulled when running the pipeline)
-  * [Hierarchical Genome Assembly Tool](https://github.com/jmatsumura/Hierarchical-Genome-Assembly-HGA)
+  * [Hierarchical Genome Assembly Tool (HGA)](https://github.com/jmatsumura/Hierarchical-Genome-Assembly-HGA)
     * [Original for reference](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
   * [Scaffold Builder](https://github.com/jmatsumura/Scaffold_builder)
     * [Original for reference](https://github.com/metageni/Scaffold_builder)
