@@ -13,9 +13,8 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 - [SMALT](http://www.sanger.ac.uk/science/tools/smalt-0)
 - [SPAdes](http://bioinf.spbau.ru/spades)
 - [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/)
-- [MUMmer](http://mummer.sourceforge.net/manual/)
 - [EMBOSS](http://emboss.open-bio.org/)
-- Python Scripts
+- Python Scripts (automatically pulled when running the pipeline)
   * [Hierarchical Genome Assembly Tool](https://github.com/jmatsumura/Hierarchical-Genome-Assembly-HGA)
     * [Original for reference](https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA)
   * [Scaffold Builder](https://github.com/jmatsumura/Scaffold_builder)
