@@ -10,6 +10,9 @@ reads1:
 reads2: 
     class: File
     path: /local/scratch/matsu_cwl_tests/demo_reads2.fastq.gz
+spades_install:
+    class: Directory
+    path: /usr/local/packages/spades
 python3_lib: "/usr/local/packages/python-3.5.2/lib"
 gene_or_exon: "gene"
 outfile: "first_sequences.fsa"
@@ -21,3 +24,6 @@ first_assmb_map: "first_assmb_map.tsv"
 buffer: 0
 aligner_threads: 20
 recruitment_threshold: 50
+number_of_jobs: 2
+threads_per_job: 6
+memory_per_job: 13

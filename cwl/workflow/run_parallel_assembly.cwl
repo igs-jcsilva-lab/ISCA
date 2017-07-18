@@ -31,7 +31,7 @@ inputs:
       prefix: "--assmb_map"
 
   assmb_step:
-    label: Either "gene" or "exon" for which sequences to pull
+    label: Either "SPAdes","HGA", or "SB"
     type: string
     inputBinding:
       prefix: "--assmb_step"

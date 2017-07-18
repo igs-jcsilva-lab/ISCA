@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
-label: Encapsulates the entirety of the targeted assembly pipeline. This means phase_one -> gsnap/smalt_workflow -> phase_two -> run_parallele_assembly -> phase_three
+label: Encapsulates the entirety of the targeted assembly pipeline. This means phase_one -> (gsnap/smalt_workflow -> phase_two -> run_parallel_assembly -> phase_three) -- section wrapped in parentheses can do iterations
 class: Workflow
 
 
@@ -26,6 +26,10 @@ inputs:
     label: Path to the second read pair file
     type: File
 
+  spades_install:
+    label: Location of the SPAdes installation
+    type: Directory
+
   python3_lib:
     label: Path to allow Python3 to be found in the ENV
     type: string
@@ -50,6 +54,10 @@ inputs:
   first_assmb_map:
     label: Name of the map to create which maps a reference locus to an int ID
     type: string
+  spades_assmb_step:
+    label: Static string to relate to the parallel assembly step which algorithm to use
+    type: string
+    default: "SPAdes"
 
   buffer:
     label: How much of a buffer to add to each end of the gene/exon, defaults to 0
@@ -59,6 +67,15 @@ inputs:
     type: int
   recruitment_threshold:
     label: Percent cut-off for how many matches a read must hit (uses whichever is longer the read or reference as denominator)
+    type: int
+  threads_per_job:
+    label: Number of threads to use for each assembly job
+    type: int
+  memory_per_job:
+    label: How much memory to limit for each individual assembly job
+    type: int
+  number_of_jobs:
+    label: Number of assembly jobs to spawn
     type: int
 
 outputs:
@@ -134,6 +151,10 @@ outputs:
     type: Directory
     outputSource: first_phase_two/renamed_assmb_dir
 
+  first_spades_assmb_dir:
+    type: Directory
+    outputSource: first_spades_assmb/assembled_dir
+
 steps:
   phase_one:
     run: phase_one.cwl
@@ -199,4 +220,20 @@ steps:
       renamed_reads_dir,
       renamed_assmb_dir,
       assmb_map
+    ]
+
+  first_spades_assmb:
+    run: run_parallel_assembly.cwl
+    in:
+      spades_install: spades_install
+      assmb_step: spades_assmb_step
+      number_of_jobs: number_of_jobs
+      threads_per_job: threads_per_job
+      memory_per_job: memory_per_job
+      assmb_map: first_phase_two/assmb_map
+      reads_dir: first_phase_two/renamed_reads_dir
+      assmb_path: first_phase_two/renamed_assmb_dir
+      python3_lib: python3_lib
+    out: [
+      assembled_dir
     ]

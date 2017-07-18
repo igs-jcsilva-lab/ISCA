@@ -36,7 +36,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
     # All are required, but different combinations for SPAdes, HGA, or SB.
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
-    parser.add_argument('--assmb_step', '-as', type=str, required=True, help='Either "SPAdes","HGA", or "SB".q')
+    parser.add_argument('--assmb_step', '-as', type=str, required=True, help='Either "SPAdes","HGA", or "SB"')
     parser.add_argument('--assmb_path', '-ap', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--number_of_jobs', '-n', type=int, required=True, help='Number of cores to call for individual processes.')
     parser.add_argument('--threads_per_job', '-t', default=1, type=int, required=False, help='Number of threads to invoke for each job.')

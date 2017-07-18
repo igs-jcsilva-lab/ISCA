@@ -1,7 +1,7 @@
 # targeted_assembly
 A pipeline to perform targeted assembly of individual loci given WGS reads, reference genome assemblies, and a primary reference annotation (GFF3)
 
-## Dependencies:
+## Dependencies
 - Python 3.5
   * [Biopython](https://pypi.python.org/pypi/biopython/1.66)
   * [pysam](https://pypi.python.org/pypi/pysam)
@@ -26,7 +26,7 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 * A TSV file noting the path of the GFF3+FASTA file(s) in the format specified in the top of [extract_alleles.py](https://github.com/jmatsumura/targeted_assembly/blob/master/bin/extract_alleles.py)
 * Two FASTQ paired reads files from the isolate to perform targeted assembly with
 
-## Pipeline steps (all scripts found in ./bin):
+## Pipeline steps (all scripts found in ./bin)
 1. Build a map for the alleles extracted from GFF3
   * `extract_alleles.py` 
 2. Extract sequences for all references given the previous scripts output
