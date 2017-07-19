@@ -25,7 +25,6 @@ def main():
 
     make_directory("{0}/gsnap_idx".format(args.workspace_location)) # stores GSNAP index
     make_directory("{0}/smalt_idx".format(args.workspace_location)) # stores SMALT index
-    make_directory("{0}/sam".format(args.workspace_location)) # alignment output
 
     # Aligner 1
     make_directory("{0}/first_reads".format(args.workspace_location)) # individual read sets per locus

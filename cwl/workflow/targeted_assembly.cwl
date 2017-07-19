@@ -133,12 +133,6 @@ inputs:
 
 
 outputs:
-  HGA:
-    type: File
-    outputSource: phase_one/HGA
-  scaffold_builder:
-    type: File
-    outputSource: phase_one/scaffold_builder
   ea_map:
     type: File
     outputSource: phase_one/ea_map
@@ -152,9 +146,6 @@ outputs:
     type: Directory
     outputSource: phase_one/gsnap_idx
   smalt_idx:
-    type: Directory
-    outputSource: phase_one/smalt_idx
-  sam_dir:
     type: Directory
     outputSource: phase_one/smalt_idx
   first_reads:
@@ -252,7 +243,6 @@ steps:
     out: [
       gsnap_idx,
       smalt_idx,
-      sam_dir,
       first_reads,
       first_spades_assemblies,
       first_hga_assemblies,

@@ -46,10 +46,6 @@ outputs:
     type: Directory
     outputSource: build_workspace/smalt_idx
 
-  sam_dir:
-    type: Directory
-    outputSource: build_workspace/smalt_idx
-
   first_reads:
     type: Directory
     outputSource: build_workspace/first_reads
@@ -127,7 +123,6 @@ steps:
     out: [
       gsnap_idx,
       smalt_idx,
-      sam_dir,
       first_reads,
       first_spades_assemblies,
       first_hga_assemblies,

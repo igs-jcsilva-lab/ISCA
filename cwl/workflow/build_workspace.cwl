@@ -36,11 +36,6 @@ outputs:
     outputBinding:
       glob: $(inputs.workspace_location + '/smalt_idx')
 
-  sam_dir:
-    type: Directory
-    outputBinding:
-      glob: $(inputs.workspace_location + '/sam')
-
   first_reads:
     type: Directory
     outputBinding:
