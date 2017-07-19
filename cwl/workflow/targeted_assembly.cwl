@@ -213,6 +213,16 @@ outputs:
     type: File
     outputSource: first_intermediary_phase_three/final_sequences
 
+  first_final_phase_three_ivc:
+    type: File
+    outputSource: first_final_phase_three/ids_v_cov
+  first_final_phase_three_am:
+    type: File
+    outputSource: first_final_phase_three/hga_assmb_map
+  first_final_phase_three_fs:
+    type: File
+    outputSource: first_final_phase_three/final_sequences
+
 
 steps:
   phase_one:
@@ -356,4 +366,31 @@ steps:
       python3_lib: python3_lib
     out: [
       assembled_dir
+    ]
+
+  first_final_phase_three:
+    run: phase_three.cwl
+    in:
+      emboss_tool: emboss_tool
+      min_align_len: min_align_len
+      threshold: aligner_threshold
+      assmb_type: hga_str
+      number_of_jobs: aligner_threads
+      best_only: best_only
+      groupby: groupby
+      ivc_outfile: first_final_ivc
+      sequences_outfile: first_final_sequences
+      prefix: first_final_prefix
+      ea_map: phase_one/ea_map
+      original_fsa: phase_one/unbuffered_sequences
+      original_buffered_fsa: phase_one/buffered_sequences
+      align_path: phase_one/first_alignments
+      assmb_map: first_intermediary_phase_three/hga_assmb_map
+      assmb_path: first_sb_assmb/assembled_dir
+      python3_lib: python3_lib
+    out: [
+      ids_v_cov,
+      leftovers,
+      hga_assmb_map,
+      final_sequences
     ]
