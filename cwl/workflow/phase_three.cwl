@@ -17,10 +17,6 @@ inputs:
     label: Path to map from format_for_assembly.cwl
     type: File
 
-  ref_genome:
-    label: Path to the reference genome file used to build aligner index
-    type: File
-
   emboss_tool:
     label: Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water])
     type: File
@@ -91,6 +87,10 @@ outputs:
     type: Directory
     outputSource: assembly_verdict/end_results
 
+  hga_assmb_map:
+    type: File
+    outputSource: assembly_verdict/hga_assmb_map
+
   final_sequences:
     type: File
     outputSource: get_final_sequences/final_sequences
@@ -133,7 +133,10 @@ steps:
       original_assmb_map: assmb_map
       out_dir: out_dir
       python3_lib: python3_lib
-    out: [end_results]
+    out: [
+      end_results,
+      hga_assmb_map
+      ]
     
   get_final_sequences:
     run: get_final_sequences.cwl

@@ -53,5 +53,10 @@ outputs:
     outputBinding:
       outputEval: $(inputs.out_dir)
 
+  hga_assmb_map:
+    type: File
+    outputBinding:
+      glob: $("*new_assmb_map*")
+
 
 baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/assembly_verdict.py"]

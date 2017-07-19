@@ -74,7 +74,7 @@ def main():
     leftovers = "{0}/total_leftovers.fasta".format(args.out_dir)
     extract_sequences(args.original_fsa,assembled,not_assembled,aligned,not_aligned,leftovers)
 
-    new_assmb_map = "{0}/new_assmb_map.tsv".format(args.out_dir)
+    new_assmb_map = "new_assmb_map.tsv"
     new_id = 1 # start a counter for new SGE ID for this assembly
     with open(new_assmb_map,'w') as o:
         with open(args.original_assmb_map,'r') as i:

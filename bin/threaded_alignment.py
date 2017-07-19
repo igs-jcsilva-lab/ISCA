@@ -38,7 +38,7 @@ def main():
     # First, extract the sequences from the reference file and 
     # *STORE IN MEMORY* (careful how big the reference genome used is.
     # We need this to generate small FASTA files for Needle alignment. 
-    seq_dict = SeqIO.to_dict(SeqIO.parse(args.ref_genome,"fasta"))
+    seq_dict = SeqIO.to_dict(SeqIO.parse(args.original_fsa,"fasta"))
 
     # In order to access these seqs efficiently, rebuild the DS created 
     # in extract_alleles.py. This is a dictionary where the key is the 
