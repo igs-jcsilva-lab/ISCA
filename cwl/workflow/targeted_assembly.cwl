@@ -48,21 +48,30 @@ inputs:
   prefix:
     label: Prefix of the output FASTA file to generate in current or existing directory
     type: string
+    default: "original_seqs"
   gsnap_genome:
     label: Name of the "genome" for GSNAP, really just a unique identifier for this index
     type: string
+    default: "gsnap"
+  smalt_prefix:
+    label: SMALT prefix for the indices built in smalt_index.cwl
+    type: string
+    default: "smalt"
   filter:
     label: Either "yes" or "no" for removing discrepancies + multi-locus mapping reads
     type: string
   first_paired_suffixes:
     label: Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly
     type: string
+    default: "no"
   first_prefix:
     label: Name of the prefix to yield the two maps (one read-based and one reference-based)
     type: string
+    default: "first"
   first_assmb_map:
     label: Name of the map to create which maps a reference locus to an int ID
     type: string
+    default: "first_assmb_map.tsv"
   spades_str:
     label: Static string to relate to the parallel assembly and alignment steps which algorithm is being handled
     type: string
@@ -84,39 +93,51 @@ inputs:
   first_intermediary_sequences:
     label: Name of first round SPAdes assembled seqs file
     type: string
+    default: "first_intermediary_sequences.fsa"
   first_final_sequences:
     label: Name of first round HGA assembled seqs file
     type: string
+    default: "first_final_sequences.fsa"
   first_intermediary_prefix:
     label: Prefix for the leftover FASTA seqs at this point
     type: string
+    default: "first_intermediary"
   first_final_prefix:
     label: Prefix for the leftover FASTA seqs at this point
     type: string
+    default: "first_final"
   second_intermediary_sequences:
     label: Name of first round SPAdes assembled seqs file
     type: string
+    default: "second_intermediary_sequences.fsa"
   second_final_sequences:
     label: Name of second round HGA assembled seqs file
     type: string
+    default: "second_final_sequences.fsa"
   second_intermediary_prefix:
     label: Prefix for the leftover FASTA seqs at this point
     type: string
+    default: "second_intermediary"
   second_final_prefix:
     label: Prefix for the leftover FASTA seqs at this point
     type: string
+    default: "second_final"
   first_intermediary_ivc:
     label: Name of IVC output file
     type: string
+    default: "first_intermediary_ivc.tsv"
   first_final_ivc:
     label: Name of IVC output file
     type: string
+    default: "first_final_ivc.tsv"
   second_intermediary_ivc:
     label: Name of IVC output file
     type: string
+    default: "second_intermediary_ivc.tsv"
   second_final_ivc:
     label: Name of IVC output file
     type: string
+    default: "second_final_ivc.tsv"
 
   buffer:
     label: How much of a buffer to add to each end of the gene/exon, defaults to 0

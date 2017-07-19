@@ -9,7 +9,7 @@ requirements:
 
 
 inputs:
-  smalt_prefix:
+  prefix:
     label: Name of the prefix used by SMALT
     type: string
 
@@ -54,7 +54,7 @@ steps:
     run: smalt_index.cwl
     in:
       smalt_dir: smalt_dir
-      smalt_prefix: smalt_prefix
+      prefix: smalt_prefix
       sequences: sequences
     out: [smalt_index_files]
 
@@ -62,7 +62,7 @@ steps:
     run: smalt_align.cwl
     in:
       smalt_dir: smalt_dir
-      smalt_prefix: smalt_prefix
+      prefix: smalt_prefix
       threads: threads
       reads1: reads1
       reads2: reads2

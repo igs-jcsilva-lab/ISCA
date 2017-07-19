@@ -13,7 +13,7 @@ inputs:
     label: SMALT directory for the two stored files
     type: Directory
 
-  smalt_prefix:
+  prefix:
     label: SMALT prefix for the indices built in smalt_index.cwl
     type: string
 
