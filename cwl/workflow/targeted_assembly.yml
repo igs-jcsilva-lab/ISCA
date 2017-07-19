@@ -13,9 +13,15 @@ reads2:
 emboss_tool: 
     class: File
     path: /usr/local/packages/emboss/bin/needle
+python2_exe:
+    class: File
+    path: /usr/local/packages/python-2.7.12/bin/python
 spades_install:
     class: Directory
     path: /usr/local/packages/spades
+velvet_install:
+    class: Directory
+    path: /usr/local/packages/velvet
 python3_lib: "/usr/local/packages/python-3.5.2/lib"
 gene_or_exon: "gene"
 prefix: "original_seqs"
@@ -35,6 +41,7 @@ first_final_ivc: "first_final_ivc.tsv"
 second_intermediary_ivc: "second_intermediary_ivc.tsv"
 second_final_ivc: "second_final_ivc.tsv"
 buffer: 0
+partitions: 2
 aligner_threads: 20
 recruitment_threshold: 50
 aligner_threshold: 90

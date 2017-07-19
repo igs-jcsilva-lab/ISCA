@@ -105,13 +105,8 @@ def spades_assemble(spades,reads,memory,threads,assmb_dir):
 
     subprocess.call(command.split())
 
-    for path,dirs,files in os.walk(assmb_dir):
-        for name in dirs: # directories need to go first
-            shutil.rmtree(os.path.join(path,name))
-        for name in files:
-            if 's.fasta' not in name:
-                if 'spades.log' not in name:
-                    os.remove(os.path.join(path,name))
+    keep_us = set(['contigs.fasta','spades.log'])
+    clean_up(assmb_dir,keep_us)
 
 # Worker for assembling via HGA
 # Arguments:
@@ -137,6 +132,9 @@ def hga_assemble(HGA,reads,assmb_dir,python2,velvet,spades,threads,partitions,me
 
     #
     # NOTE HARDCODED -PA SPAdes #
+    # Also, -ins and -std are set arbitrarily. This is because SPAdes is called
+    # for partition assembly and velvet is only called for building inputs for
+    # merged/combined assemblies. Thus, right now -ins/-std are not used. 
     #
     command = ("{0} {1} -velvet {2} -spades {3} -PA SPAdes -P12 {4} -R12 {5}"
          " -ins 150 -std 50 -Pkmer 31 -Rkmer 81 -t {6} -P {7} -out {8} -m {9}"
@@ -145,6 +143,9 @@ def hga_assemble(HGA,reads,assmb_dir,python2,velvet,spades,threads,partitions,me
     )
 
     subprocess.call(command.split())
+
+    keep_us = set(['contigs.fasta','spades.log','HGA.log','HGA_combined','HGA_merged'])
+    clean_up(assmb_dir,keep_us)
 
 # Worker for assembling via HGA
 # Arguments:
@@ -204,6 +205,22 @@ def sb_align(SB,assmb_dir,locus,python2,ea_map,fasta):
         subprocess.call(command.split())
         command = "{0} {1} -q {2} -r {3} -p {4}".format(python2,SB,query,r_fasta,r_out)
         subprocess.call(command.split())
+
+# Function to delete some directories/files made during assembly that are
+# extraneous and don't need to be captured in the output. 
+# Arguments:
+# relevant_dir = base directory to traverse and clean up
+# keep_set = set of strings/values to skip over, this should contain both 
+# directory and file names.
+def clean_up(relevant_dir,keep_set):
+
+    for path,dirs,files in os.walk(relevant_dir):
+        for name in dirs: # directories need to go first
+            if name not in keep_set:
+                shutil.rmtree(os.path.join(path,name))
+        for name in files:
+            if name not in keep_set:
+                os.remove(os.path.join(path,name))
 
 
 if __name__ == '__main__':

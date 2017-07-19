@@ -28,9 +28,15 @@ inputs:
   emboss_tool:
     label: Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water])
     type: File
+  python2_exe:
+    label: Location of the Python2 installation
+    type: File
 
   spades_install:
     label: Location of the SPAdes installation
+    type: Directory
+  velvet_install:
+    label: Location of the Velvet installation
     type: Directory
 
   python3_lib:
@@ -116,6 +122,9 @@ inputs:
     type: int
   number_of_jobs:
     label: Number of assembly jobs to spawn
+    type: int
+  partitions:
+    label: Number of partitions to use in HGA
     type: int
 
   min_align_len:
@@ -224,6 +233,10 @@ outputs:
   first_intermediary_phase_three_a:
     type: Directory
     outputSource: first_intermediary_phase_three/alignments
+
+  first_hga_assmb_dir:
+    type: Directory
+    outputSource: first_hga_assmb/assembled_dir
 
 
 steps:
@@ -337,4 +350,24 @@ steps:
       hga_assmb_map,
       final_results,
       final_sequences
+    ]
+
+  first_hga_assmb:
+    run: run_parallel_assembly.cwl
+    in:
+      spades_install: spades_install
+      velvet_install: velvet_install
+      assmb_step: hga_str
+      python2_exe: python2_exe
+      number_of_jobs: number_of_jobs
+      threads_per_job: threads_per_job
+      memory_per_job: memory_per_job
+      partitions: partitions
+      HGA_exe: phase_one/HGA
+      assmb_map: first_intermediary_phase_three/hga_assmb_map
+      reads_dir: first_phase_two/renamed_reads_dir
+      assmb_path: phase_one/first_hga_assemblies
+      python3_lib: python3_lib
+    out: [
+      assembled_dir
     ]
