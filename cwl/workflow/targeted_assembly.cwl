@@ -71,6 +71,10 @@ inputs:
     label: Static string to relate to the parallel assembly and alignment steps which algorithm is being handled
     type: string
     default: "HGA"
+  sb_str:
+    label: Static string to relate to the parallel assembly and alignment steps which algorithm is being handled
+    type: string
+    default: "SB"
   best_only:
     label: Either "yes" or "no" for whether to report stats of only the best alignment or all alignments
     type: string
@@ -198,16 +202,6 @@ outputs:
   first_phase_two_ref_map:
     type: File
     outputSource: first_phase_two/ref_map
-  first_phase_renamed_reads_dir:
-    type: Directory
-    outputSource: first_phase_two/renamed_reads_dir
-  first_phase_renamed_assmb_dir:
-    type: Directory
-    outputSource: first_phase_two/renamed_assmb_dir
-
-  first_spades_assmb_dir:
-    type: Directory
-    outputSource: first_spades_assmb/assembled_dir
 
   first_intermediary_phase_three_ivc:
     type: File
@@ -218,16 +212,6 @@ outputs:
   first_intermediary_phase_three_fs:
     type: File
     outputSource: first_intermediary_phase_three/final_sequences
-  first_intermediary_phase_three_fr:
-    type: Directory
-    outputSource: first_intermediary_phase_three/final_results
-  first_intermediary_phase_three_a:
-    type: Directory
-    outputSource: first_intermediary_phase_three/alignments
-
-  first_hga_assmb_dir:
-    type: Directory
-    outputSource: first_hga_assmb/assembled_dir
 
 
 steps:
@@ -357,6 +341,23 @@ steps:
       assmb_map: first_intermediary_phase_three/hga_assmb_map
       reads_dir: first_phase_two/renamed_reads_dir
       assmb_path: phase_one/first_hga_assemblies
+      python3_lib: python3_lib
+    out: [
+      assembled_dir
+    ]
+
+  first_sb_assmb:
+    run: run_parallel_assembly.cwl
+    in:
+      assmb_step: sb_str
+      python2_exe: python2_exe
+      number_of_jobs: number_of_jobs
+      SB_exe: phase_one/scaffold_builder
+      ea_map: phase_one/ea_map
+      original_fsa: phase_one/unbuffered_sequences
+      assmb_map: first_intermediary_phase_three/hga_assmb_map
+      reads_dir: first_phase_two/renamed_reads_dir
+      assmb_path: first_hga_assmb/assembled_dir
       python3_lib: python3_lib
     out: [
       assembled_dir

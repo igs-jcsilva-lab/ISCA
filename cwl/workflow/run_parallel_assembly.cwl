@@ -96,11 +96,11 @@ inputs:
     inputBinding:
       prefix: "--ea_map"
 
-  sequences:
-    label: Path to the sequence file built from extract_sequences.py
+  original_fsa:
+    label: Path to where the unbuffered FASTA file generated from extract_sequences is
     type: File?
     inputBinding:
-      prefix: "--fasta"
+      prefix: "--original_fsa"
 
   python3_lib:
     label: Path to allow Python3 to be found in the ENV

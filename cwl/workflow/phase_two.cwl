@@ -92,7 +92,10 @@ steps:
       threshold: threshold
       prefix: prefix
       python3_lib: python3_lib
-    out: [read_map,ref_map]
+    out: [
+      read_map,
+      ref_map
+      ]
 
   fastq_reads_to_fastq_alleles:
     run: fastq_reads_to_fastq_alleles.cwl
@@ -114,4 +117,8 @@ steps:
       ab_ref_map: analyze_bam/ref_map
       outfile: outfile
       python3_lib: python3_lib
-    out: [renamed_reads_dir,renamed_assmb_dir,assmb_map]
+    out: [
+      renamed_reads_dir,
+      renamed_assmb_dir,
+      assmb_map
+      ]

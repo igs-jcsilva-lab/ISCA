@@ -49,7 +49,7 @@ def main():
     parser.add_argument('--velvet_install', '-vi', type=str, required=False, help='Path to the the location of the velvet install.')
     parser.add_argument('--partitions', '-p', type=int, required=False, help='Number of partitions to split on during HGA.')
     parser.add_argument('--ea_map', '-eam', type=str, required=False, help='Path to the output from extract_alleles.py.')
-    parser.add_argument('--fasta', '-f', type=str, required=False, help='File that holds all the reference sequences to build scaffolds off of.')
+    parser.add_argument('--original_fsa', '-of', type=str, required=False, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
 
     args = parser.parse_args()
 
@@ -81,7 +81,7 @@ def main():
                 jobs.append(pool.apply_async(hga_assemble, (args.HGA_install,reads,assembly_out,args.python2_install,args.velvet_install,args.spades_install,args.threads_per_job,args.partitions,args.memory_per_job)))
 
             elif args.assmb_step == "SB":
-                jobs.append(pool.apply_async(sb_align, (args.SB_install,assembly_out,locus_id,args.python2_install,args.ea_map,args.fasta)))
+                jobs.append(pool.apply_async(sb_align, (args.SB_install,assembly_out,locus_id,args.python2_install,args.ea_map,args.original_fsa)))
 
     # Get all the returns from the apply_async function.
     for job in jobs:
