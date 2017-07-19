@@ -122,22 +122,10 @@ inputs:
     label: Prefix for the leftover FASTA seqs at this point
     type: string
     default: "second_final"
-  first_intermediary_ivc:
+  ivc:
     label: Name of IVC output file
     type: string
-    default: "first_intermediary_ivc.tsv"
-  first_final_ivc:
-    label: Name of IVC output file
-    type: string
-    default: "first_final_ivc.tsv"
-  second_intermediary_ivc:
-    label: Name of IVC output file
-    type: string
-    default: "second_intermediary_ivc.tsv"
-  second_final_ivc:
-    label: Name of IVC output file
-    type: string
-    default: "second_final_ivc.tsv"
+    default: "total_ivc.tsv"
 
   buffer:
     label: How much of a buffer to add to each end of the gene/exon, defaults to 0
@@ -243,6 +231,13 @@ outputs:
   first_final_phase_three_fs:
     type: File
     outputSource: first_final_phase_three/final_sequences
+  first_final_phase_three_lo:
+    type: File
+    outputSource: first_final_phase_three/leftovers
+
+  smalt_sam:
+    type: File
+    outputSource: smalt/smalt_sam
 
 
 steps:
@@ -336,7 +331,7 @@ steps:
       number_of_jobs: aligner_threads
       best_only: best_only
       groupby: groupby
-      ivc_outfile: first_intermediary_ivc
+      ivc_outfile: ivc
       sequences_outfile: first_intermediary_sequences
       prefix: first_intermediary_prefix
       ea_map: phase_one/ea_map
@@ -399,7 +394,7 @@ steps:
       number_of_jobs: aligner_threads
       best_only: best_only
       groupby: groupby
-      ivc_outfile: first_final_ivc
+      ivc_outfile: ivc
       sequences_outfile: first_final_sequences
       prefix: first_final_prefix
       ea_map: phase_one/ea_map
@@ -414,4 +409,18 @@ steps:
       leftovers,
       hga_assmb_map,
       final_sequences
+    ]
+
+  smalt:
+    run: smalt_workflow.cwl
+    in:
+      threads: aligner_threads
+      reads1: reads1
+      reads2: reads2
+      smalt_prefix: smalt_prefix
+      smalt_dir: phase_one/smalt_idx
+      sequences: first_final_phase_three/leftovers
+      python3_lib: python3_lib
+    out: [
+      smalt_sam
     ]

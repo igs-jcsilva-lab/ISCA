@@ -13,7 +13,7 @@ inputs:
     label: SMALT directory for the two stored files
     type: Directory
 
-  prefix:
+  smalt_prefix:
     label: Path to directory to build the SMALT index
     type: string
 

@@ -9,7 +9,7 @@ requirements:
 
 
 inputs:
-  prefix:
+  smalt_prefix:
     label: Name of the prefix used by SMALT
     type: string
 
@@ -54,16 +54,19 @@ steps:
     run: smalt_index.cwl
     in:
       smalt_dir: smalt_dir
-      prefix: smalt_prefix
+      smalt_prefix: smalt_prefix
       sequences: sequences
+      python3_lib: python3_lib
     out: [smalt_index_files]
 
   smalt_align:
     run: smalt_align.cwl
     in:
       smalt_dir: smalt_dir
-      prefix: smalt_prefix
+      smalt_prefix: smalt_prefix
+      index_files: smalt_index/smalt_index_files
       threads: threads
       reads1: reads1
       reads2: reads2
+      python3_lib: python3_lib
     out: [smalt_sam]

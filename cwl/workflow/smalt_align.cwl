@@ -13,9 +13,14 @@ inputs:
     label: SMALT directory for the two stored files
     type: Directory
 
-  prefix:
+  smalt_prefix:
     label: SMALT prefix for the indices built in smalt_index.cwl
     type: string
+
+  index_files:
+    type:
+      type: array
+      items: File
 
   threads:
     label: number of threads to use for running SMALT
