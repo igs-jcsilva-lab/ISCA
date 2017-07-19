@@ -87,11 +87,23 @@ inputs:
   first_final_sequences:
     label: Name of first round HGA assembled seqs file
     type: string
+  first_intermediary_prefix:
+    label: Prefix for the leftover FASTA seqs at this point
+    type: string
+  first_final_prefix:
+    label: Prefix for the leftover FASTA seqs at this point
+    type: string
   second_intermediary_sequences:
     label: Name of first round SPAdes assembled seqs file
     type: string
   second_final_sequences:
     label: Name of second round HGA assembled seqs file
+    type: string
+  second_intermediary_prefix:
+    label: Prefix for the leftover FASTA seqs at this point
+    type: string
+  second_final_prefix:
+    label: Prefix for the leftover FASTA seqs at this point
     type: string
   first_intermediary_ivc:
     label: Name of IVC output file
@@ -164,12 +176,6 @@ outputs:
   first_alignments:
     type: Directory
     outputSource: phase_one/first_alignments
-  first_intermediary_end_results:
-    type: Directory
-    outputSource: phase_one/first_intermediary_end_results
-  first_final_end_results:
-    type: Directory
-    outputSource: phase_one/first_final_end_results
   second_reads:
     type: Directory
     outputSource: phase_one/second_reads
@@ -182,12 +188,6 @@ outputs:
   second_alignments:
     type: Directory
     outputSource: phase_one/second_alignments
-  second_intermediary_end_results:
-    type: Directory
-    outputSource: phase_one/second_intermediary_end_results
-  second_final_end_results:
-    type: Directory
-    outputSource: phase_one/second_final_end_results
 
   gsnap_sam:
     type: File
@@ -231,14 +231,10 @@ steps:
       first_spades_assemblies,
       first_hga_assemblies,
       first_alignments,
-      first_intermediary_end_results,
-      first_final_end_results,
       second_reads,
       second_spades_assemblies,
       second_hga_assemblies,
       second_alignments,
-      second_intermediary_end_results,
-      second_final_end_results,
       HGA,
       scaffold_builder,
       ea_map,
@@ -311,18 +307,17 @@ steps:
       groupby: groupby
       ivc_outfile: first_intermediary_ivc
       sequences_outfile: first_intermediary_sequences
-      out_dir: phase_one/first_intermediary_end_results
+      prefix: first_intermediary_prefix
       ea_map: phase_one/ea_map
       original_fsa: phase_one/unbuffered_sequences
+      original_buffered_fsa: phase_one/buffered_sequences
       align_path: phase_one/first_alignments
       assmb_path: first_spades_assmb/assembled_dir
       assmb_map: first_phase_two/assmb_map
       python3_lib: python3_lib
     out: [
-      alignments,
       ids_v_cov,
       hga_assmb_map,
-      final_results,
       final_sequences
     ]
 
@@ -338,8 +333,8 @@ steps:
       memory_per_job: memory_per_job
       partitions: partitions
       HGA_exe: phase_one/HGA
-      assmb_map: first_intermediary_phase_three/hga_assmb_map
       reads_dir: first_phase_two/renamed_reads_dir
+      assmb_map: first_intermediary_phase_three/hga_assmb_map
       assmb_path: phase_one/first_hga_assemblies
       python3_lib: python3_lib
     out: [
@@ -355,8 +350,8 @@ steps:
       SB_exe: phase_one/scaffold_builder
       ea_map: phase_one/ea_map
       original_fsa: phase_one/unbuffered_sequences
-      assmb_map: first_intermediary_phase_three/hga_assmb_map
       reads_dir: first_phase_two/renamed_reads_dir
+      assmb_map: first_intermediary_phase_three/hga_assmb_map
       assmb_path: first_hga_assmb/assembled_dir
       python3_lib: python3_lib
     out: [

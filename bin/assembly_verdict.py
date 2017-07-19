@@ -19,7 +19,7 @@
 # a new set of assemblies for these particular loci.  
 #
 # Run the script using a command like this:
-# python3 final_verdict.py --ivc /path/to/ids_v_cov.tsv --threshold 80 --original_assmb_map /path/to/assmb_map.tsv --original_fsa /path/to/old.fsa --out_dir /path/to/new.fsa
+# python3 final_verdict.py --ivc /path/to/ids_v_cov.tsv --threshold 80 --original_assmb_map /path/to/assmb_map.tsv --original_fsa /path/to/old.fsa --prefix /path/to/my_prefix
 #
 # Author: James Matsumura
 
@@ -31,9 +31,9 @@ def main():
     parser = argparse.ArgumentParser(description='Script to assess the results of the base Targeted Assembly pipeline.')
     parser.add_argument('--ivc', '-i', type=str, required=True, help='Path to an ids_v_cov.tsv file from the previous run.')
     parser.add_argument('--threshold', '-t', type=float, required=True, help='Minimum threshold of %ID that needs to be met to pass final assembly.')
-    parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
+    parser.add_argument('--original_buffered_fsa', '-of', type=str, required=True, help='Path to where the buffered (buffer may be 0 so this will be same as unbuffered) FASTA from extract_sequences.py is.')
     parser.add_argument('--original_assmb_map', '-oam', type=str, required=True, help='Path to where the output from format_for_assembly.py is located.')
-    parser.add_argument('--out_dir', '-o', type=str, required=True, help='Path to where the unaligned/unassembled FASTA entries and the new alignments map should go.')
+    parser.add_argument('--prefix', '-p', type=str, required=True, help='Name of the prefix for the various FASTA files.')
     args = parser.parse_args()
 
     assembled,aligned = (set() for i in range(2))
@@ -69,12 +69,10 @@ def main():
             else:
                 aligned.add(locus)
 
-    not_assembled = "{0}/not_assembled.fasta".format(args.out_dir)
-    not_aligned = "{0}/not_aligned.fasta".format(args.out_dir)
-    leftovers = "{0}/total_leftovers.fasta".format(args.out_dir)
-    extract_sequences(args.original_fsa,assembled,not_assembled,aligned,not_aligned,leftovers)
+    leftovers = "{0}_leftovers.fasta".format(args.prefix)
+    extract_sequences(args.original_buffered_fsa,assembled,aligned,leftovers)
 
-    new_assmb_map = "new_assmb_map.tsv"
+    new_assmb_map = "{0}_new_assmb_map.tsv".format(args.prefix)
     new_id = 1 # start a counter for new SGE ID for this assembly
     with open(new_assmb_map,'w') as o:
         with open(args.original_assmb_map,'r') as i:
@@ -90,12 +88,10 @@ def main():
 
 # Arguments:
 # file = FASTA file
-# loci1 = set of loci that are already assembled well enough.  
-# loci2 = set of loci that at least aligned and tried to assemble.
-# outfile1 = output file to write unassembled to. 
-# outfile2 = output file to write unaligned to. 
-# outfile3 = both contents of outfile1 and outfile2
-def extract_sequences(file,assembled,outfile1,aligned,outfile2,outfile3):
+# assembled = set of loci that are already assembled well enough.  
+# aligned = set of loci that at least aligned and tried to assemble.
+# outfile = both contents of outfile1 and outfile2
+def extract_sequences(file,assembled,aligned,outfile):
 
     regex_for_contig_id = ">([a-zA-Z0-9_\.]+)"
 
@@ -126,12 +122,10 @@ def extract_sequences(file,assembled,outfile1,aligned,outfile2,outfile3):
                 contigs[current_id] += line # add all the bases
 
     for allele in not_assembled:
-        write_fasta(outfile1,allele,contigs[allele])
-        write_fasta(outfile3,allele,contigs[allele])
+        write_fasta(outfile,allele,contigs[allele])
 
     for allele in not_aligned:
-        write_fasta(outfile2,allele,contigs[allele])
-        write_fasta(outfile3,allele,contigs[allele])
+        write_fasta(outfile,allele,contigs[allele])
 
 
 if __name__ == '__main__':

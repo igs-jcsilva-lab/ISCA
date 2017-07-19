@@ -24,11 +24,11 @@ inputs:
     inputBinding:
       prefix: "--threshold"
 
-  original_fsa:
+  original_buffered_fsa:
     label: Path to where the unbuffered FASTA file generated from extract_sequences is
     type: File
     inputBinding:
-      prefix: "--original_fsa"
+      prefix: "--original_buffered_fsa"
 
   original_assmb_map:
     label: Path to where the output from format_for_assembly.py is located
@@ -36,11 +36,11 @@ inputs:
     inputBinding:
       prefix: "--original_assmb_map"
 
-  out_dir:
-    label: Path to where the unaligned/unassembled FASTA entries and the new alignments map should go
-    type: Directory
+  prefix:
+    label: Prefix for the output FASTA files to generate in current or existing directory
+    type: string
     inputBinding:
-      prefix: "--out_dir"
+      prefix: "--prefix"
 
   python3_lib:
     label: Path to allow Python3 to be found in the ENV
@@ -48,15 +48,15 @@ inputs:
 
 
 outputs:
-  end_results:
-    type: Directory
+  leftovers:
+    type: File
     outputBinding:
-      outputEval: $(inputs.out_dir)
+      glob: $("*leftovers*")
 
   hga_assmb_map:
     type: File
     outputBinding:
-      glob: $("*new_assmb_map*")
+      glob: $("*assmb*")
 
 
 baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/assembly_verdict.py"]

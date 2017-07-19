@@ -25,6 +25,10 @@ inputs:
     label: Path to where the initial FASTA file generated from the pipeline is
     type: File
 
+  original_buffered_fsa:
+    label: Path to where the initial, with any padding, FASTA file generated from the pipeline is
+    type: File
+
   assmb_path:
     label: Path to the the directory to initialize directories for all the assembly output
     type: Directory
@@ -33,9 +37,9 @@ inputs:
     label: Path to output directory for all these alignments.
     type: Directory
 
-  out_dir:
-    label: Path to where the unaligned/unassembled FASTA entries and the new alignments map should go
-    type: Directory
+  prefix:
+    label: Prefix for the output FASTA files to generate in current or existing directory
+    type: string
 
   assmb_type:
     label: Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to
@@ -83,9 +87,9 @@ outputs:
     type: File
     outputSource: alignment_assessment/ids_v_cov
 
-  final_results:
-    type: Directory
-    outputSource: assembly_verdict/end_results
+  leftovers:
+    type: File
+    outputSource: assembly_verdict/leftovers
 
   hga_assmb_map:
     type: File
@@ -129,12 +133,12 @@ steps:
     in:
       ivc: alignment_assessment/ids_v_cov
       threshold: threshold
-      original_fsa: original_fsa
+      original_buffered_fsa: original_buffered_fsa
       original_assmb_map: assmb_map
-      out_dir: out_dir
+      prefix: prefix
       python3_lib: python3_lib
     out: [
-      end_results,
+      leftovers,
       hga_assmb_map
       ]
     
