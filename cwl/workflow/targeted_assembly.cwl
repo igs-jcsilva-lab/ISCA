@@ -25,6 +25,9 @@ inputs:
   reads2:
     label: Path to the second read pair file
     type: File
+  emboss_tool:
+    label: Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water])
+    type: File
 
   spades_install:
     label: Location of the SPAdes installation
@@ -54,10 +57,44 @@ inputs:
   first_assmb_map:
     label: Name of the map to create which maps a reference locus to an int ID
     type: string
-  spades_assmb_step:
-    label: Static string to relate to the parallel assembly step which algorithm to use
+  spades_str:
+    label: Static string to relate to the parallel assembly and alignment steps which algorithm is being handled
     type: string
     default: "SPAdes"
+  hga_str:
+    label: Static string to relate to the parallel assembly and alignment steps which algorithm is being handled
+    type: string
+    default: "HGA"
+  best_only:
+    label: Either "yes" or "no" for whether to report stats of only the best alignment or all alignments
+    type: string
+  groupby:
+    label: Get sequences by loci, alleles/exons, or CDS (could also be exons if extracted at ea_map step), choose either "l", "ae", or "cds"
+    type: string
+  first_intermediary_sequences:
+    label: Name of first round SPAdes assembled seqs file
+    type: string
+  first_final_sequences:
+    label: Name of first round HGA assembled seqs file
+    type: string
+  second_intermediary_sequences:
+    label: Name of first round SPAdes assembled seqs file
+    type: string
+  second_final_sequences:
+    label: Name of second round HGA assembled seqs file
+    type: string
+  first_intermediary_ivc:
+    label: Name of IVC output file
+    type: string
+  first_final_ivc:
+    label: Name of IVC output file
+    type: string
+  second_intermediary_ivc:
+    label: Name of IVC output file
+    type: string
+  second_final_ivc:
+    label: Name of IVC output file
+    type: string
 
   buffer:
     label: How much of a buffer to add to each end of the gene/exon, defaults to 0
@@ -68,6 +105,9 @@ inputs:
   recruitment_threshold:
     label: Percent cut-off for how many matches a read must hit (uses whichever is longer the read or reference as denominator)
     type: int
+  aligner_threshold:
+    label: Minimum threshold of %ID that needs to be met to pass final assembly
+    type: int
   threads_per_job:
     label: Number of threads to use for each assembly job
     type: int
@@ -77,6 +117,11 @@ inputs:
   number_of_jobs:
     label: Number of assembly jobs to spawn
     type: int
+
+  min_align_len:
+    label: Minimum alignment length to perform alignment with (RATIO)
+    type: double
+
 
 outputs:
   HGA:
@@ -164,6 +209,23 @@ outputs:
     type: Directory
     outputSource: first_spades_assmb/assembled_dir
 
+  first_intermediary_phase_three_ivc:
+    type: File
+    outputSource: first_intermediary_phase_three/ids_v_cov
+  first_intermediary_phase_three_am:
+    type: File
+    outputSource: first_intermediary_phase_three/hga_assmb_map
+  first_intermediary_phase_three_fs:
+    type: File
+    outputSource: first_intermediary_phase_three/final_sequences
+  first_intermediary_phase_three_fr:
+    type: Directory
+    outputSource: first_intermediary_phase_three/final_results
+  first_intermediary_phase_three_a:
+    type: Directory
+    outputSource: first_intermediary_phase_three/alignments
+
+
 steps:
   phase_one:
     run: phase_one.cwl
@@ -238,7 +300,7 @@ steps:
     run: run_parallel_assembly.cwl
     in:
       spades_install: spades_install
-      assmb_step: spades_assmb_step
+      assmb_step: spades_str
       number_of_jobs: number_of_jobs
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
@@ -248,4 +310,31 @@ steps:
       python3_lib: python3_lib
     out: [
       assembled_dir
+    ]
+
+  first_intermediary_phase_three:
+    run: phase_three.cwl
+    in:
+      emboss_tool: emboss_tool
+      min_align_len: min_align_len
+      threshold: aligner_threshold
+      assmb_type: spades_str
+      number_of_jobs: aligner_threads
+      best_only: best_only
+      groupby: groupby
+      ivc_outfile: first_intermediary_ivc
+      sequences_outfile: first_intermediary_sequences
+      out_dir: phase_one/first_intermediary_end_results
+      ea_map: phase_one/ea_map
+      original_fsa: phase_one/unbuffered_sequences
+      align_path: phase_one/first_alignments
+      assmb_path: first_spades_assmb/assembled_dir
+      assmb_map: first_phase_two/assmb_map
+      python3_lib: python3_lib
+    out: [
+      alignments,
+      ids_v_cov,
+      hga_assmb_map,
+      final_results,
+      final_sequences
     ]
