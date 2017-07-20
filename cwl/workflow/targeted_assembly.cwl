@@ -267,6 +267,10 @@ outputs:
     type: File
     outputSource: second_final_phase_three/final_sequences
 
+  assembled_seqs:
+    type: File
+    outputSource: gather_sequences/all_seqs
+
 
 steps:
   phase_one:
@@ -582,4 +586,14 @@ steps:
       leftovers,
       hga_assmb_map,
       final_sequences
+    ]
+
+  gather_sequences:
+    run: combine_assembled.cwl
+    in:
+        first_final: first_final_phase_three/final_sequences
+        second_final: second_final_phase_three/final_sequences
+        python3_lib: python3_lib
+    out: [
+      all_seqs
     ]

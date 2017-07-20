@@ -1,0 +1,6 @@
+first_final:
+    class: File
+    path: /Users/jmatsumura/dev/targeted_assembly/cwl/workflow/test1.txt
+second_final:
+    class: File
+    path: /Users/jmatsumura/dev/targeted_assembly/cwl/workflow/test1.txt
