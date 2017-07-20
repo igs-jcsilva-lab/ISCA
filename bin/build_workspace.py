@@ -49,5 +49,8 @@ def main():
         data = response.read() # a `bytes` object
         out_file.write(data)
 
+    open("{0}/ids_v_cov.tsv".format(args.workspace_location),'w').close()
+
+
 if __name__ == '__main__':
     main()

@@ -31,11 +31,11 @@ inputs:
     inputBinding:
       prefix: "--align_path"
 
-  outfile:
-    label: Name of output file
-    type: string
+  ivc_outfile:
+    label: Path to the ids_v_cov.tsv outfile
+    type: File
     inputBinding:
-      prefix: "--outfile"
+      prefix: "--ivc_outfile"
 
   best_only:
     label: Either "yes" or "no" for whether to report stats of only the best alignment or all alignments
@@ -64,7 +64,7 @@ outputs:
   ids_v_cov:
     type: File
     outputBinding:
-      glob: $(inputs.outfile)
+      outputEval: $(inputs.ivc_outfile)
 
 
 baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/threaded_assess_alignment.py"]

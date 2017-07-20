@@ -47,7 +47,7 @@ inputs:
 
   ivc_outfile:
     label: Name of output file
-    type: string
+    type: File
 
   sequences_outfile:
     label: Name of output file
@@ -123,7 +123,7 @@ steps:
       align_path: alignment/aligned_dir
       number_of_jobs: number_of_jobs
       assmb_type: assmb_type
-      outfile: ivc_outfile
+      ivc_outfile: ivc_outfile
       best_only: best_only
       python3_lib: python3_lib
     out: [ids_v_cov]

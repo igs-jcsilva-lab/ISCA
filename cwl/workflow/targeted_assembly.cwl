@@ -122,10 +122,6 @@ inputs:
     label: Prefix for the leftover FASTA seqs at this point
     type: string
     default: "second_final"
-  ivc:
-    label: Name of IVC output file
-    type: string
-    default: "total_ivc.tsv"
 
   buffer:
     label: How much of a buffer to add to each end of the gene/exon, defaults to 0
@@ -158,6 +154,9 @@ inputs:
 
 
 outputs:
+  ivc:
+    type: File
+    outputSource: phase_one/ivc
   ea_map:
     type: File
     outputSource: phase_one/ea_map
@@ -263,6 +262,7 @@ steps:
       second_alignments,
       HGA,
       scaffold_builder,
+      ivc,
       ea_map,
       buffered_sequences,
       unbuffered_sequences
@@ -331,7 +331,7 @@ steps:
       number_of_jobs: aligner_threads
       best_only: best_only
       groupby: groupby
-      ivc_outfile: ivc
+      ivc_outfile: phase_one/ivc
       sequences_outfile: first_intermediary_sequences
       prefix: first_intermediary_prefix
       ea_map: phase_one/ea_map
@@ -394,7 +394,7 @@ steps:
       number_of_jobs: aligner_threads
       best_only: best_only
       groupby: groupby
-      ivc_outfile: ivc
+      ivc_outfile: phase_one/ivc
       sequences_outfile: first_final_sequences
       prefix: first_final_prefix
       ea_map: phase_one/ea_map
