@@ -61,17 +61,28 @@ inputs:
     label: Either "yes" or "no" for removing discrepancies + multi-locus mapping reads
     type: string
   first_paired_suffixes:
-    label: Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly
+    label: Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly. GSNAP always trims so leave this as "no". 
     type: string
     default: "no"
+  second_paired_suffixes:
+    label: Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly. GSNAP always trims so leave this as "no". 
+    type: string
   first_prefix:
     label: Name of the prefix to yield the two maps (one read-based and one reference-based)
     type: string
     default: "first"
+  second_prefix:
+    label: Name of the prefix to yield the two maps (one read-based and one reference-based)
+    type: string
+    default: "second"
   first_assmb_map:
     label: Name of the map to create which maps a reference locus to an int ID
     type: string
     default: "first_assmb_map.tsv"
+  second_assmb_map:
+    label: Name of the map to create which maps a reference locus to an int ID
+    type: string
+    default: "second_assmb_map.tsv"
   spades_str:
     label: Static string to relate to the parallel assembly and alignment steps which algorithm is being handled
     type: string
@@ -211,9 +222,6 @@ outputs:
     type: File
     outputSource: first_phase_two/ref_map
 
-  first_intermediary_phase_three_ivc:
-    type: File
-    outputSource: first_intermediary_phase_three/ids_v_cov
   first_intermediary_phase_three_am:
     type: File
     outputSource: first_intermediary_phase_three/hga_assmb_map
@@ -237,6 +245,16 @@ outputs:
   smalt_sam:
     type: File
     outputSource: smalt/smalt_sam
+
+  second_phase_two_assmb_map:
+    type: File
+    outputSource: second_phase_two/assmb_map
+  second_phase_two_read_map:
+    type: File
+    outputSource: second_phase_two/read_map
+  second_phase_two_ref_map:
+    type: File
+    outputSource: second_phase_two/ref_map
 
 
 steps:
@@ -423,4 +441,43 @@ steps:
       python3_lib: python3_lib
     out: [
       smalt_sam
+    ]
+
+  second_phase_two:
+    run: phase_two.cwl
+    in:
+      threshold: recruitment_threshold
+      prefix: second_prefix
+      filter: filter
+      paired_suffixes: second_paired_suffixes
+      reads1: reads1
+      reads2: reads2
+      outfile: second_assmb_map
+      ea_map: phase_one/ea_map
+      reads_dir: phase_one/second_reads
+      assmb_path: phase_one/second_spades_assemblies
+      sam: smalt/smalt_sam
+      python3_lib: python3_lib
+    out: [
+      read_map,
+      ref_map,
+      renamed_reads_dir,
+      renamed_assmb_dir,
+      assmb_map
+    ]
+
+  second_spades_assmb:
+    run: run_parallel_assembly.cwl
+    in:
+      spades_install: spades_install
+      assmb_step: spades_str
+      number_of_jobs: number_of_jobs
+      threads_per_job: threads_per_job
+      memory_per_job: memory_per_job
+      assmb_map: second_phase_two/assmb_map
+      reads_dir: second_phase_two/renamed_reads_dir
+      assmb_path: second_phase_two/renamed_assmb_dir
+      python3_lib: python3_lib
+    out: [
+      assembled_dir
     ]

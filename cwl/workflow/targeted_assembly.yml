@@ -33,7 +33,7 @@ best_only: "no"
 groupby: "l"
 buffer: 0
 partitions: 2
-recruitment_threshold: 50
+recruitment_threshold: 75
 aligner_threshold: 90
 min_align_len: 0.7
 
