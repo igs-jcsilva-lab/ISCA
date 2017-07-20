@@ -76,10 +76,15 @@ outputs:
     outputBinding:
       glob: $(inputs.workspace_location + '/second_alignments')
 
-  ivc:
+  first_ivc:
     type: File
     outputBinding:
-      glob: $(inputs.workspace_location + '/ids_v_cov.tsv')
+      glob: $(inputs.workspace_location + '/first_ids_v_cov.tsv')
+
+  second_ivc:
+    type: File
+    outputBinding:
+      glob: $(inputs.workspace_location + '/second_ids_v_cov.tsv')
 
   HGA:
     type: File

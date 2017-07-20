@@ -165,9 +165,12 @@ inputs:
 
 
 outputs:
-  ivc:
+  first_ivc:
     type: File
-    outputSource: phase_one/ivc
+    outputSource: phase_one/first_ivc
+  second_ivc:
+    type: File
+    outputSource: phase_one/second_ivc
   ea_map:
     type: File
     outputSource: phase_one/ea_map
@@ -256,6 +259,13 @@ outputs:
     type: File
     outputSource: second_phase_two/ref_map
 
+  second_intermediary_phase_three_am:
+    type: File
+    outputSource: second_intermediary_phase_three/hga_assmb_map
+  second_intermediary_phase_three_fs:
+    type: File
+    outputSource: second_intermediary_phase_three/final_sequences
+
 
 steps:
   phase_one:
@@ -280,7 +290,8 @@ steps:
       second_alignments,
       HGA,
       scaffold_builder,
-      ivc,
+      first_ivc,
+      second_ivc,
       ea_map,
       buffered_sequences,
       unbuffered_sequences
@@ -349,7 +360,7 @@ steps:
       number_of_jobs: aligner_threads
       best_only: best_only
       groupby: groupby
-      ivc_outfile: phase_one/ivc
+      ivc_outfile: phase_one/first_ivc
       sequences_outfile: first_intermediary_sequences
       prefix: first_intermediary_prefix
       ea_map: phase_one/ea_map
@@ -412,7 +423,7 @@ steps:
       number_of_jobs: aligner_threads
       best_only: best_only
       groupby: groupby
-      ivc_outfile: phase_one/ivc
+      ivc_outfile: phase_one/first_ivc
       sequences_outfile: first_final_sequences
       prefix: first_final_prefix
       ea_map: phase_one/ea_map
@@ -480,4 +491,30 @@ steps:
       python3_lib: python3_lib
     out: [
       assembled_dir
+    ]
+
+  second_intermediary_phase_three:
+    run: phase_three.cwl
+    in:
+      emboss_tool: emboss_tool
+      min_align_len: min_align_len
+      threshold: aligner_threshold
+      assmb_type: spades_str
+      number_of_jobs: aligner_threads
+      best_only: best_only
+      groupby: groupby
+      ivc_outfile: phase_one/second_ivc
+      sequences_outfile: second_intermediary_sequences
+      prefix: second_intermediary_prefix
+      ea_map: phase_one/ea_map
+      original_fsa: phase_one/unbuffered_sequences
+      original_buffered_fsa: phase_one/buffered_sequences
+      align_path: phase_one/second_alignments
+      assmb_path: second_spades_assmb/assembled_dir
+      assmb_map: second_phase_two/assmb_map
+      python3_lib: python3_lib
+    out: [
+      ids_v_cov,
+      hga_assmb_map,
+      final_sequences
     ]

@@ -49,7 +49,9 @@ def main():
         data = response.read() # a `bytes` object
         out_file.write(data)
 
-    open("{0}/ids_v_cov.tsv".format(args.workspace_location),'w').close()
+    # "touch" these files
+    open("{0}/first_ids_v_cov.tsv".format(args.workspace_location),'w').close()
+    open("{0}/second_ids_v_cov.tsv".format(args.workspace_location),'w').close()
 
 
 if __name__ == '__main__':

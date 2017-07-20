@@ -86,9 +86,13 @@ outputs:
     type: File
     outputSource: build_workspace/scaffold_builder
 
-  ivc:
+  first_ivc:
     type: File
-    outputSource: build_workspace/ivc
+    outputSource: build_workspace/first_ivc
+
+  second_ivc:
+    type: File
+    outputSource: build_workspace/second_ivc
 
   ea_map:
     type: File
@@ -121,7 +125,8 @@ steps:
       second_alignments,
       HGA,
       scaffold_builder,
-      ivc
+      first_ivc,
+      second_ivc
     ]
 
   extract_alleles:
