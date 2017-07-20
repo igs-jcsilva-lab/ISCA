@@ -232,18 +232,12 @@ outputs:
     type: File
     outputSource: first_intermediary_phase_three/final_sequences
 
-  first_final_phase_three_ivc:
-    type: File
-    outputSource: first_final_phase_three/ids_v_cov
   first_final_phase_three_am:
     type: File
     outputSource: first_final_phase_three/hga_assmb_map
   first_final_phase_three_fs:
     type: File
     outputSource: first_final_phase_three/final_sequences
-  first_final_phase_three_lo:
-    type: File
-    outputSource: first_final_phase_three/leftovers
 
   smalt_sam:
     type: File
@@ -265,6 +259,13 @@ outputs:
   second_intermediary_phase_three_fs:
     type: File
     outputSource: second_intermediary_phase_three/final_sequences
+
+  second_final_phase_three_am:
+    type: File
+    outputSource: second_final_phase_three/hga_assmb_map
+  second_final_phase_three_fs:
+    type: File
+    outputSource: second_final_phase_three/final_sequences
 
 
 steps:
@@ -515,6 +516,70 @@ steps:
       python3_lib: python3_lib
     out: [
       ids_v_cov,
+      hga_assmb_map,
+      final_sequences
+    ]
+
+  second_hga_assmb:
+    run: run_parallel_assembly.cwl
+    in:
+      spades_install: spades_install
+      velvet_install: velvet_install
+      assmb_step: hga_str
+      python2_exe: python2_exe
+      number_of_jobs: number_of_jobs
+      threads_per_job: threads_per_job
+      memory_per_job: memory_per_job
+      partitions: partitions
+      HGA_exe: phase_one/HGA
+      reads_dir: second_phase_two/renamed_reads_dir
+      assmb_map: second_intermediary_phase_three/hga_assmb_map
+      assmb_path: phase_one/second_hga_assemblies
+      python3_lib: python3_lib
+    out: [
+      assembled_dir
+    ]
+
+  second_sb_assmb:
+    run: run_parallel_assembly.cwl
+    in:
+      assmb_step: sb_str
+      python2_exe: python2_exe
+      number_of_jobs: number_of_jobs
+      SB_exe: phase_one/scaffold_builder
+      ea_map: phase_one/ea_map
+      original_fsa: phase_one/unbuffered_sequences
+      reads_dir: second_phase_two/renamed_reads_dir
+      assmb_map: second_intermediary_phase_three/hga_assmb_map
+      assmb_path: second_hga_assmb/assembled_dir
+      python3_lib: python3_lib
+    out: [
+      assembled_dir
+    ]
+
+  second_final_phase_three:
+    run: phase_three.cwl
+    in:
+      emboss_tool: emboss_tool
+      min_align_len: min_align_len
+      threshold: aligner_threshold
+      assmb_type: hga_str
+      number_of_jobs: aligner_threads
+      best_only: best_only
+      groupby: groupby
+      ivc_outfile: phase_one/second_ivc
+      sequences_outfile: second_final_sequences
+      prefix: second_final_prefix
+      ea_map: phase_one/ea_map
+      original_fsa: phase_one/unbuffered_sequences
+      original_buffered_fsa: phase_one/buffered_sequences
+      align_path: phase_one/second_alignments
+      assmb_map: second_intermediary_phase_three/hga_assmb_map
+      assmb_path: second_sb_assmb/assembled_dir
+      python3_lib: python3_lib
+    out: [
+      ids_v_cov,
+      leftovers,
       hga_assmb_map,
       final_sequences
     ]
