@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 # This script follows extract_alleles.py. This expects the output from that 
 # script in addition to the same list used as input for that script. The 
@@ -13,7 +13,7 @@
 # that lack a buffer when it comes to the alignment steps.  
 # 
 # Run the script using a command like this:
-# python3 extract_sequences.py --ea_input /path/to/list_input.tsv --ea_map /path/to/out_from_extract_alleles.tsv --prefix /path/to/my_seqs --buffer 20
+# extract_sequences.py --ea_input /path/to/list_input.tsv --ea_map /path/to/out_from_extract_alleles.tsv --prefix /path/to/my_seqs --buffer 20
 #
 # Author: James Matsumura
 

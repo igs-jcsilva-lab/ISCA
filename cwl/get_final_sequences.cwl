@@ -61,4 +61,4 @@ outputs:
       glob: $(inputs.outfile)
 
 
-baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/get_final_sequences.py"]
+baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/get_final_sequences.py"]

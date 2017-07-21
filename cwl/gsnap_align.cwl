@@ -71,4 +71,4 @@ outputs:
 stdout: 'gsnap.sam'
 
 
-baseCommand: ["/usr/local/packages/gmap-gsnap/bin/gsnap"]
+baseCommand: ["GSNAP_BIN/gsnap"]

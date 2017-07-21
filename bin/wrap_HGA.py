@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 # This script wraps the script to perform Hierarchical Genome Assembly (HGA):
 # (https://github.com/aalokaily/Hierarchical-Genome-Assembly-HGA).
@@ -11,7 +11,7 @@
 # the output directory for HGA to write to, and the SGE ID. 
 #
 # Run the script using a command like this:
-# python3 wrap_HGA.py --python /path/to/python-2.7 --assembly_verdict_map /path/to/final_verdict_out.tsv --hga /path/to/HGA.py --velvet /path/to/velvet --spades /path/to/spades --insert insert_size -std standard_deviation --threads num_of_threads 6 --reads_dir /path/to/reads_dir --out_dir /path/to/out_dir --sge_id 1 -m 18
+# wrap_HGA.py --python /path/to/python-2.7 --assembly_verdict_map /path/to/final_verdict_out.tsv --hga /path/to/HGA.py --velvet /path/to/velvet --spades /path/to/spades --insert insert_size -std standard_deviation --threads num_of_threads 6 --reads_dir /path/to/reads_dir --out_dir /path/to/out_dir --sge_id 1 -m 18
 #
 # Author: James Matsumura
 

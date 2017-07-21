@@ -55,4 +55,4 @@ outputs:
       glob: $(inputs.outfile)
 
 
-baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/format_for_assembly.py"]
+baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/format_for_assembly.py"]

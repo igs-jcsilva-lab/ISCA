@@ -1,10 +1,10 @@
-
+#!/usr/bin/env python3
 
 # A script that follows threaded_assess_alignment.py and pulls the best 
 # assembled sequence into a single FASTA file. 
 #
 # Run the script using a command like this:
-# python3 get_final_sequences.py --align_path /path/to/alignments --ivc ids_v_cov.tsv --outfile out.fsa --threshold 90 --ea_map /path/to/ea_map.tsv 
+# get_final_sequences.py --align_path /path/to/alignments --ivc ids_v_cov.tsv --outfile out.fsa --threshold 90 --ea_map /path/to/ea_map.tsv 
 #
 # Author: James Matsumura
 

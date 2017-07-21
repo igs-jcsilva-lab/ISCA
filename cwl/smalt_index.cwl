@@ -62,4 +62,4 @@ outputs:
       glob: $(inputs.smalt_prefix + "*")
 
 
-baseCommand: ["/usr/local/packages/smalt/bin/smalt","index"]
+baseCommand: ["SMALT_BIN/smalt","index"]

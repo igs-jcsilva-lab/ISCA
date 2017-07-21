@@ -91,4 +91,4 @@ outputs:
       outputEval: $(inputs.align_path)
 
 
-baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/threaded_alignment.py"]
+baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/threaded_alignment.py"]

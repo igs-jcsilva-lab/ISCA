@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 # This script acts similar to an SGE array job where it queues tasks as 
 # resources on the system as they become available. 
@@ -21,7 +21,7 @@
 # ******
 #
 # Run the script using a command like this:
-# python3 run_parallel_assembly.py --assmb_step (SPAdes|HGA|SB) --number_of_jobs 8 --assmb_map /path/to/map.tsv \
+# run_parallel_assembly.py --assmb_step (SPAdes|HGA|SB) --number_of_jobs 8 --assmb_map /path/to/map.tsv \
 # --threads_per_job 5 --memory_per_job 8 --reads_dir /path/to/reads_dir --spades_install /path/to/spades/bin \
 # -rd /path/to/reads_dir -ap /path/to/assemblies
 #

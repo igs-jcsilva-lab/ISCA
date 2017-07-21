@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 # This follows analyze_bam.py and accepts the *_read_map.tsv generated from that 
 # script. Remember that this dataset must consist of PAIRED-END SORTED FASTQ reads
@@ -21,7 +21,7 @@
 # originated from.
 #
 # Run the script using a command like this:
-# python3 fastq_reads_to_fastq_alleles.py --ab_read_map /path/to/analyze_bam.out --fastq1 /path/to/reads1.fastq.gz --fastq2 /path/to/reads2.fastq.gz --filter (yes|no) -reads_dir /path/to/read_dir
+# fastq_reads_to_fastq_alleles.py --ab_read_map /path/to/analyze_bam.out --fastq1 /path/to/reads1.fastq.gz --fastq2 /path/to/reads2.fastq.gz --filter (yes|no) -reads_dir /path/to/read_dir
 #
 # Author: James Matsumura
 

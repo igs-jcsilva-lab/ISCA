@@ -41,4 +41,4 @@ outputs:
       outputEval: $(inputs.gsnap_dir)
 
 
-baseCommand: ["/usr/local/packages/gmap-gsnap/bin/gmap_build"]
+baseCommand: ["GSNAP_BIN/gmap_build"]

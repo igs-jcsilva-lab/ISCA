@@ -69,4 +69,4 @@ outputs:
 stdout: 'smalt.sam'
 
 
-baseCommand: ["/usr/local/packages/smalt/bin/smalt","map"]
+baseCommand: ["SMALT_BIN/smalt","map"]

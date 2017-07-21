@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 # This script establishes the necessary directory structures needed to run the
 # pipeline. It requires the destination for where to place these directories. 
@@ -6,7 +6,7 @@
 # the specified location. 
 #
 # Run the script using a command like this:
-# python3 build_workspace.py --workspace_location /path/to/build_directories
+# build_workspace.py --workspace_location /path/to/build_directories
 #
 # Author: James Matsumura
 

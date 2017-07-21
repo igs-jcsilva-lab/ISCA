@@ -97,4 +97,4 @@ outputs:
       glob: $(inputs.workspace_location + '/scaffold_builder.py')
 
 
-baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/build_workspace.py"]
+baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/build_workspace.py"]

@@ -27,8 +27,9 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 * A list of loci to focus the assembly on -- [example](https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/subset_list.txt)
 * Two FASTQ paired reads files from the isolate to perform targeted assembly with
 
-## Usage
+Example files can be found in the `./example_data` directory.
 
+## Usage
 The pipeline can be run as individual Python scripts or via Command Workflow Language ([CWL]((http://www.commonwl.org/draft-3/UserGuide.html#Writing_Workflows)))
 
 ### Pipeline steps (all scripts found in ./bin)

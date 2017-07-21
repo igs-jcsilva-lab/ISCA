@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 # This script aims to reformat all directories created by fastq_reads_to_fastq_alleles.py
 # into something that SGE grid can use for a job array submission. This script
@@ -7,7 +7,7 @@
 # be arbitrary and start at 1 climbing until it hits the number of directories made.
 #
 # Run the script using a command like this:
-# python3 format_for_assembly.py --ref_map /path/to/ref_map.tsv --reads_dir /path/to/reads_dir --assmb_path /path/to/assmb/dirs --outfile /path/to/out_map.tsv
+# format_for_assembly.py --ref_map /path/to/ref_map.tsv --reads_dir /path/to/reads_dir --assmb_path /path/to/assmb/dirs --outfile /path/to/out_map.tsv
 #
 # Author: James Matsumura
 

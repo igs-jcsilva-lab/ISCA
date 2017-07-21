@@ -1,10 +1,10 @@
-
+#!/usr/bin/env python3
 
 # This script automates a few steps in order to estimate insert size for 
 # running the second assembly method.  
 #
 # Run the script using a command like this:
-# python3 estimate_insert.py --samtools /path/to/samtools --java /path/to/java --picard /path/to/picard --sam_file /path/to/original/sam 
+# estimate_insert.py --samtools /path/to/samtools --java /path/to/java --picard /path/to/picard --sam_file /path/to/original/sam 
 #
 # Author: James Matsumura
 

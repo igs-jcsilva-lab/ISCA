@@ -59,4 +59,4 @@ outputs:
       glob: $(inputs.prefix + "*ref*")
 
 
-baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/analyze_bam.py"]
+baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/analyze_bam.py"]

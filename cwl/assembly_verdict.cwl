@@ -59,4 +59,4 @@ outputs:
       glob: $("*assmb*")
 
 
-baseCommand: ["/usr/local/packages/python-3.5.2/bin/python","/local/scratch/matsu_cwl_tests/assembly_verdict.py"]
+baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/assembly_verdict.py"]

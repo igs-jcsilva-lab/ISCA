@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 
 # This script follows threaded_assess_alignment.py. This is only necessary
 # to run if there are still sequences that have yet to be assembled at an 
@@ -19,7 +19,7 @@
 # a new set of assemblies for these particular loci.  
 #
 # Run the script using a command like this:
-# python3 final_verdict.py --ivc /path/to/ids_v_cov.tsv --threshold 80 --original_assmb_map /path/to/assmb_map.tsv --original_buffered_fsa /path/to/old.fsa --prefix /path/to/my_prefix
+# final_verdict.py --ivc /path/to/ids_v_cov.tsv --threshold 80 --original_assmb_map /path/to/assmb_map.tsv --original_buffered_fsa /path/to/old.fsa --prefix /path/to/my_prefix
 #
 # Author: James Matsumura
 
