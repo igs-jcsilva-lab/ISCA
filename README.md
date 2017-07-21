@@ -27,7 +27,11 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 * A list of loci to focus the assembly on -- [example](https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/subset_list.txt)
 * Two FASTQ paired reads files from the isolate to perform targeted assembly with
 
-## Pipeline steps (all scripts found in ./bin)
+## Usage
+
+The pipeline can be run as individual Python scripts or via Command Workflow Language ([CWL]((http://www.commonwl.org/draft-3/UserGuide.html#Writing_Workflows)))
+
+### Pipeline steps (all scripts found in ./bin)
 1. Build a map for the alleles extracted from GFF3
   * `extract_alleles.py` 
 2. Extract sequences for all references given the previous scripts output
@@ -62,10 +66,5 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
   * `assembly_verdict.py`
 16. Repeat steps 4-15, but at step 4 use the SMALT aligner
 
-## Invoking a CWL workflow
-```
-cwl-runner <cwl tool/workflow script> <input parameter yml/json>
-```
-The first parameter is a valid cwl tool or workflow script.  These have the extension __.cwl__.
-
-The second parameter is a YAML or JSON file consisting of input parameters for the CWL script. YAML examples are provided and are listed with the extension __.yml__.
+### Workflow (all relevant files found in ./cwl)
+Please refer to the README.md under the `./cwl` directory for more information on how to run this tool via CWL.
