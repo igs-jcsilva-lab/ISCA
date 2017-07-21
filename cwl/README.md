@@ -5,9 +5,9 @@ CWL Documentation can be found [here](http://www.commonwl.org/draft-3/UserGuide.
 ## Setup
 1. Modify `conf.py` to have the correct paths for the installations of the various dependencies
 2. Run the `setup.py` script to modify the CWL files to correctly utilize these installations
-3. Setup complete, can move on to `Invoking a CWL workflow`
+3. Setup complete, can move on to [Invoking a CWL workflow](https://github.com/jmatsumura/targeted_assembly/tree/master/cwl#invoking-a-cwl-workflow)
 
-TIP: If you mess up a path in the conf and need to remake your __.cwl__ files, backup files are made by default (with extension of __.bak__) to allow one to rerun the `setup.py` script. Use the following command once you are in the same directory as all of your __.bak__ files, then go back to step 1 of `Setup`.
+TIP: If you mess up a path in the conf and need to remake your __.cwl__ files, backup files are made by default (with extension of __.bak__) to allow one to rerun the `setup.py` script. Use the following command once you are in the same directory as all of your __.bak__ files, then go back to step 1 of [Setup](https://github.com/jmatsumura/targeted_assembly/tree/master/cwl#setup).
 ```
 find . -iname "*.bak" -exec bash -c 'mv "$0" "${0%\.cwl\.bak}.cwl"' {} \;
 ```
@@ -20,7 +20,7 @@ The first parameter is a valid cwl tool or workflow script.  These have the exte
 
 The second parameter is a YAML or JSON file consisting of input parameters for the CWL script. YAML examples are provided and are listed with the extension __.yml__.
 
-For example, to run the complete workflow/pipeline __first modify__ `targeted_asembly.yml` and then use the command:
+For example, to run the complete workflow/pipeline __first modify__ `targeted_asembly.yml` (be sure to read and change as appropriate any line that does __not__ start with a __#__) and then use the command:
 ```
 cwl-runner --outdir /path/to/my/results targeted_assembly.cwl targeted_assembly.yml
 ```

@@ -68,4 +68,4 @@ The pipeline can be run as individual Python scripts or via Command Workflow Lan
 16. Repeat steps 4-15, but at step 4 use the SMALT aligner
 
 ### Workflow (all relevant files found in ./cwl)
-Please refer to the README.md under the `./cwl` directory for more information on how to run this tool via CWL.
+Please refer to the [README.md](https://github.com/jmatsumura/targeted_assembly/tree/master/cwl#running-the-tool-via-common-workflow-language-cwl) under the `./cwl` directory for more information on how to run this tool via CWL.
