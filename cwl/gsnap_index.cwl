@@ -41,4 +41,4 @@ outputs:
       outputEval: $(inputs.gsnap_dir)
 
 
-baseCommand: ["GSNAP_BIN/gmap_build"]
+baseCommand: ["GMAP_GSNAP_BIN/gmap_build"]

@@ -71,4 +71,4 @@ outputs:
 stdout: 'gsnap.sam'
 
 
-baseCommand: ["GSNAP_BIN/gsnap"]
+baseCommand: ["GMAP_GSNAP_BIN/gsnap"]
