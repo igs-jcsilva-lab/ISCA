@@ -15,7 +15,7 @@ from conf import TARGETED_ASSEMBLY_BIN,PYTHON3_BIN,GMAP_GSNAP_BIN,SMALT_BIN
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
+    parser = argparse.ArgumentParser(description='Script to set up CWL files with the correct paths.')
     parser.add_argument('--path_to_cwl', '-p', type=str, default='.', required=False, help='Path to the the base directory where all the CWL files are stored.')
 
     args = parser.parse_args()
