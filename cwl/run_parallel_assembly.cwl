@@ -114,4 +114,4 @@ outputs:
       outputEval: $(inputs.assmb_path)
 
 
-baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/run_parallel_assembly.py"]
+baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/run_parallel_assembly.py"]
