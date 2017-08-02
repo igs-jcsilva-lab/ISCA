@@ -3,6 +3,9 @@
 # A script that follows threaded_assess_alignment.py and pulls the best 
 # assembled sequence into a single FASTA file. 
 #
+# Note that the best %ID achieved when aligning to the reference will be
+# included in the FASTA header of each sequence.
+#
 # Run the script using a command like this:
 # get_final_sequences.py --align_path /path/to/alignments --ivc ids_v_cov.tsv --outfile out.fsa --threshold 90 --ea_map /path/to/ea_map.tsv 
 #
@@ -107,7 +110,7 @@ def main():
             record = SeqIO.read(file, "fasta")
 
             record.id = new_id
-            record.description = ''
+            record.description = 'ID_to_ref={0}'.format(v[0])
             record.name = ''
             if '.r.trimmed' in v[1]:
                 tmp_seq = Seq(str(record.seq))
