@@ -20,7 +20,7 @@ The first parameter is a valid cwl tool or workflow script.  These have the exte
 
 The second parameter is a YAML or JSON file consisting of input parameters for the CWL script. YAML examples are provided and are listed with the extension __.yml__.
 
-For example, to run the complete workflow/pipeline __first modify__ `targeted_asembly.yml` (be sure to read and change as appropriate any line that does __not__ start with a __#__) and then use the command:
+For example, to run the complete workflow/pipeline __first modify__ `targeted_asembly.yml`. Be sure to read and change as appropriate any line that does __not__ start with a __#__. Also make sure to have the [required inputs](https://github.com/jmatsumura/targeted_assembly#required-inputs) ready as they must be set in this file. Once `targeted_assembly.yml` has been modified appropriately, use the command:
 ```
 cwl-runner --outdir /path/to/my/results targeted_assembly.cwl targeted_assembly.yml
 ```
