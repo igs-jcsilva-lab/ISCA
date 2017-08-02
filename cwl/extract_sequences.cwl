@@ -60,4 +60,4 @@ outputs:
       glob: $(inputs.prefix + "*_unbuffered*")
 
 
-baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/extract_sequences.py"]
+baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/extract_sequences.py"]

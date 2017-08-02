@@ -61,4 +61,4 @@ outputs:
       glob: $(inputs.outfile)
 
 
-baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/get_final_sequences.py"]
+baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/get_final_sequences.py"]

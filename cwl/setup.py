@@ -11,7 +11,7 @@
 # Author: James Matsumura
 
 import argparse,os,fileinput
-from conf import TARGETED_ASSEMBLY_BIN,PYTHON3_BIN,GMAP_GSNAP_BIN,SMALT_BIN
+from conf import TARGETED_ASSEMBLY_BIN,PYTHON3_EXE,GMAP_GSNAP_BIN,SMALT_BIN
 
 def main():
 
@@ -22,7 +22,7 @@ def main():
 
     replacements = {
         'TARGETED_ASSEMBLY_BIN': TARGETED_ASSEMBLY_BIN,
-        'PYTHON3_BIN': PYTHON3_BIN,
+        'PYTHON3_EXE': PYTHON3_EXE,
         'GMAP_GSNAP_BIN': GMAP_GSNAP_BIN,
         'SMALT_BIN': SMALT_BIN
     }

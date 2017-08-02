@@ -61,4 +61,4 @@ outputs:
       outputEval: $(inputs.reads_dir)
 
 
-baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/fastq_reads_to_fastq_alleles.py"]
+baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/fastq_reads_to_fastq_alleles.py"]

@@ -59,4 +59,4 @@ outputs:
       glob: $(inputs.prefix + "*ref*")
 
 
-baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/analyze_bam.py"]
+baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/analyze_bam.py"]

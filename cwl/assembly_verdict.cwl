@@ -59,4 +59,4 @@ outputs:
       glob: $("*assmb*")
 
 
-baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/assembly_verdict.py"]
+baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/assembly_verdict.py"]

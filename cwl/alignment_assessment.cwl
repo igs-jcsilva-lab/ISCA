@@ -67,4 +67,4 @@ outputs:
       outputEval: $(inputs.ivc_outfile)
 
 
-baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/threaded_assess_alignment.py"]
+baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/threaded_assess_alignment.py"]

@@ -37,4 +37,4 @@ outputs:
       glob: $('ea_map.tsv')
 
 
-baseCommand: ["PYTHON3_BIN/python","TARGETED_ASSEMBLY_BIN/extract_alleles.py"]
+baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/extract_alleles.py"]
