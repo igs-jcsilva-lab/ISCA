@@ -180,12 +180,6 @@ outputs:
   unbuffered_sequences:
     type: File
     outputSource: phase_one/unbuffered_sequences
-  gsnap_idx:
-    type: Directory
-    outputSource: phase_one/gsnap_idx
-  smalt_idx:
-    type: Directory
-    outputSource: phase_one/smalt_idx
   first_reads:
     type: Directory
     outputSource: phase_one/first_reads
