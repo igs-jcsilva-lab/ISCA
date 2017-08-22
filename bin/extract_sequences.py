@@ -18,6 +18,7 @@
 # Author: James Matsumura
 
 import re,argparse
+from Bio import SeqIO
 from shared_fxns import write_fasta
 
 def main():
@@ -77,29 +78,9 @@ def main():
 # prefix = base prefix to write unbuffered/buffered files to 
 def extract_sequences(file,genes,buffer,prefix):
 
-    regex_for_contig_id = ">([a-zA-Z0-9_]+)"
-
     # Since PF is fairly small, can be greedy about how the FASTA entries are being
     # processed and store them in memory.
-    contigs = {}
-    current_id = "" # store the previous key for the bases to be assigned to
-
-    with open(file,'r') as fasta:
-        for line in fasta: # iterate over the FASTA file and extract the entirety of each sequence
-            
-            line = line.rstrip()
-
-            if line.startswith('>'):
-                current_id = re.search(regex_for_contig_id,line).group(1)
-                contigs[current_id] = ""
-            else:
-                contigs[current_id] += line # add all the bases
-
-    # Calculate the lengths of each contig just once to make sure that the
-    # buffer does not exceed the max length.
-    lengths = {} 
-    for key in contigs:
-        lengths[key] = len(contigs[key])
+    contigs = SeqIO.to_dict(SeqIO.parse(file, "fasta"))
 
     for gene in genes:
         vals = gene.split('|')
@@ -113,16 +94,13 @@ def extract_sequences(file,genes,buffer,prefix):
         # need to handle stop similarly using the sequence length.
         if start < 1:
             start = 0
-        if stop > lengths[source]:
-            stop = lengths[source]
+        if stop > len(contigs[source].seq):
+            stop = len(contigs[source].seq)
 
         # Generate both a buffered and unbuffered sequence. These files will
         # be exactly the same if buffer==0
-        sequence1 = contigs[source][start:stop]
-        sequence1 = sequence1.upper() 
-
-        sequence2 = contigs[source][(int(vals[1]) - 1):int(vals[2])]
-        sequence2 = sequence2.upper() 
+        sequence1 = str(contigs[source].seq[start:stop].upper())
+        sequence2 = str(contigs[source].seq[(int(vals[1]) - 1):int(vals[2])].upper())
 
         if strand == "-": # if reverse strand, swap the bases
             sequence1 = rev_comp(sequence1)
