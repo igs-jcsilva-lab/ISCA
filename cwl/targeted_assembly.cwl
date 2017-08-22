@@ -180,6 +180,12 @@ outputs:
   unbuffered_sequences:
     type: File
     outputSource: phase_one/unbuffered_sequences
+  gsnap_idx:
+    type: Directory
+    outputSource: phase_one/gsnap_idx
+  smalt_idx:
+    type: Directory
+    outputSource: phase_one/smalt_idx
   first_reads:
     type: Directory
     outputSource: phase_one/first_reads
@@ -205,10 +211,6 @@ outputs:
     type: Directory
     outputSource: phase_one/second_alignments
 
-  gsnap_sam:
-    type: File
-    outputSource: gsnap/gsnap_sam
-
   first_phase_two_assmb_map:
     type: File
     outputSource: first_phase_two/assmb_map
@@ -232,10 +234,6 @@ outputs:
   first_final_phase_three_fs:
     type: File
     outputSource: first_final_phase_three/final_sequences
-
-  smalt_sam:
-    type: File
-    outputSource: smalt/smalt_sam
 
   second_phase_two_assmb_map:
     type: File

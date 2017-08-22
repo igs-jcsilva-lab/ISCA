@@ -20,11 +20,17 @@ The first parameter is a valid cwl tool or workflow script.  These have the exte
 
 The second parameter is a YAML or JSON file consisting of input parameters for the CWL script. YAML examples are provided and are listed with the extension __.yml__.
 
-For example, to run the complete workflow/pipeline __first modify__ `targeted_asembly.yml`. Be sure to read and change as appropriate any line that does __not__ start with a __#__. Also make sure to have the [required inputs](https://github.com/jmatsumura/targeted_assembly#required-inputs) ready as they must be set in this file. Once `targeted_assembly.yml` has been modified appropriately, use the command:
+For example, to run the complete workflow/pipeline __first modify__ `targeted_asembly.yml` (be sure to read and change as appropriate any line that does __not__ start with a __#__) and then use the command:
 ```
 cwl-runner --outdir /path/to/my/results targeted_assembly.cwl targeted_assembly.yml
 ```
 `targeted_asembly.cwl` is comprised of all the other __.cwl__ files in this directory and will run them in the correct order. This command will output all the results of the workflow to the directory specified after the `--outdir` option. Output defaults to the current working directory if the `--outdir` option is not specified. 
+
+__NOTE:__ CWL requires a temporary space to do its work. This space can potentially be very large (due to SAM files) if the number of reads used in alignment is high. In order to redirect CWL to generate these directories elsewhere, you must set your `TMPDIR` path to a location which can afford to allocate these files using a command like:
+```
+export TMPDIR=/path/to/dir/to/populate
+```
+The `tmp*` directories generated at this path should be removed after a CWL run if there is no interest in the files used to get to the assembled products (like SAM and index files). Automatic removal may already be setup for a directory like `/tmp`, but if you are redirecting to a directory not being monitored by some cleanup task, be sure to remove these temporary directories to conserve space. 
 
 ### Outputs
 - The primary output file will always be named `assembled_seqs.fsa` and consists of all the assembled sequences in a single file. 
