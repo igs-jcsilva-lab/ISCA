@@ -22,32 +22,21 @@
 # check for which reference contigs were able to recruit the most reads. 
 #
 # Run the script using a command like this:
-# analyze_bam.py --bam /path/to/bowtie_out.bam (-threshold 90) -p /path/to/out_prefix --ea_map /path/to/out_from_extract_alleles.tsv 
+# analyze_bam.py --sam /path/to/bowtie_out.bam (-threshold 90) -p /path/to/out_prefix --ea_map /path/to/out_from_extract_alleles.tsv 
 #
 # Author: James Matsumura
 
-import argparse,pysam
+import argparse,pysam,subprocess
 from collections import defaultdict
 
 def main():
 
     parser = argparse.ArgumentParser(description='Script to isolate all reads and where they aligned to given a BAM file.')
-    parser.add_argument('--bam', '-b', type=str, help='Path to a BAM file.')
-    parser.add_argument('--sam', '-s', type=str, help='Path to a SAM file.')
+    parser.add_argument('--sam', '-s', type=str, help='Path to a SAM/BAM file, will automatically handle either.')
     parser.add_argument('--ea_map', '-eam', type=str, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('--threshold', '-t', type=int, default=80, required=False, help='Minimum %ID threshold to retain (entering 95 means %95 minimum %ID). Defaults to %80.')
     parser.add_argument('--prefix', '-p', type=str, required=True, help='Name of the prefix of where the two output TSV files should go.')
     args = parser.parse_args()
-
-    if args.sam is None and args.bam is None:
-        parser.error("Either --sam or --bam input is required.")
-    
-    i = None # will be the input file
-
-    if args.sam is not None: # separate file handlers for noncompressed/compressed
-        i = pysam.AlignmentFile(args.sam,'r')
-    if args.bam is not None:
-        i = pysam.AlignmentFile(args.bam,'rb')
 
     # Collect the lengths from each reference gene
     ref_lengths = defaultdict(list)
@@ -62,7 +51,20 @@ def main():
                 length = (int(allele_info[2])-int(allele_info[1])+1) # include starting base
                 ref_lengths[allele_info[4]] = length
 
+    infile = args.sam
+    tmp_file = "tmp.bam"
+
+    with open(tmp_file,'w') as tmp_sam:
+        subprocess.call("samtools view -b -h -F 4 {}".format(infile).split(),stdout=tmp_sam)
+
+    # guarantee a BAM file including the extension
+    subprocess.call("rm {}".format(infile).split()) # need this when SAM is the input
+    infile = infile.replace(".sam",".bam")
+    subprocess.call("mv {} {}".format(tmp_file,infile).split()) 
+
     rd_map,rf_map = (defaultdict(list) for j in range(2)) # establish these dicts as holding lists
+
+    i = pysam.AlignmentFile(infile,'rb')
 
     for read in i.fetch(until_eof=True): # iterate over all reads in the [S|B]AM file.
 
