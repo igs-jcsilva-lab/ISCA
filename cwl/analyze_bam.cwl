@@ -12,15 +12,9 @@ requirements:
         envValue: $(inputs.python3_lib)
 
 inputs:
-  bam:
-    label: Path to a BAM file derived from aligner
-    type: File?
-    inputBinding:
-      prefix: "--bam"
-
   sam:
     label: Path to a SAM file derived from aligner
-    type: File?
+    type: File
     inputBinding:
       prefix: "--sam"
 
