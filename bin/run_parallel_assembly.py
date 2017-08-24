@@ -55,7 +55,7 @@ def main():
 
     if (args.number_of_jobs * args.threads_per_job) >= mp.cpu_count():
         print("Number of CPUs*threads requested will consume everything. You will want to allow at least one core to be used by processes outside this program.")
-        sys.exit(0)
+        sys.exit(1)
 
     # Set up the multiprocessing manager, pool, and queue
     manager = mp.Manager()

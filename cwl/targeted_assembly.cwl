@@ -65,7 +65,7 @@ inputs:
     type: string
     default: "no"
   second_paired_suffixes:
-    label: Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly. GSNAP always trims so leave this as "no". 
+    label: Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. SMALT will not trim this, so check your WGS input reads and see whether they end in ".1"/".2". 
     type: string
   first_prefix:
     label: Name of the prefix to yield the two maps (one read-based and one reference-based)

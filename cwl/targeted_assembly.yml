@@ -56,7 +56,9 @@ groupby: "l"
 # same locus.
 filter: "no"
 # second_paired_suffixes should be set to "yes" if your WGS read IDs end with 
-# .1 and .2 for each respective pair. If they don't, then leave as a "no".
+# .1 and .2 for each respective pair. If they don't, then leave as a "no". Note
+# that GSNAP by default will trim this in the resulting SAM file while SMALT 
+# will not. 
 second_paired_suffixes: "no"
 # When reporting the %IDs and the coverage for the alignments between the new
 # assembled sequence and the reference, either report only the best one or all.
