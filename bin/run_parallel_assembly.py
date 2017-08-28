@@ -53,6 +53,21 @@ def main():
 
     args = parser.parse_args()
 
+    # SB runs poorly in parallel, until source code is addressed run serially
+    if args.assmb_step == "SB": 
+        with open(args.assmb_map,'r') as loc_map:
+            for line in loc_map:
+                line = line.rstrip()
+                ele = line.split('\t')
+                locus = ele[1] # no matter the map (SPAdes or HGA), the second column is what we want
+                locus_id = ele[0] # for SB, we care about the locus ID not the mapped number
+
+                assembly_out = "{0}/{1}".format(args.assmb_path,locus) 
+
+                sb_align(args.SB_install,assembly_out,locus_id,args.python2_install,args.ea_map,args.original_fsa)
+
+        return # done at this point if at SB step              
+
     if (args.number_of_jobs * args.threads_per_job) >= mp.cpu_count():
         print("Number of CPUs*threads requested will consume everything. You will want to allow at least one core to be used by processes outside this program.")
         sys.exit(1)
@@ -79,9 +94,6 @@ def main():
             elif args.assmb_step == "HGA":
                 reads = "{0}/{1}/reads.fastq".format(args.reads_dir,locus)
                 jobs.append(pool.apply_async(hga_assemble, (args.HGA_install,reads,assembly_out,args.python2_install,args.velvet_install,args.spades_install,args.threads_per_job,args.partitions,args.memory_per_job)))
-
-            elif args.assmb_step == "SB":
-                jobs.append(pool.apply_async(sb_align, (args.SB_install,assembly_out,locus_id,args.python2_install,args.ea_map,args.original_fsa)))
 
     # Get all the returns from the apply_async function.
     for job in jobs:
