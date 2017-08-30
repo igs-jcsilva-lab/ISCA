@@ -57,15 +57,19 @@ The pipeline can be run as individual Python scripts or via Command Workflow Lan
   * `threaded_assess_alignment.py`
 11. If there are any remaining loci that could not assemble at a desired minimum threshold, can isolate these reference sequences to another round of the pipeline and use a different aligner/sensitivity. Note that using this step will essentially format the data similar to the end of step 3
   * `assembly_verdict.py`
-12. Try assemble those that the previous assembler could not
+12. Obtain assembled sequences
+  * `get_final_sequences.py`
+13. Try assemble those that the previous assembler could not
   * `run_parallel_assembly.py`
-13. Rerun alignment using these new assemblies.
+14. Rerun alignment using these new assemblies
   * `threaded_alignment.py`
-14. Assess these new assemblies.
+15. Assess these new assemblies
   * `threaded_assess_alignment.py`
-15. Build a dataset for those that cannot align
+16. Build a dataset for those that cannot align
   * `assembly_verdict.py`
-16. Repeat steps 4-15, but at step 4 use the SMALT aligner
+17. Obtain assembled sequences (can concatenate these results with those from step `12`)
+  * `get_final_sequences.py`
+18. Repeat steps 4-18, but at step 4 use the SMALT aligner
 
 ### Workflow (all relevant files found in ./cwl)
 Please refer to the [README.md](https://github.com/jmatsumura/targeted_assembly/tree/master/cwl#running-the-tool-via-common-workflow-language-cwl) under the `./cwl` directory for more information on how to run this tool via CWL.
