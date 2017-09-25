@@ -226,7 +226,7 @@ def filter_fastq(ids,file1,file2,outdir):
                     # Note that these mates will both be included if just one is relevant,
                     # so can do all checks using just one of the mates.
                     header = entry1[0]
-                    elements = header.split(' ')
+                    elements = header.strip().split(' ')
                     id = elements[0][1:] # drop the '@'
                     if id.endswith('.1'):
                         id = id[:-2] # drop the mate distinction of '.1' or '.2'
