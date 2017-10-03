@@ -1,0 +1,1 @@
+qsub -P project_code -l mem_free=10G -q threaded.q -pe thread 20 -l centos7 -o PLACEHOLDER_CWL_OUT -e PLACEHOLDER_CWL_ERR -v LD_LIBRARY_PATH=LD_LIBRARY_PATH=/usr/local/packages/python-3.5.2/lib:/usr/local/packages/python-2.7.12/lib:$LD_LIBRARY_PATH -v PATH=/usr/local/packages/python-2.7.12/bin:/local/scratch/ta_iterations/targeted_assembly/cwl:$PATH PLACEHOLDER_CWL_SH
