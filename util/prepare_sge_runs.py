@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-A script to setup numerous grid runs of the targeted assembly pipeline for an 
+A script to setup numerous grid runs of the targeted assembly pipeline for a 
 SGE environment. Copy the preparation_file_examples directory and modify the 
 contents of those files accordingly except for those that start with 
 PLACEHOLDER_*. 
@@ -9,7 +9,7 @@ PLACEHOLDER_*.
 Input: 
     1. A CSV file with each line containing: /path/to/reads1,/path/to/reads2
     2. An input directory which mirrors the contents of preparation_file_examples
-    directory found in this repository location. Contents of the files should be 
+    directory found in this repository's location. Contents of the files should be 
     modified except for those elements that start with PLACEHOLDER_*.
     3. Location of an output directory to have all these runs output to.
 
@@ -21,7 +21,7 @@ Output:
     which set of input reads. Columns are ID,qsub,reads1,reads2.
 
 Usage:
-    prepare_grid_runs.py -c read_info_file.csv -y master.yml -o /path/to/out_dir
+    prepare_grid_runs.py -c read_info_file.csv -i /dir/for/master/files -o /path/to/out/dir
 
 Author: 
     James Matsumura
