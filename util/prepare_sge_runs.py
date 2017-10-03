@@ -8,17 +8,27 @@ PLACEHOLDER_*.
 
 Input: 
     1. A CSV file with each line containing: /path/to/reads1,/path/to/reads2
+
     2. An input directory which mirrors the contents of preparation_file_examples
     directory found in this repository's location. Contents of the files should be 
     modified except for those elements that start with PLACEHOLDER_*.
+
     3. Location of an output directory to have all these runs output to.
 
 Output: 
     1. A set of directories at the specified path to populate with the results
     of the pipeline. Each will also contain its own *.sh and *.yml file for
     running the pipeline.
+
     2. A preparation_map.csv file which tells you which directory belongs to 
-    which set of input reads. Columns are ID,qsub,reads1,reads2.
+    which set of input reads. Columns are ID,qsub,reads1,reads2. These qsub
+    commands can then be used individually to run each job on the grid. 
+
+    3. Outputs to the terminal a command to run the pipelines as an array job.
+    The benefit of this is that it will better constrain how many possible 
+    resources this will consume on the grid (-tc argument). The downside is that
+    all of the ~.err and ~.out files will be found in two consolidated files 
+    making it harder to pinpoint errors in specific runs. 
 
 Usage:
     prepare_grid_runs.py -c read_info_file.csv -i /dir/for/master/files -o /path/to/out/dir
@@ -44,6 +54,15 @@ def main():
     with open("{}/cwl.sh".format(args.i),'r') as sh_infile:
         sh_content = sh_infile.read()
 
+    with open("{}/cwl.sh".format(args.o),'w') as sh_outfile:
+
+        content = sh_content                   
+        content = content.replace('PLACEHOLDER_OUTDIR',"{}/$SGE_TASK_ID".format(args.o))
+        content = content.replace('PLACEHOLDER_YML',"{}/$SGE_TASK_ID/targeted_assembly.yml".format(args.o))
+
+        sh_outfile.write("{}\n".format('#!/bin/sh'))
+        sh_outfile.write(content)
+
     with open("{}/qsub".format(args.i),'r') as qsub_infile:
         qsub_content = qsub_infile.read().strip()
 
@@ -56,15 +75,18 @@ def main():
 
         with open(args.c,'r') as reads_file: 
 
-            run_id = 1
+            run_id = 0
             
             for line in reads_file:
+
+                run_id += 1 
+
                 reads = line.strip().split(',')
                 reads1,reads2 = reads[0],reads[1]
 
                 cur_out_dir = "{}/{}".format(args.o,run_id) 
                 make_directory(cur_out_dir)
-                    
+
                 with open("{}/cwl.sh".format(cur_out_dir),'w') as sh_outfile:
 
                     content = sh_content                   
@@ -81,15 +103,25 @@ def main():
 
                     yml_outfile.write(content)
 
-                qsub_cmd = qsub_content
-                qsub_cmd = qsub_cmd.replace('PLACEHOLDER_CWL_SH',"{}/cwl.sh".format(cur_out_dir))
-                qsub_cmd = qsub_cmd.replace('PLACEHOLDER_CWL_OUT',"{}/cwl.out".format(cur_out_dir))
-                qsub_cmd = qsub_cmd.replace('PLACEHOLDER_CWL_ERR',"{}/cwl.err".format(cur_out_dir))
+                qsub_cmd = replace_placeholders_in_qsub(qsub_content,cur_out_dir)
 
                 prep_map.write("{}\n".format((',').join([str(run_id),qsub_cmd,reads1,reads2])))
 
-                run_id += 1 
+    array_job = replace_placeholders_in_qsub(qsub_content,args.o)
+    array_job = array_job.split()
+    jobs = "-t 1-{} -tc 15".format(run_id) # by default, restrict to 15 simultaneous jobs
+    print("{} {} {}".format((' ').join(array_job[:-1]),jobs,array_job[-1]))
 
+
+def replace_placeholders_in_qsub(qsub_str,cur_dir):
+    """ 
+    Takes in a qsub command and a directory to rewrite the PLACEHOLDER_* 
+    arguments found within the base qsub file.
+    """
+    qsub_str = qsub_str.replace('PLACEHOLDER_CWL_SH',"{}/cwl.sh".format(cur_dir))
+    qsub_str = qsub_str.replace('PLACEHOLDER_CWL_OUT',"{}/cwl.out".format(cur_dir))
+    qsub_str = qsub_str.replace('PLACEHOLDER_CWL_ERR',"{}/cwl.err".format(cur_dir))
+    return qsub_str
 
 def make_directory(path):
     """ Takes in a path and tries to build that directory """
