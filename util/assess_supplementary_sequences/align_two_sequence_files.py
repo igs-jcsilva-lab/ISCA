@@ -11,9 +11,7 @@ careful with their size.
 
 Input: 
     1. Paths to two FASTA files separated by commas
-
     2. Path to install directory of EMBOSS needle/water executable
-
     3. Location to write all alignments to 
 
 Output: 
