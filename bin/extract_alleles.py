@@ -59,7 +59,7 @@ def main():
             name = vals[3]
 
             # Regardless of reference or isolate, all should be mapping to the same name
-            # designated by the reference. vi 
+            # designated by the reference. 
             allele_map = parse_gff3(gff3,allele_map,type,name,args.insert,args.gene_or_exon,args.out_dir)
 
     # Iterate over the final hash of lists and print out a TSV
