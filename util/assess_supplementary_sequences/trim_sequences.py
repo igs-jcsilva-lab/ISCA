@@ -14,7 +14,7 @@ Input:
     1. Paths to two FASTA files separated by commas. The first file should be
     the reference file and the second file should be the assembled sequences
     from the TASR run (ends with .contigs).
-    2. Path to install directory of EMBOSS needle/water executable.
+    2. Path to install directory of EMBOSS needle executable.
     3. Name of the output directory to write to. 
 
 Output: 

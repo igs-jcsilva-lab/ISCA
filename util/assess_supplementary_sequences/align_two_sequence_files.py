@@ -10,8 +10,9 @@ the specified output directory. It will load these FASTA files into memory so
 careful with their size. 
 
 Input: 
-    1. Paths to two FASTA files separated by commas
-    2. Path to install directory of EMBOSS needle/water executable
+    1. Paths to two FASTA files separated by commas. The first should be a 
+    reference file while the second is a set of assembled sequences. 
+    2. Path to install directory of EMBOSS needle executable
     3. Location to write all alignments to 
 
 Output: 
@@ -65,6 +66,8 @@ def main():
                     entry1 = first_seqs[entry1_id] # get the Seq object
                     entry2 = second_seqs[entry2_id]
 
+                    entry2.id = entry2.id.replace('|','.')
+
                     entry1_file = "{}/{}.fsa".format(cur_key_dir,entry1.id)
                     entry2_file = "{}/{}.fsa".format(cur_key_dir,entry2.id)
 
@@ -100,7 +103,7 @@ def build_sequence_map(sequence_ids):
     sequence_map = defaultdict(list)
 
     for id in sequence_ids:
-        sequence_map[id.split('.')[1]].append(id)
+        sequence_map[id.split('.')[1].split('|')[0]].append(id)
 
     return sequence_map
 
