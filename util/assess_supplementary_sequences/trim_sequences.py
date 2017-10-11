@@ -6,9 +6,9 @@ This will not trim the reference sequence at all, but will remove anything
 which overhangs on the assembled sequence based on the reference alignment. 
 This overhang is to be expected given most assembled sequences as the reads 
 used to build the sequence will contain data beyond just the reference sequence. 
-This script is built to work specifically with the output of TASR:
+This script is built to work specifically with the output of TASR.
 
-https://github.com/warrenlr/TASR 
+TASR: https://github.com/warrenlr/TASR 
 
 Input: 
     1. Paths to two FASTA files separated by commas. The first file should be
