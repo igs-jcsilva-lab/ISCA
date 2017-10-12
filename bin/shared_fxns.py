@@ -1,5 +1,10 @@
 
-# Holds functions used by at least two scripts in the targeted assembly pipeline.
+"""
+Holds functions used by multiple scripts in the targeted assembly pipeline.
+
+    Author:
+        James Matsumura
+"""
 
 import os,errno
 

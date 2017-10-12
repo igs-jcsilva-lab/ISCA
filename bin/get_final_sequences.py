@@ -1,15 +1,29 @@
 #!/usr/bin/env python3
 
-# A script that follows threaded_assess_alignment.py and pulls the best 
-# assembled sequence into a single FASTA file. 
-#
-# Note that the best %ID achieved when aligning to the reference will be
-# included in the FASTA header of each sequence.
-#
-# Run the script using a command like this:
-# get_final_sequences.py --align_path /path/to/alignments --ivc ids_v_cov.tsv --outfile out.fsa --threshold 90 --ea_map /path/to/ea_map.tsv 
-#
-# Author: James Matsumura
+"""
+A script that follows threaded_assess_alignment.py and pulls the best 
+assembled sequence into a single FASTA file. Note that the best %ID 
+achieved when aligning to the reference will be included in the FASTA 
+header of each sequence.
+
+    Input:
+        1. Path to ids_v_cov.tsv output from threaded_assess_alignment.py
+        2. Cutoff for pulling a sequence or not. Can set to 0 to get anything
+        3. Get sequences by loci, alleles/exons, or CDS (could also be exons 
+        if extracted at ea_map step), choose either "l", "ae", or "cds"
+        4. Path to where all the alignments were performed
+        5. Path to ea_map.tsv output from extract_alleles.py
+        6. Name of an outfile to populate with the final assemblies
+
+    Output:
+        1. An outfile containing all the best assembled sequences 
+
+    Usage:
+        get_final_sequences.py --align_path /path/to/alignments --ivc ids_v_cov.tsv --outfile out.fsa --threshold 90 --ea_map /path/to/ea_map.tsv 
+
+    Author: 
+        James Matsumura
+"""
 
 import argparse,collections,sys
 from Bio import SeqIO
@@ -25,7 +39,7 @@ def main():
     parser.add_argument('--groupby', '-g', type=str, required=True, help='Get sequences by loci, alleles/exons, or CDS (could also be exons if extracted at ea_map step), choose either "l", "ae", or "cds".')
     parser.add_argument('--align_path', '-ap', type=str, required=True, help='Path to where all the alignments are.')
     parser.add_argument('--outfile', '-o', type=str, required=True, help='Name of an outfile.')
-    parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
+    parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to ea_map.tsv output from extract_alleles.py.')
     args = parser.parse_args()
 
     best_id,cds_map = (defaultdict(list) for i in range(2)) 

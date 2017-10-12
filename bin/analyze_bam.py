@@ -1,30 +1,39 @@
 #!/usr/bin/env python3
 
-# This script will parse through a BAM file resulting from a paired-end 
-# alignment and extract all query sequence IDs that meet a certain percent
-# identity threshold (which the user can set). 
-#
-# The output will be two tab-delimited files:
-# 1) prefix_read_map.tsv
-# A map file where a given read is a key and it maps to all the references
-# that it hit. The first column is the read ID, every subsequent column is a
-# combination of %ID|length|referenceID for all the reference alignments 
-# that passed the threshold. Note that %ID and length are included so that
-# these values can help determine which read may have a better alignment
-# given a similar %ID. 
-#
-# 2) prefix_ref_map.tsv
-# Similar to the first, except this one uses the reference ID as the main
-# map point. The subsequent columns will consist of %ID|readID. 
-# 
-# While these two files are similar, they're more useful in separate cases. The
-# first is what will be used downstream here while the second can be used to 
-# check for which reference contigs were able to recruit the most reads. 
-#
-# Run the script using a command like this:
-# analyze_bam.py --sam /path/to/bowtie_out.bam (-threshold 90) -p /path/to/out_prefix --ea_map /path/to/out_from_extract_alleles.tsv 
-#
-# Author: James Matsumura
+"""
+This script will parse through a BAM file resulting from a paired-end 
+alignment and extract all query sequence IDs that meet a certain percent
+identity threshold. 
+
+    Input:
+        1. Path to a SAM file. 
+        2. Path to ea_map.tsv from extract_alleles.py
+        3. Threshold for considering a read to be recruited. Defaults to 80%. 
+        The denominator for calculating this percentage is either the sequence
+        length or read length, whichever is shorter.
+        4. A prefix for naming the output files.
+
+    Output:
+        1. prefix_read_map.tsv
+        A map file where a given read is a key and it maps to all the references
+        that it hit. The first column is the read ID, every subsequent column is a
+        combination of %ID|length|referenceID for all the reference alignments 
+        that passed the threshold. Note that %ID and length are included so that
+        these values can help determine which read may have a better alignment
+        given a similar %ID.
+        2. prefix_ref_map.tsv
+        Similar to the first, except this one uses the reference ID as the main
+        map point. The subsequent columns will consist of %ID | read ID. 
+        While these two files are similar, they're more useful in separate cases. The
+        first is what will be used downstream here while the second can be used to 
+        check for which reference contigs were able to recruit the most reads. 
+
+    Usage:
+        analyze_bam.py --sam /path/to/gsnap_out.bam (-threshold 90) -p /path/to/out_prefix --ea_map /path/to/out_from_extract_alleles.tsv
+
+    Author: 
+        James Matsumura
+"""
 
 import argparse,pysam,subprocess
 from collections import defaultdict
@@ -32,14 +41,13 @@ from collections import defaultdict
 def main():
 
     parser = argparse.ArgumentParser(description='Script to isolate all reads and where they aligned to given a BAM file.')
-    parser.add_argument('--sam', '-s', type=str, help='Path to a SAM/BAM file, will automatically handle either.')
+    parser.add_argument('--sam', '-s', type=str, help='Path to a SAM file.')
     parser.add_argument('--ea_map', '-eam', type=str, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('--threshold', '-t', type=int, default=80, required=False, help='Minimum %ID threshold to retain (entering 95 means %95 minimum %ID). Defaults to %80.')
     parser.add_argument('--prefix', '-p', type=str, required=True, help='Name of the prefix of where the two output TSV files should go.')
     args = parser.parse_args()
 
-    # Collect the lengths from each reference gene
-    ref_lengths = defaultdict(list)
+    ref_lengths = defaultdict(list) # Collect the lengths from each reference gene
     with open(args.ea_map,'r') as loc_map:
 
         for line in loc_map:

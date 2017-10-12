@@ -1,29 +1,41 @@
 #!/usr/bin/env python3
 
-# This follows analyze_bam.py and accepts the *_read_map.tsv generated from that 
-# script. Remember that this dataset must consist of PAIRED-END SORTED FASTQ reads
-# that have the SAME order. This is because this script will iterate over the two
-# files simultaneously. This script expects the reads to match in their name except for 
-# the final number value, e.g. ABC.123.1 + ABC.123.2 are a properly formatted pair.
-#
-# This script aims to accomplish two things:
-#
-# 1) Generate some statistics on the alignments like how many reads mapped 
-# to multiple loci, how many reads mapped to only aligned to one locus, and
-# how many reads have a discrepancy where the two mates in a pair map to 
-# different loci. All these stats will be written to STDOUT.
-#
-# 2) Using the alignment information, potentially refine a FASTQ file of reads
-# to either those pairs found aligning to just one locus, or no filtering at all.
-#
-# The output will be a set of directories, one for each locus aligned to by at least
-# one read. Under each directory is the set of paired reads that an alignment
-# originated from.
-#
-# Run the script using a command like this:
-# fastq_reads_to_fastq_alleles.py --ab_read_map /path/to/analyze_bam.out --fastq1 /path/to/reads1.fastq.gz --fastq2 /path/to/reads2.fastq.gz --filter (yes|no) -reads_dir /path/to/read_dir
-#
-# Author: James Matsumura
+"""
+This follows analyze_bam.py and accepts the *_read_map.tsv generated from that 
+script. Remember that this dataset must consist of PAIRED-END SORTED FASTQ reads
+that have the SAME order. This is because this script will iterate over the two
+files simultaneously. This script expects the reads to match in their name except for 
+the final number value, e.g. ABC.123.1 + ABC.123.2 are a properly formatted pair.
+Using the alignment information (multi-map, single-map, etc.) it will potentially
+refine the FASTQ output if the filter option is used. 
+
+    Input:
+        1. Path to *_read_map.tsv output from analyze_bam.py
+        2. Path to the first paired fastq.gz file
+        3. Path to the second paired fastq.gz file
+        4. Either "yes" or "no" for removing discrepancies + multi-locus mapping reads
+        5. Either "yes" or "no" for whether the reads are mapped to one another with 
+        suffixes like .1 and .2 and one wants to assess for concordancy. This is 
+        dependent on the aligner. Check the *read_map.tsv file and see if the first 
+        elements are by read pair (so no suffix) or individual read (each read has 
+        a suffix) and answer accordingly
+        6. Path to the base output directory for writing out the FASTQ bins
+
+    Output:
+        1. Some statistics on the alignments like how many reads mapped to
+        multiple loci, how many reads mapped to only aligned to one locus, and
+        how many reads have a discrepancy where the two mates in a pair map to 
+        different loci. This will all be written to STDOUT.
+        2. One directory for each locus aligned to. Each directory has a 
+        reads.fastq.gz file which will be used to try assemble that particular
+        locus. 
+
+    Usage:
+        fastq_reads_to_fastq_alleles.py --ab_read_map /path/to/analyze_bam.out --fastq1 /path/to/reads1.fastq.gz --fastq2 /path/to/reads2.fastq.gz --filter (yes|no) -reads_dir /path/to/read_dir
+
+    Author: 
+        James Matsumura
+"""
 
 import argparse,gzip,itertools
 from collections import defaultdict
@@ -36,7 +48,7 @@ def main():
     parser.add_argument('--fastq1', '-1', type=str, required=True, help='Path to the first paired fastq.gz file.')
     parser.add_argument('--fastq2', '-2', type=str, required=True, help='Path to the second paired fastq.gz file.')
     parser.add_argument('--filter', '-f', type=str, required=True, help='Either "yes" or "no" for removing discrepancies + multi-locus mapping reads.')
-    parser.add_argument('--paired_suffixes', '-ps', type=str, required=True, help='Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has  suffix) and answer accordingly.')
+    parser.add_argument('--paired_suffixes', '-ps', type=str, required=True, help='Either "yes" or "no" for whether the reads are mapped to one another with suffixes like .1 and .2 and one wants to assess for concordancy. This is dependent on the aligner. Check the *read_map.tsv file and see if the first elements are by read pair (so no suffix) or individual read (each read has a suffix) and answer accordingly.')
     parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Path to where the output directory for the FASTQs to go.')
     args = parser.parse_args()
 

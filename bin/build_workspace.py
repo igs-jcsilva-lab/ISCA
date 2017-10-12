@@ -1,14 +1,30 @@
 #!/usr/bin/env python3
 
-# This script establishes the necessary directory structures needed to run the
-# pipeline. It requires the destination for where to place these directories. 
-# Please make sure you have the necessary permissions to create directories at
-# the specified location. 
-#
-# Run the script using a command like this:
-# build_workspace.py --workspace_location /path/to/build_directories
-#
-# Author: James Matsumura
+"""
+This script establishes the necessary directory structures needed to run the
+pipeline. It requires the destination for where to place these directories. 
+Please make sure you have the necessary permissions to create directories at
+the specified location. 
+
+    Input:
+        1. A base directory location to build a workspace
+
+    Output:
+        1. grid_out directory
+        2. grid_err directory
+        3. gsnap_idx to store GSNAP index
+        4. smalt_idx to store SMALT index
+        5. (first|second)_reads to store directories of individual read bins per locus
+        6. (first|second)_spades_assemblies to perform SPAdes assembly
+        7. (first|second)_hga_assemblies to perform HGA assembly
+        8. (first|second)_alignments to align assemblies to references
+
+    Usage:
+        build_workspace.py --workspace_location /path/to/build_directories
+
+    Author: 
+        James Matsumura
+"""
 
 import argparse, urllib.request
 from shared_fxns import make_directory

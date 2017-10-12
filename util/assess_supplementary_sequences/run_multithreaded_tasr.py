@@ -8,13 +8,16 @@ TASR: https://github.com/warrenlr/TASR
 
 Input: 
     1. Path to the TASR executable. 
-    2. A file which has, on each line, the path to a set of reads to assemble. 
-    3. A file which has a set of sequences to target assembly for.
-    4. A location to a working directory. 
+    2. Number of threads to use (this will invoke 1 less than requested here
+    to accommodate this running script itself)
+    3. A file which has, on each line, the path to a set of reads to assemble. 
+    4. A file which has a set of sequences to target assembly for.
+    5. A location to a working directory. 
 
 Output: 
-    1. Numerous directories (one for each sequence specified in 3.) which has
-    all the contents of a typical output from TASR. 
+    1. Numerous directories (one for each sequence specified in 3.) which each
+    haev all the contents of a typical output from TASR. The file of interest
+    is likely *contigs in each directory.
 
 Usage:
     run_multithreaded_tasr.py -t /path/to/TASR -d 10 -r /path/to/reads.txt -s /path/to/sequences.fsa -o /path/to/outdir
