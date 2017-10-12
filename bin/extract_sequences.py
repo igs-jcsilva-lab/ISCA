@@ -1,21 +1,33 @@
 #!/usr/bin/env python3
 
-# This script follows extract_alleles.py. This expects the output from that 
-# script in addition to the same list used as input for that script. The 
-# output of this script will be a FASTA file. The final argument of this script,
-# -buffer, is optional. This parameter sets a "buffer" region to extend the gene
-# positions noted in the GFF3 file a bit. The output of this is meant to build
-# a reference tob e used for alignment.
-#
-# It is recommended that you set a value for the buffer length that makes sense
-# depending on your read length (e.g. use 125 for 250bp reads). If you do set
-# a buffer, you should run this script twice as you'll want a set of sequences
-# that lack a buffer when it comes to the alignment steps.  
-# 
-# Run the script using a command like this:
-# extract_sequences.py --ea_input /path/to/list_input.tsv --ea_map /path/to/out_from_extract_alleles.tsv --prefix /path/to/my_seqs --buffer 20
-#
-# Author: James Matsumura
+"""
+This script follows extract_alleles.py. This expects the output from that 
+script in addition to the same list used as input for that script. The 
+output of this script will be a FASTA file. The optional --buffer argument 
+adds a "buffer" region to extend the gene positions noted in the GFF3 file 
+a bit. It is recommended that you set a value for the buffer length that makes 
+sense depending on your read length (e.g. use 125 for 250bp reads). 
+The output of this is meant to build a reference set to be used for alignment.
+
+    Input:
+        1. Path to a TSV list for references and isolates, same as input for extract_alleles.py
+        2. Path to the output from extract_alleles.py
+        3. Path to a file with locus IDs to include in the reference set
+        4. How much of a buffer to add to each end of the gene, defaults to 0
+        5. Prefix of the output FASTA files to generate
+
+    Output:
+        1. A file with the reference sequences with the buffer padding
+        2. A file with the reference sequences without any buffer (just the
+        gene region), note this may be equivalent to 1. if buffer is 0
+
+
+    Usage:
+        extract_sequences.py --ea_input /path/to/list_input.tsv --ea_map /path/to/out_from_extract_alleles.tsv --prefix /path/to/my_seqs --buffer 20
+    
+    Author: 
+        James Matsumura
+"""
 
 import re,argparse
 from Bio import SeqIO

@@ -16,7 +16,7 @@ Input:
 
 Output: 
     1. Numerous directories (one for each sequence specified in 3.) which each
-    haev all the contents of a typical output from TASR. The file of interest
+    have all the contents of a typical output from TASR. The file of interest
     is likely *contigs in each directory.
 
 Usage:

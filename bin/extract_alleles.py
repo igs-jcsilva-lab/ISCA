@@ -1,35 +1,49 @@
 #!/usr/bin/env python3
 
-# This script will parse through multiple GFF3 files and pull the alleles of each.
-# It expects a file as input with each line in the file being tab-delimited 
-# where the first column is the type (either reference or isolate), the second
-# column is the GFF3 file, the third column is the FASTA that correlates to 
-# the GFF3 file, and the fourth column is the name/prefix to designate these files to. 
-# While the FASTA file is not used by this script, it is used by downstream
-# scripts so formatting this file like this allows for this single file 
-# to be used as input for all subsequent scripts. 
-#
-# The input should look like this (MUST start with whichever you want to be the reference): 
-# reference     /path/to/ref.gff3   /path/to/ref.fasta  name_of_ref
-# isolate       /path/to/iso1.gff3   /path/to/iso1.fasta    name_of_iso1
-# isolate       /path/to/iso2.gff3   /path/to/iso2.fasta    name_of_iso2
-#
-# *** It is VERY important that the name_of_* column does not have periods ('.') ***
-# *** This is to guarantee correct mapping later on in the pipeline. ***
-#
-# Note there can only be one reference as this is what all other alleles will map
-# to. The output will be another TSV file with the first column being the reference
-# ID, the second column being source/location of this gene, and the third column
-# contains the start-stop coordinates for the gene. Subsequent columns will  
-# have the isolates that follow this same pattern. 
-#
-# The output will look like this:
-# ref_id_0001   ref_loc   1-8888  iso1.ref_id_0001  iso1_loc    2-7999  iso2.ref_id_0001    iso2_loc    3-8000
-# 
-# Run the script using a command like this:
-# extract_alleles.py --ea_input /path/to/list_input.tsv --gene_or_exon gene --insert 500 --out_dir /path/to/outfile.tsv
-#
-# Author: James Matsumura
+"""
+This script will parse through multiple GFF3 files and pull the alleles of each.
+It expects a file as input with each line in the file being tab-delimited 
+where the first column is the type (either reference or isolate), the second
+column is the GFF3 file, the third column is the FASTA that correlates to 
+the GFF3 file, and the fourth column is the name/prefix to designate these files to. 
+While the FASTA file is not used by this script, it is used by downstream
+scripts so formatting this file like this allows for this single file 
+to be used as input for all subsequent scripts. 
+
+The input should look like this (MUST start with whichever you want to be the reference): 
+    reference     /path/to/ref.gff3   /path/to/ref.fasta  name_of_ref
+    isolate       /path/to/iso1.gff3   /path/to/iso1.fasta    name_of_iso1
+    isolate       /path/to/iso2.gff3   /path/to/iso2.fasta    name_of_iso2
+
+*** It is VERY important that values in the name_of_* column do not contain periods ***
+*** This is to guarantee correct mapping later on in the pipeline ***
+
+Note there can only be one reference as this is what all other alleles will map
+to. The output will be another TSV file with the first column being the reference
+ID, the second column being source/location of this gene, and the third column
+contains the start-stop coordinates for the gene. Subsequent columns will  
+have the isolates that follow this same pattern. 
+
+The output will look like this:
+    ref_id_0001   ref_loc   1-8888  iso1.ref_id_0001  iso1_loc    2-7999  iso2.ref_id_0001    iso2_loc    3-8000
+
+    Input:
+        1. Path to a TSV list for references and isolates described above
+        2. Insert size from SRA for the reads that will be used as input
+        3. Either "gene" or "exon" for which level of sequences to pull
+        4. Directory for where the output should go
+
+    Output:
+        1. A map for a single loci to all its alleles
+        2. A map indicating any overlapping gene positions
+        3. Summary data on introns including locations and longest intron length 
+
+    Usage:
+        extract_alleles.py --ea_input /path/to/list_input.tsv --gene_or_exon gene --insert 500 --out_dir /path/to/outfile.tsv
+
+    Author: 
+        James Matsumura
+"""
 
 import re,argparse
 from collections import defaultdict

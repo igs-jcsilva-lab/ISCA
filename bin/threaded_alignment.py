@@ -1,13 +1,43 @@
 #!/usr/bin/env python3
 
-# This script uses EMBOSS's needle global alignment tool to perform alignments
-# between the assembled output of the assembler and the unbuffered set of FASTA 
-# sequences. 
-#
-# Run the script using a command like this:
-# threaded_alignment.py --ea_map /path/to/extract_alleles_map.tsv --assmb_map /path/to/format_for_assembly.tsv --original_fsa /path/to/ref_genome.fsa --assmb_path -/path/to/assemblies_out --assmb_type (HGA|SPAdes) --align_path /path/to/alignment_out --priority 3D7 --emboss_tool /pkgs/emboss/bin/needle
-#
-# Author: James Matsumura
+"""
+This script uses EMBOSS's needle global alignment tool to perform alignments
+between the assembled output of the assembler and the unbuffered set of FASTA 
+sequences. Also works with EMBOSS's water tool. 
+
+    Input:
+        1. Path to ea_map.tsv output from extract_alleles.py
+        2. Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py
+        3. Number of cores to use
+        4. Path to the unbuffered FASTA from extract_sequences.py
+        5. Optional minimum length ratio of an assembled sequence that should be aligned 
+        to. For instance, enter .1 to not align constructed sequences less than 10% of 
+        the original sequence length. Default 1.0
+        6. Optional maximum length of an assembled sequence that should be aligned to. 
+        This is a integer, not a ratio like the min length. Useful to prevent out of memory
+        7. Path to the the directory preceding all the ref directories 
+        (e.g. for "/path/to/ref123" put "/path/to" as the input)
+        8. Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to
+        9. If given, the prefix of the sequence to solely align to like XYZ.11203981.1 would 
+        require "XYZ" as input. Useful when trying to reconstruct a particular sequence from
+        just one of the input strains
+        10. Base output directory for all these alignments
+        11. Path to install directory of EMBOSS needle/water executable 
+        (e.g. /path/to/packages/emboss/bin/[needle|water])
+
+    Output:
+        1. Several directories each with original alignments and then trimmed 
+        alignments where the assembled sequence over extensions are pared down
+
+    Usage:
+        threaded_alignment.py --ea_map /path/to/extract_alleles_map.tsv \
+        --assmb_map /path/to/format_for_assembly.tsv --original_fsa /path/to/ref_genome.fsa \
+        --assmb_path -/path/to/assemblies_out --assmb_type (HGA|SPAdes) \
+        --align_path /path/to/alignment_out --priority 3D7 --emboss_tool /pkgs/emboss/bin/needle
+
+    Author: 
+        James Matsumura
+"""
 
 import argparse,os,sys
 import multiprocessing as mp
@@ -22,15 +52,15 @@ from shared_fxns import make_directory,write_fasta
 def main():
 
     parser = argparse.ArgumentParser(description='Script to generate EMBOSS Needle alignments given output from format_for_assembly.py.')
-    parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to map.tsv output from extract_alleles.py.')
-    parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
+    parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to ea_map.tsv output from extract_alleles.py.')
+    parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py.')
     parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use.')
     parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
     parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
     parser.add_argument('--max_align_len', '-maxl', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
     parser.add_argument('--assmb_path', '-asp', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--assmb_type', '-at', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
-    parser.add_argument('--priority', '-p', type=str, required=False, default="", help='If given, the prefix of the sequence to solelys align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
+    parser.add_argument('--priority', '-p', type=str, required=False, default="", help='If given, the prefix of the sequence to solely align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
     parser.add_argument('--align_path', '-alp', type=str, required=True, help='Path to output directory for all these alignments.')
     parser.add_argument('--emboss_tool', '-e', type=str, required=True, help='Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water]).')
     args = parser.parse_args()

@@ -1,31 +1,50 @@
 #!/usr/bin/env python3
 
-# This script acts similar to an SGE array job where it queues tasks as 
-# resources on the system as they become available. 
-#
-# PLEASE BE CAREFUL WHEN RUNNING THIS SCRIPT. 
-#
-# It is certainly possible to consume all the resources on your machine 
-# if you request too much in terms of threads and memory. How many threads
-# you need for each assembly is going to vary depending on your 
-# dataset. Please start conservative with your estimates and if SPAdes 
-# is prohibitively slow or gets OOM errors then increment up. 
-#
-# Generally, with default read inputs SPAdes can succeed with 1:1
-# GB:thread count. The amount of memory per thread will increase
-# to 3:1 when running HGA. These are only estimates though, YMMV. 
-#
-# ******
-# total number of cores/cpus used by this script is determined by: (--number_of_jobs) + (--number_of_jobs) * (--threads_per_job)
-# rough total memory used by this script is determined by: (--number_of_jobs) * (--memory_per_job)
-# ******
-#
-# Run the script using a command like this:
-# run_parallel_assembly.py --assmb_step (SPAdes|HGA|SB) --number_of_jobs 8 --assmb_map /path/to/map.tsv \
-# --threads_per_job 5 --memory_per_job 8 --reads_dir /path/to/reads_dir --spades_install /path/to/spades/bin \
-# -rd /path/to/reads_dir -ap /path/to/assemblies
-#
-# Author: James Matsumura
+"""
+This script acts similar to an SGE array job where it queues tasks as 
+resources on the system as they become available. 
+
+*** Please be careful when running this script ***
+
+It is certainly possible to consume all the resources on your machine 
+if you request too much in terms of threads and memory. How many threads
+you need for each assembly is going to vary depending on your 
+dataset. Please start conservative with your estimates and if SPAdes 
+is prohibitively slow or gets OOM errors then increment up. 
+
+Generally, with default read inputs SPAdes can succeed with 1:1
+GB:thread count. The amount of memory per thread will increase
+to 3:1 when running HGA. These are only estimates though, YMMV. 
+
+******
+total number of cores/cpus used by this script is determined by: 1 + (--number_of_jobs) * (--threads_per_job)
+rough total memory used by this script is determined by: (--number_of_jobs) * (--memory_per_job)
+******
+
+    Input:
+        1. Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py
+        2. Path to the directory preceding all the ref directories (e.g. for "/path/to/ref123" 
+        put "/path/to" as the input) to generate output for the assemblies
+        3. Number of cores to call for individual processes
+        4. Number of threads to invoke for each job
+        5. Memory, in GB, to use per job
+        6. Base path to where the reads are stored
+        7. One of "SPAdes","HGA", or "SB"
+        8. SPAdes/HGA/Scaffold Builder install location (coincide with 7.)
+        9. Path to the the location of the Python2 executable (only when 7. is not "SPAdes")
+        10. Path to the the location of the velvet install (only when 7. is "HGA")
+        11. Number of partitions to split on during HGA (only when 7. is "HGA")
+        12. Path to the output from extract_alleles.py
+        13. Path to the unbuffered FASTA from extract_sequences.py
+
+    Usage:
+       run_parallel_assembly.py --assmb_step (SPAdes|HGA|SB) --number_of_jobs 8 --assmb_map \
+       /path/to/map.tsv --threads_per_job 5 --memory_per_job 8 --reads_dir /path/to/reads_dir \ 
+       --spades_install /path/to/spades/bin -rd /path/to/reads_dir -ap /path/to/assemblies
+
+    Author: 
+        James Matsumura
+"""
 
 import re,argparse,os,subprocess,shutil,sys
 import multiprocessing as mp
@@ -35,9 +54,9 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
     # All are required, but different combinations for SPAdes, HGA, or SB.
-    parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
-    parser.add_argument('--assmb_step', '-as', type=str, required=True, help='Either "SPAdes","HGA", or "SB"')
-    parser.add_argument('--assmb_path', '-ap', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py.')
+    parser.add_argument('--assmb_step', '-as', type=str, required=True, help='One of "SPAdes","HGA", or "SB"')
+    parser.add_argument('--assmb_path', '-ap', type=str, required=True, help='Path to the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--number_of_jobs', '-n', type=int, required=True, help='Number of cores to call for individual processes.')
     parser.add_argument('--threads_per_job', '-t', default=1, type=int, required=False, help='Number of threads to invoke for each job.')
     parser.add_argument('--memory_per_job', '-m', required=False, help='Memory, in GB, to use per job.')

@@ -1,22 +1,38 @@
 #!/usr/bin/env python3
 
-# This script parses through the output directories of threaded_alignment.py
-# to extract the best alignment for each assembled sequence. Note the 'priority' 
-# parameter which prefers that isolate set which was used to map from via GMAP. 
-# When the desired reference priority is not the best hit, brief stats on what %ID 
-# it was capable of reaching for that locus compared to the best hit are presented.
-# 
-# The STDOUT consists of the following columns (tab-separated):
-# locus best_ref %id_of_best_ref priority_ref %id_of_priority_ref %id_difference
-#
-# The ids_v_cov.tsv file consists of the best hits for each assembled locus. 
-# The columns are as follows (tab-separated):
-# %ID coverage(reference/assembled) reference path_to_best_alignment
-#
-# Run the script using a command like this:
-# threaded_assess_alignment.py --assmb_map /path/to/format_for_assembly.tsv --align_path /path/to/alignments --ivc_outfile /path/to/output_dir --priority 3D7
-#
-# Author: James Matsumura
+"""
+This script parses through the output directories of threaded_alignment.py
+to extract the best alignment for each assembled sequence. Note the 'priority' 
+parameter which prefers that isolate set which was used to map from via GMAP. 
+When the desired reference priority is not the best hit, brief stats on what %ID 
+it was capable of reaching for that locus compared to the best hit are presented.
+
+The ids_v_cov.tsv file consists of the best hits for each assembled locus. 
+The columns are as follows (tab-separated):
+    %ID coverage(reference/assembled) reference path_to_best_alignment
+
+    Input:
+        1. Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py
+        2. Number of cores to use
+        3. Path to the the directory preceding all the alignment directories 
+        (e.g. for "/path/to/ref123" put "/path/to" as the input)
+        4. Name of ids_v_cov.tsv output file
+        5. Optional prefix for prioritizing one isolate over the others
+        6. Either "yes" or "no" for whether to report stats of only the best alignment or all alignments
+        7. Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to
+
+    Output:
+        1. A file which relates the %ID found when aligning the reference and
+        the assembled sequence. If HGA is used, has an additional column which
+        tells the %ID found just with respect to the reference and ignores any
+        over-assembled internal regions of the newly assembled sequence
+
+    Usage:
+        threaded_assess_alignment.py --assmb_map /path/to/format_for_assembly.tsv \
+         --align_path /path/to/alignments --ivc_outfile /path/to/output_dir --priority 3D7
+    Author: 
+        James Matsumura
+"""
 
 import re,argparse,os,collections
 import multiprocessing as mp
@@ -25,7 +41,7 @@ from Bio import AlignIO
 def main():
 
     parser = argparse.ArgumentParser(description='Script to assess EMBOSS Needle alignments, follows global_alignment.py.')
-    parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to map.tsv output from format_for_assembly.py or assembly_verdict.py.')
+    parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py.')
     parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use.')
     parser.add_argument('--align_path', '-ap', type=str, required=True, help='Path to the the directory preceding all the alignment directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--ivc_outfile', '-io', type=str, required=True, help='Name of ids_v_cov.tsv output file.')
