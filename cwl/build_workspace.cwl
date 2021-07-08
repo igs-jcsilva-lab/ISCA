@@ -86,15 +86,5 @@ outputs:
     outputBinding:
       glob: $(inputs.workspace_location + '/second_ids_v_cov.tsv')
 
-  HGA:
-    type: File
-    outputBinding:
-      glob: $(inputs.workspace_location + '/HGA.py')
-
-  scaffold_builder:
-    type: File
-    outputBinding:
-      glob: $(inputs.workspace_location + '/scaffold_builder.py')
-
 
 baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/build_workspace.py"]

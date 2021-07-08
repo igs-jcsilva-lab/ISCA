@@ -78,14 +78,6 @@ outputs:
     type: Directory
     outputSource: build_workspace/second_alignments
 
-  HGA:
-    type: File
-    outputSource: build_workspace/HGA
-  
-  scaffold_builder:
-    type: File
-    outputSource: build_workspace/scaffold_builder
-
   first_ivc:
     type: File
     outputSource: build_workspace/first_ivc
@@ -123,8 +115,6 @@ steps:
       second_spades_assemblies,
       second_hga_assemblies,
       second_alignments,
-      HGA,
-      scaffold_builder,
       first_ivc,
       second_ivc
     ]

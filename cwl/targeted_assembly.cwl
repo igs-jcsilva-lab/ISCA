@@ -29,7 +29,14 @@ inputs:
     label: Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water])
     type: File
   python2_exe:
-    label: Location of the Python2 installation
+    label: Location of the Python2 executable
+    type: File
+
+  HGA_exe:
+    label: Location of the HGA executable
+    type: File
+  SB_exe:
+    label: Location of the scaffold_builder executable
     type: File
 
   spades_install:
@@ -380,11 +387,12 @@ steps:
       velvet_install: velvet_install
       assmb_step: hga_str
       python2_exe: python2_exe
+      HGA_exe: HGA_exe
+      SB_exe: SB_exe
       number_of_jobs: number_of_jobs
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
       partitions: partitions
-      HGA_exe: phase_one/HGA
       reads_dir: first_phase_two/renamed_reads_dir
       assmb_map: first_intermediary_phase_three/hga_assmb_map
       assmb_path: phase_one/first_hga_assemblies
@@ -398,8 +406,9 @@ steps:
     in:
       assmb_step: sb_str
       python2_exe: python2_exe
+      HGA_exe: HGA_exe
+      SB_exe: SB_exe
       number_of_jobs: number_of_jobs
-      SB_exe: phase_one/scaffold_builder
       ea_map: phase_one/ea_map
       original_fsa: phase_one/unbuffered_sequences
       reads_dir: first_phase_two/renamed_reads_dir
@@ -523,11 +532,12 @@ steps:
       velvet_install: velvet_install
       assmb_step: hga_str
       python2_exe: python2_exe
+      HGA_exe: HGA_exe
+      SB_exe: SB_exe
       number_of_jobs: number_of_jobs
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
       partitions: partitions
-      HGA_exe: phase_one/HGA
       reads_dir: second_phase_two/renamed_reads_dir
       assmb_map: second_intermediary_phase_three/hga_assmb_map
       assmb_path: phase_one/second_hga_assemblies
@@ -541,8 +551,9 @@ steps:
     in:
       assmb_step: sb_str
       python2_exe: python2_exe
+      HGA_exe: HGA_exe
+      SB_exe: SB_exe
       number_of_jobs: number_of_jobs
-      SB_exe: phase_one/scaffold_builder
       ea_map: phase_one/ea_map
       original_fsa: phase_one/unbuffered_sequences
       reads_dir: second_phase_two/renamed_reads_dir
