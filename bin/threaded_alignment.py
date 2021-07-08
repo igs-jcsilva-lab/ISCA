@@ -39,7 +39,7 @@ sequences. Also works with EMBOSS's water tool.
         James Matsumura
 """
 
-import argparse,os,sys
+import argparse,os,sys,tempfile
 import multiprocessing as mp
 from collections import defaultdict
 from Bio.Emboss.Applications import NeedleCommandline, WaterCommandline
@@ -64,6 +64,9 @@ def main():
     parser.add_argument('--align_path', '-alp', type=str, required=True, help='Path to output directory for all these alignments.')
     parser.add_argument('--emboss_tool', '-e', type=str, required=True, help='Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water]).')
     args = parser.parse_args()
+
+    # ensure that multiprocessing module doesn't use NFS
+    tempfile.tempdir = '/tmp'
 
     # First, extract the sequences from the reference file and 
     # *STORE IN MEMORY* (careful how big the reference genome used is.
@@ -135,7 +138,8 @@ def main():
     q.put('stop') # should be no more messages
     pool.close() #  Tell the queue it's done getting new jobs
     pool.join() # Make sure these new jobs are all finished
-
+    manager.shutdown() # Clean up / close files + sockets
+    
 # This is the worker that each CPU will process asynchronously
 # Arguments:
 # locus = the locus that was attempted to assemble

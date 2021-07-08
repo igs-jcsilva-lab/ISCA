@@ -46,7 +46,7 @@ rough total memory used by this script is determined by: (--number_of_jobs) * (-
         James Matsumura
 """
 
-import re,argparse,os,subprocess,shutil,sys
+import re,argparse,os,subprocess,shutil,sys,tempfile
 import multiprocessing as mp
 from Bio import SeqIO
 
@@ -71,6 +71,9 @@ def main():
     parser.add_argument('--original_fsa', '-of', type=str, required=False, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
 
     args = parser.parse_args()
+
+    # ensure that multiprocessing module doesn't use NFS
+    tempfile.tempdir = '/tmp'
 
     # SB runs poorly in parallel, until source code is addressed run serially
     if args.assmb_step == "SB": 
@@ -120,6 +123,7 @@ def main():
     
     pool.close() #  Tell the queue it's done getting new jobs
     pool.join() # Make sure these new jobs are all finished
+    manager.shutdown() # Clean up / close files + sockets
 
 # Worker for assembling via SPAdes
 # Arguments:
