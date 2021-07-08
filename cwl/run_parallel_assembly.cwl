@@ -108,7 +108,7 @@ inputs:
 
   assmb_stdout:
     label: Prior step stdout used as workaround for outputEval.
-    type: File
+    type: File?
 
 outputs:
   stdout:

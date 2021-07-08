@@ -70,14 +70,6 @@ outputs:
     type: File
     outputSource: analyze_bam/ref_map
 
-  renamed_reads_dir:
-    type: Directory
-    outputSource: format_for_assembly/renamed_reads_dir
-
-  renamed_assmb_dir:
-    type: Directory
-    outputSource: format_for_assembly/renamed_assmb_dir
-
   assmb_map:
     type: File
     outputSource: format_for_assembly/assmb_map

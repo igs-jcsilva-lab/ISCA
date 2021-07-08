@@ -82,9 +82,6 @@ inputs:
     type: File
 
 outputs:
-  alignments:
-    type: Directory
-    outputSource: alignment/aligned_dir
 
   ids_v_cov:
     type: File
