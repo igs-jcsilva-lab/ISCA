@@ -135,6 +135,10 @@ def extract_sequences(file,assembled,aligned,outfile):
             else:
                 contigs[current_id] += line # add all the bases
 
+    # ensure that outfile is always written, even if 0 length
+    with open(outfile, "a") as ofile:
+        pass
+
     for allele in not_assembled:
         write_fasta(outfile,allele,contigs[allele])
 
