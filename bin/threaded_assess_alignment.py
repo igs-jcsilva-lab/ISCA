@@ -34,7 +34,7 @@ The columns are as follows (tab-separated):
         James Matsumura
 """
 
-import re,argparse,os,collections
+import re,argparse,os,collections,tempfile
 import multiprocessing as mp
 from Bio import AlignIO
 
