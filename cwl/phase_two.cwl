@@ -107,18 +107,17 @@ steps:
       reads1: reads1
       reads2: reads2
       python3_lib: python3_lib
-    out: [assigned_reads_dir]
+    out: [stdout]
     
   format_for_assembly:
     run: format_for_assembly.cwl
     in:
-      reads_dir: fastq_reads_to_fastq_alleles/assigned_reads_dir
+      reads_dir: reads_dir
       assmb_path: assmb_path
       ab_ref_map: analyze_bam/ref_map
       outfile: outfile
       python3_lib: python3_lib
+      fastq_reads_to_fastq_alleles_stdout: fastq_reads_to_fastq_alleles/stdout
     out: [
-      renamed_reads_dir,
-      renamed_assmb_dir,
       assmb_map
       ]

@@ -2,6 +2,7 @@
 cwlVersion: v1.0
 label: Targeted Assembly -- run threaded alignment
 class: CommandLineTool
+stdout: alignment.out
 
 
 requirements:
@@ -85,10 +86,8 @@ inputs:
 
 
 outputs:
-  aligned_dir:
-    type: Directory
-    outputBinding:
-      outputEval: $(inputs.align_path)
+  stdout:
+    type: stdout
 
 
 baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/threaded_alignment.py"]

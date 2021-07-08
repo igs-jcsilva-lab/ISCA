@@ -77,6 +77,9 @@ inputs:
     label: Minimum alignment length to perform alignment with (RATIO)
     type: double
 
+  assmb_stdout:
+    label: Prior step stdout used as workaround for outputEval.
+    type: File
 
 outputs:
   alignments:
@@ -114,18 +117,19 @@ steps:
       min_align_len: min_align_len
       assmb_type: assmb_type
       python3_lib: python3_lib
-    out: [aligned_dir]
+    out: [stdout]
 
   alignment_assessment:
     run: alignment_assessment.cwl
     in:
       assmb_map: assmb_map
-      align_path: alignment/aligned_dir
+      align_path: align_path
       number_of_jobs: number_of_jobs
       assmb_type: assmb_type
       ivc_outfile: ivc_outfile
       best_only: best_only
       python3_lib: python3_lib
+      alignment_stdout: alignment/stdout
     out: [ids_v_cov]
 
   assembly_verdict:
@@ -146,7 +150,7 @@ steps:
     run: get_final_sequences.cwl
     in:
       ivc: alignment_assessment/ids_v_cov
-      align_path: alignment/aligned_dir
+      align_path: align_path
       groupby: groupby
       threshold: threshold
       outfile: sequences_outfile
