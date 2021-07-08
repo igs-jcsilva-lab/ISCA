@@ -292,8 +292,6 @@ steps:
       second_spades_assemblies,
       second_hga_assemblies,
       second_alignments,
-      HGA,
-      scaffold_builder,
       first_ivc,
       second_ivc,
       ea_map,
