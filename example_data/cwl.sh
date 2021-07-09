@@ -12,6 +12,6 @@ mkdir $TMPDIR $OUTDIR $TMPOUTDIR
   --tmp-outdir-prefix $TMPOUTDIR \
   --outdir $OUTDIR \
   --disable-color \
-  /usr/local/scratch/TA-test/TA1/targeted_assembly.cwl \
+  /usr/local/scratch/TA-test/TA1/cwl/targeted_assembly.cwl \
   $WDIR/targeted_assembly.yml
 
