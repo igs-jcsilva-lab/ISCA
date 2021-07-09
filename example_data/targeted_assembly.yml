@@ -102,14 +102,14 @@ aligner_threshold: 90
 # BE CAREFUL with this as this value multiplied by the value specified for 
 # threads_per_job should be LESS THAN the number of CPUs available. Similarly,
 # the same holds true for this and the memory_per_job parameter.
-number_of_jobs: 10
+number_of_jobs: 1
 # How many threads to allot for each individual assembly job (how many jobs
 # depends on value set for number_of_jobs). 
-threads_per_job: 3
+threads_per_job: 1
 # How much memory, in GB, to allot for each individual assembly job (how many 
 # jobs depends on value set for number_of_jobs). )
 memory_per_job: 8
 # How many threads to call when using GSNAP/SMALT. This value is independent of 
 # any other parameters so it's probably best to set this to n-1 where n is the 
 # number CPUs on the system.  
-aligner_threads: 30
+aligner_threads: 1
