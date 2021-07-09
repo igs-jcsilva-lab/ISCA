@@ -8,8 +8,7 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: EnvVarRequirement
     envDef:
-      - envName: LD_LIBRARY_PATH
-        envValue: $(inputs.python3_lib)
+      LD_LIBRARY_PATH: $(inputs.python3_lib)
 
 inputs:
   reads_dir:
