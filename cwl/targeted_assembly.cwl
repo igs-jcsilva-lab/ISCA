@@ -337,6 +337,7 @@ steps:
   first_spades_assmb:
     run: run_parallel_assembly.cwl
     in:
+      python2_exe: python2_exe
       spades_install: spades_install
       assmb_step: spades_str
       number_of_jobs: number_of_jobs
@@ -483,6 +484,7 @@ steps:
   second_spades_assmb:
     run: run_parallel_assembly.cwl
     in:
+      python2_exe: python2_exe
       spades_install: spades_install
       assmb_step: spades_str
       number_of_jobs: number_of_jobs
