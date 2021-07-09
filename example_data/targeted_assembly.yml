@@ -5,19 +5,19 @@
 # File formatted as per the specifications at the top of extract_alleles.py
 ea_input:
     class: File
-    path: /autofs/scratch/jcrabtree/targeted-assembly/example-1/ea_input.tsv
+    path: /tmp/example/ea_input.tsv
 # Text file where each line notes a locus to try to assemble
 subset_list:
     class: File
-    path: /autofs/scratch/jcrabtree/targeted-assembly/example-1/subset_list.txt
+    path: /tmp/example/subset_list.txt
 # Path to the first of the two read pairs
 reads1:
     class: File
-    path: /usr/local/scratch/jcrabtree/targeted-assembly/example-1/demo_reads1.fastq.gz
+    path: /tmp/example/demo_reads1.fastq.gz
 # Path to the second of the two read pairs
 reads2: 
     class: File
-    path: /usr/local/scratch/jcrabtree/targeted-assembly/example-1/demo_reads2.fastq.gz
+    path: /tmp/example/demo_reads2.fastq.gz
 # Location of the "needle" executable within the EMBOSS suite
 emboss_tool: 
     class: File
