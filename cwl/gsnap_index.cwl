@@ -2,7 +2,7 @@
 cwlVersion: v1.0
 label: GSNAP - Build an index
 class: CommandLineTool
-
+stdout: gsnap_index.out
 
 requirements:
   - class: InlineJavascriptRequirement
@@ -35,10 +35,8 @@ inputs:
 
 
 outputs:
-  gsnap_index_dir:
-    type: Directory
-    outputBinding:
-      outputEval: $(inputs.gsnap_dir)
+  stdout:
+    type: stdout
 
 
 baseCommand: ["GMAP_GSNAP_BIN/gmap_build"]

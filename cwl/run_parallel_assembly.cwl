@@ -2,14 +2,13 @@
 cwlVersion: v1.0
 label: Targeted Assembly -- run parallel assembly (SPAdes, HGA, ScaffoldBuilder)
 class: CommandLineTool
-
+stdout: run_parallel_assembly.out
 
 requirements:
   - class: InlineJavascriptRequirement
   - class: EnvVarRequirement
     envDef:
-      - envName: LD_LIBRARY_PATH
-        envValue: $(inputs.python3_lib)
+      LD_LIBRARY_PATH: $(inputs.python3_lib)
 
 inputs:
   reads_dir:
@@ -106,12 +105,13 @@ inputs:
     label: Path to allow Python3 to be found in the ENV
     type: string?
 
+  assmb_stdout:
+    label: Prior step stdout used as workaround for outputEval.
+    type: File?
 
 outputs:
-  assembled_dir:
-    type: Directory
-    outputBinding:
-      outputEval: $(inputs.assmb_path)
+  stdout:
+    type: stdout
 
 
 baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/run_parallel_assembly.py"]

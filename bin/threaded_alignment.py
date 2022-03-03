@@ -54,7 +54,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to generate EMBOSS Needle alignments given output from format_for_assembly.py.')
     parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to ea_map.tsv output from extract_alleles.py.')
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py.')
-    parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use.')
+    parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use for alignments.')
     parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
     parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
     parser.add_argument('--max_align_len', '-maxl', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
@@ -97,7 +97,7 @@ def main():
 
     manager = mp.Manager()
     q = manager.Queue()
-    pool = mp.Pool(args.cpus)
+    pool = mp.Pool(args.cpus + 1)
 
     pool.apply_async(listener, (q,args.align_path))
 

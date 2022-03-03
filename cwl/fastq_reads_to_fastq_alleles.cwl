@@ -2,6 +2,7 @@
 cwlVersion: v1.0
 label: Targeted Assembly -- assign reads to individual locus directories
 class: CommandLineTool
+stdout: fastq_reads_to_fastq_alleles.out
 
 
 requirements:
@@ -55,10 +56,8 @@ inputs:
 
 
 outputs:
-  assigned_reads_dir:
-    type: Directory
-    outputBinding:
-      outputEval: $(inputs.reads_dir)
+  stdout:
+    type: stdout
 
 
 baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/fastq_reads_to_fastq_alleles.py"]

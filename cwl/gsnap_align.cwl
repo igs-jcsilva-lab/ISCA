@@ -63,6 +63,9 @@ inputs:
     label: Path to allow Python3 to be found in the ENV
     type: string?
 
+  gsnap_index_stdout:
+    label: Prior step stdout used as workaround for outputEval.
+    type: File
 
 outputs:
   gsnap_sam:

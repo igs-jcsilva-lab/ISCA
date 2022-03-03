@@ -51,15 +51,16 @@ steps:
       gsnap_dir: gsnap_dir
       sequences: sequences
       python3_lib: python3_lib
-    out: [gsnap_index_dir]
+    out: [stdout]
 
   gsnap_align:
     run: gsnap_align.cwl
     in:
       gsnap_genome: gsnap_genome
-      gsnap_dir: gsnap_index/gsnap_index_dir
+      gsnap_dir: gsnap_dir
       threads: threads
       reads1: reads1
       reads2: reads2
       python3_lib: python3_lib
+      gsnap_index_stdout: gsnap_index/stdout
     out: [gsnap_sam]

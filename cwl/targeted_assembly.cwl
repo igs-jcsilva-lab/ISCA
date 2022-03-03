@@ -331,25 +331,24 @@ steps:
     out: [
       read_map,
       ref_map,
-      renamed_reads_dir,
-      renamed_assmb_dir,
       assmb_map
     ]
 
   first_spades_assmb:
     run: run_parallel_assembly.cwl
     in:
+      python2_exe: python2_exe
       spades_install: spades_install
       assmb_step: spades_str
       number_of_jobs: number_of_jobs
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
       assmb_map: first_phase_two/assmb_map
-      reads_dir: first_phase_two/renamed_reads_dir
-      assmb_path: first_phase_two/renamed_assmb_dir
+      reads_dir: phase_one/first_reads
+      assmb_path: phase_one/first_spades_assemblies
       python3_lib: python3_lib
     out: [
-      assembled_dir
+      stdout
     ]
 
   first_intermediary_phase_three:
@@ -369,9 +368,10 @@ steps:
       original_fsa: phase_one/unbuffered_sequences
       original_buffered_fsa: phase_one/buffered_sequences
       align_path: phase_one/first_alignments
-      assmb_path: first_spades_assmb/assembled_dir
+      assmb_path: phase_one/first_spades_assemblies
       assmb_map: first_phase_two/assmb_map
       python3_lib: python3_lib
+      assmb_stdout: first_spades_assmb/stdout
     out: [
       ids_v_cov,
       hga_assmb_map,
@@ -391,12 +391,12 @@ steps:
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
       partitions: partitions
-      reads_dir: first_phase_two/renamed_reads_dir
+      reads_dir: phase_one/first_reads
       assmb_map: first_intermediary_phase_three/hga_assmb_map
       assmb_path: phase_one/first_hga_assemblies
       python3_lib: python3_lib
     out: [
-      assembled_dir
+      stdout
     ]
 
   first_sb_assmb:
@@ -409,12 +409,13 @@ steps:
       number_of_jobs: number_of_jobs
       ea_map: phase_one/ea_map
       original_fsa: phase_one/unbuffered_sequences
-      reads_dir: first_phase_two/renamed_reads_dir
+      reads_dir: phase_one/first_reads
       assmb_map: first_intermediary_phase_three/hga_assmb_map
-      assmb_path: first_hga_assmb/assembled_dir
+      assmb_path: phase_one/first_hga_assemblies
       python3_lib: python3_lib
+      assmb_stdout: first_hga_assmb/stdout
     out: [
-      assembled_dir
+      stdout
     ]
 
   first_final_phase_three:
@@ -435,8 +436,9 @@ steps:
       original_buffered_fsa: phase_one/buffered_sequences
       align_path: phase_one/first_alignments
       assmb_map: first_intermediary_phase_three/hga_assmb_map
-      assmb_path: first_sb_assmb/assembled_dir
+      assmb_path: phase_one/first_hga_assemblies
       python3_lib: python3_lib
+      assmb_stdout: first_sb_assmb/stdout
     out: [
       ids_v_cov,
       leftovers,
@@ -476,25 +478,24 @@ steps:
     out: [
       read_map,
       ref_map,
-      renamed_reads_dir,
-      renamed_assmb_dir,
       assmb_map
     ]
 
   second_spades_assmb:
     run: run_parallel_assembly.cwl
     in:
+      python2_exe: python2_exe
       spades_install: spades_install
       assmb_step: spades_str
       number_of_jobs: number_of_jobs
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
       assmb_map: second_phase_two/assmb_map
-      reads_dir: second_phase_two/renamed_reads_dir
-      assmb_path: second_phase_two/renamed_assmb_dir
+      reads_dir: phase_one/second_reads
+      assmb_path: phase_one/second_spades_assemblies
       python3_lib: python3_lib
     out: [
-      assembled_dir
+      stdout
     ]
 
   second_intermediary_phase_three:
@@ -514,9 +515,10 @@ steps:
       original_fsa: phase_one/unbuffered_sequences
       original_buffered_fsa: phase_one/buffered_sequences
       align_path: phase_one/second_alignments
-      assmb_path: second_spades_assmb/assembled_dir
+      assmb_path: phase_one/second_spades_assemblies
       assmb_map: second_phase_two/assmb_map
       python3_lib: python3_lib
+      assmb_stdout: second_spades_assmb/stdout
     out: [
       ids_v_cov,
       hga_assmb_map,
@@ -536,12 +538,12 @@ steps:
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
       partitions: partitions
-      reads_dir: second_phase_two/renamed_reads_dir
+      reads_dir: phase_one/second_reads
       assmb_map: second_intermediary_phase_three/hga_assmb_map
       assmb_path: phase_one/second_hga_assemblies
       python3_lib: python3_lib
     out: [
-      assembled_dir
+      stdout
     ]
 
   second_sb_assmb:
@@ -554,12 +556,13 @@ steps:
       number_of_jobs: number_of_jobs
       ea_map: phase_one/ea_map
       original_fsa: phase_one/unbuffered_sequences
-      reads_dir: second_phase_two/renamed_reads_dir
+      reads_dir: phase_one/second_reads
       assmb_map: second_intermediary_phase_three/hga_assmb_map
-      assmb_path: second_hga_assmb/assembled_dir
+      assmb_path: phase_one/second_hga_assemblies
       python3_lib: python3_lib
+      assmb_stdout: second_hga_assmb/stdout
     out: [
-      assembled_dir
+      stdout
     ]
 
   second_final_phase_three:
@@ -580,8 +583,9 @@ steps:
       original_buffered_fsa: phase_one/buffered_sequences
       align_path: phase_one/second_alignments
       assmb_map: second_intermediary_phase_three/hga_assmb_map
-      assmb_path: second_sb_assmb/assembled_dir
+      assmb_path: phase_one/second_hga_assemblies
       python3_lib: python3_lib
+      assmb_stdout: second_sb_assmb/stdout
     out: [
       ids_v_cov,
       leftovers,

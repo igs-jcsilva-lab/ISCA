@@ -34,7 +34,7 @@ The columns are as follows (tab-separated):
         James Matsumura
 """
 
-import re,argparse,os,collections
+import re,argparse,os,collections,tempfile
 import multiprocessing as mp
 from Bio import AlignIO
 
@@ -56,7 +56,7 @@ def main():
     # Set up the multiprocessing manager, pool, and queue
     manager = mp.Manager()
     q = manager.Queue()
-    pool = mp.Pool(args.cpus)
+    pool = mp.Pool(args.cpus + 1)
     pool.apply_async(listener, (q,args.ivc_outfile))
     jobs = []
 
