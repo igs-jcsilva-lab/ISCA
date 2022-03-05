@@ -288,7 +288,7 @@ def listener(queue,out_dir):
 # emboss_tool = path to EMBOSS tool executable
 def align(out,allele,contig,aseq,bseq,f_or_r,assmb_type,emboss_tool):
 
-    initial_align = "{0}/{1}.WITH.{2}.align.txt".format(out,allele,contig)
+    initial_align = "{0}/{1}.WITH.{2}.{3}.align.txt".format(out,allele,contig,f_or_r)
     
     call_emboss(emboss_tool,aseq,bseq,initial_align)
 
