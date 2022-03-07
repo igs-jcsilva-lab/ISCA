@@ -313,10 +313,10 @@ def align(out,allele,contig,aseq,bseq,f_or_r,assmb_type,emboss_tool):
             a_trim = "{0}.a.trimmed".format(f_or_r) # sequence header, file name makes distinction
             b_trim = "{0}.b.trimmed".format(f_or_r)
 
-            if 'needle' in emboss_tool:
-                a_fsa = "{0}/{1}.WITH.{2}.{3}.a.fsa".format(out,allele,contig,f_or_r) # filename
-                b_fsa = "{0}/{1}.WITH.{2}.{3}.b.fsa".format(out,allele,contig,f_or_r) # will be different since alignments will be different
+            a_fsa = "{0}/{1}.WITH.{2}.{3}.a.fsa".format(out,allele,contig,f_or_r) # filename
+            b_fsa = "{0}/{1}.WITH.{2}.{3}.b.fsa".format(out,allele,contig,f_or_r) # will be different since alignments will be different
 
+            if 'needle' in emboss_tool:
                 write_fasta(a_fsa,a_trim,seqs['a'])
                 write_fasta(b_fsa,b_trim,seqs['b'])
 
@@ -328,8 +328,8 @@ def align(out,allele,contig,aseq,bseq,f_or_r,assmb_type,emboss_tool):
                 os.remove(initial_align)
 
             elif 'water' in emboss_tool:
-                write_fasta(a_fsa,a_trim,a.replace('-',''))
-                write_fasta(b_fsa,b_trim,b.replace('-',''))
+                write_fasta(a_fsa,a_trim,str(a).replace('-',''))
+                write_fasta(b_fsa,b_trim,str(b).replace('-',''))
 
                 os.rename(initial_align,refined_align)
 
