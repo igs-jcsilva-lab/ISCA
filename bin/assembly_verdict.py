@@ -145,6 +145,9 @@ def extract_sequences(file,assembled,aligned,outfile):
     for allele in not_aligned:
         write_fasta(outfile,allele,contigs[allele])
 
+    # output FASTA file will be empty - write single dummy sequence instead
+    if (len(not_assembled) + len(not_aligned)) == 0:
+        write_fasta(outfile,'no_sequences_left',''.join(['N' for i in range(0,100)]))
 
 if __name__ == '__main__':
     main()
