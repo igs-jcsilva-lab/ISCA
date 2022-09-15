@@ -25,7 +25,7 @@ header of each sequence.
         James Matsumura
 """
 
-import argparse,collections,sys
+import argparse,collections,sys,os
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
@@ -53,14 +53,14 @@ def main():
 
             entity = ""
             if args.groupby != 'l':
-                entity = elements[3].split('/')[-1].split('.WITH')[0]
+                entity = os.path.basename(elements[3]).split('.WITH')[0]
             else:
-                entity = elements[3].split('.')[1]
+                entity = os.path.basename(elements[3]).split('.')[1]
 
-            # Modify the path to where this file is found, needs to some extra 
+            # Modify the path to where this file is found; needs some extra 
             # handholding to work both with/without CWL
             base_dir = args.align_path
-            split_point = base_dir.split('/')[-1]
+            split_point = os.path.basename(base_dir)
             tmp_path = elements[3].split(split_point)[1]
             file_path = "{0}/{1}".format(base_dir,tmp_path)
 
