@@ -16,7 +16,7 @@ from conf import TARGETED_ASSEMBLY_BIN,PYTHON3_EXE,GMAP_GSNAP_BIN,SMALT_BIN
 def main():
 
     parser = argparse.ArgumentParser(description='Script to set up CWL files with the correct paths.')
-    parser.add_argument('--path_to_cwl', '-p', type=str, default='.', required=False, help='Path to the the base directory where all the CWL files are stored.')
+    parser.add_argument('--path_to_cwl', '-p', type=str, default='.', required=False, help='Path to the base directory where all the CWL files are stored.')
 
     args = parser.parse_args()
 
@@ -28,8 +28,9 @@ def main():
     }
 
     for file in os.listdir(args.path_to_cwl):
-        if os.path.isfile(file) and file.endswith('cwl'):
-            with fileinput.FileInput(file, inplace=True, backup='.bak') as cwl_file:
+        path = os.path.join(args.path_to_cwl, file)
+        if os.path.isfile(path) and path.endswith('cwl'):
+            with fileinput.FileInput(path, inplace=True, backup='.bak') as cwl_file:
                 # iterate over each line, and in each line replace any of the
                 # bin values with those set in the conf
                 for line in cwl_file:

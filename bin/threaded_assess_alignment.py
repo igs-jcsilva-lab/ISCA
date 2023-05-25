@@ -34,7 +34,7 @@ The columns are as follows (tab-separated):
         James Matsumura
 """
 
-import re,argparse,os,collections
+import re,argparse,os,collections,tempfile
 import multiprocessing as mp
 from Bio import AlignIO
 
@@ -50,10 +50,13 @@ def main():
     parser.add_argument('--assmb_type', '-at', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
     args = parser.parse_args()
 
+    # ensure that multiprocessing module doesn't use NFS
+    tempfile.tempdir = '/tmp'
+
     # Set up the multiprocessing manager, pool, and queue
     manager = mp.Manager()
     q = manager.Queue()
-    pool = mp.Pool(args.cpus)
+    pool = mp.Pool(args.cpus + 1)
     pool.apply_async(listener, (q,args.ivc_outfile))
     jobs = []
 
@@ -78,6 +81,7 @@ def main():
     q.put('stop') # should be no more messages
     pool.close() #  Tell the queue it's done getting new jobs
     pool.join() # Make sure these new jobs are all finished
+    manager.shutdown() # Clean up / close files + sockets
 
 # This is the worker that each CPU will process asynchronously
 # Arguments:

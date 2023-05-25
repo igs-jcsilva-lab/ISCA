@@ -37,18 +37,11 @@ inputs:
     label: Path to allow Python3 to be found in the ENV
     type: string?
 
+  fastq_reads_to_fastq_alleles_stdout:
+    label: Prior step stdout used as workaround for outputEval.
+    type: File
 
 outputs:
-  renamed_reads_dir:
-    type: Directory
-    outputBinding:
-      outputEval: $(inputs.reads_dir)
-
-  renamed_assmb_dir:
-    type: Directory
-    outputBinding:
-      outputEval: $(inputs.assmb_path)
-
   assmb_map:
     type: File
     outputBinding:

@@ -39,7 +39,7 @@ sequences. Also works with EMBOSS's water tool.
         James Matsumura
 """
 
-import argparse,os,sys
+import argparse,os,sys,tempfile
 import multiprocessing as mp
 from collections import defaultdict
 from Bio.Emboss.Applications import NeedleCommandline, WaterCommandline
@@ -54,7 +54,7 @@ def main():
     parser = argparse.ArgumentParser(description='Script to generate EMBOSS Needle alignments given output from format_for_assembly.py.')
     parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to ea_map.tsv output from extract_alleles.py.')
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py.')
-    parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use.')
+    parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use for alignments.')
     parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
     parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
     parser.add_argument('--max_align_len', '-maxl', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
@@ -64,6 +64,9 @@ def main():
     parser.add_argument('--align_path', '-alp', type=str, required=True, help='Path to output directory for all these alignments.')
     parser.add_argument('--emboss_tool', '-e', type=str, required=True, help='Path to install directory of EMBOSS needle/water executable (e.g. /path/to/packages/emboss/bin/[needle|water]).')
     args = parser.parse_args()
+
+    # ensure that multiprocessing module doesn't use NFS
+    tempfile.tempdir = '/tmp'
 
     # First, extract the sequences from the reference file and 
     # *STORE IN MEMORY* (careful how big the reference genome used is.
@@ -94,7 +97,7 @@ def main():
 
     manager = mp.Manager()
     q = manager.Queue()
-    pool = mp.Pool(args.cpus)
+    pool = mp.Pool(args.cpus + 1)
 
     pool.apply_async(listener, (q,args.align_path))
 
@@ -135,7 +138,8 @@ def main():
     q.put('stop') # should be no more messages
     pool.close() #  Tell the queue it's done getting new jobs
     pool.join() # Make sure these new jobs are all finished
-
+    manager.shutdown() # Clean up / close files + sockets
+    
 # This is the worker that each CPU will process asynchronously
 # Arguments:
 # locus = the locus that was attempted to assemble
@@ -284,7 +288,7 @@ def listener(queue,out_dir):
 # emboss_tool = path to EMBOSS tool executable
 def align(out,allele,contig,aseq,bseq,f_or_r,assmb_type,emboss_tool):
 
-    initial_align = "{0}/{1}.WITH.{2}.align.txt".format(out,allele,contig)
+    initial_align = "{0}/{1}.WITH.{2}.{3}.align.txt".format(out,allele,contig,f_or_r)
     
     call_emboss(emboss_tool,aseq,bseq,initial_align)
 
@@ -309,10 +313,10 @@ def align(out,allele,contig,aseq,bseq,f_or_r,assmb_type,emboss_tool):
             a_trim = "{0}.a.trimmed".format(f_or_r) # sequence header, file name makes distinction
             b_trim = "{0}.b.trimmed".format(f_or_r)
 
-            if 'needle' in emboss_tool:
-                a_fsa = "{0}/{1}.WITH.{2}.{3}.a.fsa".format(out,allele,contig,f_or_r) # filename
-                b_fsa = "{0}/{1}.WITH.{2}.{3}.b.fsa".format(out,allele,contig,f_or_r) # will be different since alignments will be different
+            a_fsa = "{0}/{1}.WITH.{2}.{3}.a.fsa".format(out,allele,contig,f_or_r) # filename
+            b_fsa = "{0}/{1}.WITH.{2}.{3}.b.fsa".format(out,allele,contig,f_or_r) # will be different since alignments will be different
 
+            if 'needle' in emboss_tool:
                 write_fasta(a_fsa,a_trim,seqs['a'])
                 write_fasta(b_fsa,b_trim,seqs['b'])
 
@@ -324,8 +328,8 @@ def align(out,allele,contig,aseq,bseq,f_or_r,assmb_type,emboss_tool):
                 os.remove(initial_align)
 
             elif 'water' in emboss_tool:
-                write_fasta(a_fsa,a_trim,a.replace('-',''))
-                write_fasta(b_fsa,b_trim,b.replace('-',''))
+                write_fasta(a_fsa,a_trim,str(a).replace('-',''))
+                write_fasta(b_fsa,b_trim,str(b).replace('-',''))
 
                 os.rename(initial_align,refined_align)
 

@@ -33,7 +33,7 @@ def main():
 
     parser = argparse.ArgumentParser(description='Script to set up for SPAdes alignment on a grid.')
     parser.add_argument('--ref_map', '-rm', type=str, required=True, help='Path to *_ref_map.tsv output from analyze_bam.py.')
-    parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Path to where the output directory for the FASTQs went, same as what was used for fastq_reads_to_fastq_alleles.py.')
+    parser.add_argument('--reads_dir', '-rd', type=str, required=True, help='Path to the FASTQ output directory, same as for fastq_reads_to_fastq_alleles.py.')
     parser.add_argument('--assmb_path', '-ap', type=str, required=True, help='Path to the the directory to initialize directories for all the assembly output.')
     parser.add_argument('--outfile', '-o', type=str, required=True, help='Path to output map (maps the ref to the SGE ID)).')
     args = parser.parse_args()

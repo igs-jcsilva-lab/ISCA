@@ -1,0 +1,6 @@
+v1.0.0 (9/14/2022)
+ -Baseline release with outputEval-stdout workaround and local alignment option.
+
+v1.0.1 (9/15/2022)
+ -Fix bug in get_final_sequences.py that occurs when there's a "." in the working dir directory path. (#2)
+

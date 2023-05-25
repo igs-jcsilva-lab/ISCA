@@ -1,0 +1,115 @@
+######################
+# FILES AND SOFTWARE #
+######################
+
+# File formatted as per the specifications at the top of extract_alleles.py
+ea_input:
+    class: File
+    path: /tmp/example/ea_input.tsv
+# Text file where each line notes a locus to try to assemble
+subset_list:
+    class: File
+    path: /tmp/example/subset_list.txt
+# Path to the first of the two read pairs
+reads1:
+    class: File
+    path: /tmp/example/demo_reads1.fastq.gz
+# Path to the second of the two read pairs
+reads2: 
+    class: File
+    path: /tmp/example/demo_reads2.fastq.gz
+# Location of the "needle" executable within the EMBOSS suite
+emboss_tool: 
+    class: File
+    path: /usr/local/packages/emboss/bin/needle
+# Location of the Python2 executable (note 'bin' in the path)
+python2_exe:
+    class: File
+    path: /usr/local/packages/python-2.7.17/bin/python
+# HGA.py executable
+HGA_exe:
+    class: File
+    path: /local/scratch/jcrabtree/targeted-assembly/bin/HGA.py
+# scaffold_builder executable
+SB_exe:
+    class: File
+    path: /local/scratch/jcrabtree/targeted-assembly/bin/scaffold_builder.py
+# Base location of SPAdes install (not the *.py script)
+spades_install:
+    class: Directory
+    path: /usr/local/packages/spades
+# Base location of Velvet install
+velvet_install:
+    class: Directory
+    path: /usr/local/packages/velvet
+# Path to the Python3 library directory
+python3_lib: "/usr/local/packages/python-3.8.2/lib"
+
+#######################
+# WORKFLOW PARAMETERS #
+#######################
+
+# Currently, only "gene" has been tested for this workflow. Setting this to
+# "exon" will treat each exon as a locus from the GFF3 file and likely will
+# not work if using multiple GFF3+FASTAs in the ea_input specified above. 
+gene_or_exon: "gene"
+# Set to "l", "ae", or "cds". Must correspond to the previous parameter. Use 
+# "ae"/"cds" to extract exons or CDS sequences when assembling exons. Else, 
+# use "l" to extract the assembled locus when assembling whole genes.  
+groupby: "l"
+# Whether to filter when assigning recruited reads. If "yes", then only those
+# reads which mapped to a single location will be included in each FASTQ set 
+# for each individual locus' assembly. Default "no" since most of the time
+# the input set has redundant loci due to including multiple alleles of the 
+# same locus.
+filter: "no"
+# second_paired_suffixes should be set to "yes" if your WGS read IDs end with 
+# .1 and .2 for each respective pair. If they don't, then leave as a "no".
+second_paired_suffixes: "no"
+# When reporting the %IDs and the coverage for the alignments between the new
+# assembled sequence and the reference, either report only the best one or all.
+best_only: "no"
+# How much of a pad to give the sequences when recruiting in GSNAP/SMALT. 
+# Should give a bit of a pad if data in reads1/reads2 are longer than 151bp. 
+# This will allow more read recruitment for smaller features. Can also add 
+# padding if trying to build very short sequences so that these can better
+# recruit reads in the alignment step.
+buffer: 125
+# How many partitions to randomly assign reads to when using HGA. Due to the
+# rather small dataset of FASTQ sequences often built for a locus, this value
+# should stay low. Read more on Hierarchical Genome Assembly before changing
+# this value. 
+partitions: 2
+# Cutoff when assessing the recruitment SAM file for whether or not to treat
+# a read as recruited. Should be considered in conjunction with value set for
+# "buffer". The lower this is set, the longer assembly will take as more reads
+# will be considered recruited. Setting it very high may eliminate the 
+# possibility to assemble sequences that are proportionally that much smaller
+# than the read length. Max 100.
+recruitment_threshold: 85
+# The ratio for how long an assembled sequence must be compared to the reference
+# in order to even attempt alignment. Max 1.0
+min_align_len: 0.7
+# Cutoff for considering a sequence to be assembled or not. Max 100. 
+aligner_threshold: 90
+
+
+###################
+# HARDWARE CONFIG #
+###################
+
+# How many jobs to spawn for individual assemblies. 
+# BE CAREFUL with this as this value multiplied by the value specified for 
+# threads_per_job should be LESS THAN the number of CPUs available. Similarly,
+# the same holds true for this and the memory_per_job parameter.
+number_of_jobs: 1
+# How many threads to allot for each individual assembly job (how many jobs
+# depends on value set for number_of_jobs). 
+threads_per_job: 1
+# How much memory, in GB, to allot for each individual assembly job (how many 
+# jobs depends on value set for number_of_jobs). )
+memory_per_job: 8
+# How many threads to call when using GSNAP/SMALT. This value is independent of 
+# any other parameters so it's probably best to set this to n-1 where n is the 
+# number CPUs on the system.  
+aligner_threads: 1

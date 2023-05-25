@@ -41,13 +41,13 @@ from collections import defaultdict
 def main():
 
     parser = argparse.ArgumentParser(description='Script to isolate all reads and where they aligned to given a BAM file.')
-    parser.add_argument('--sam', '-s', type=str, help='Path to a SAM file.')
+    parser.add_argument('--sam', '-s', type=str, help='Path to a SAM/BAM file, will automatically handle either.')
     parser.add_argument('--ea_map', '-eam', type=str, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('--threshold', '-t', type=int, default=80, required=False, help='Minimum %ID threshold to retain (entering 95 means %95 minimum %ID). Defaults to %80.')
     parser.add_argument('--prefix', '-p', type=str, required=True, help='Name of the prefix of where the two output TSV files should go.')
     args = parser.parse_args()
-
-    ref_lengths = defaultdict(list) # Collect the lengths from each reference gene
+    # Collect the lengths from each reference gene
+    ref_lengths = defaultdict(list)
     with open(args.ea_map,'r') as loc_map:
 
         for line in loc_map:

@@ -54,17 +54,6 @@ def main():
     make_directory("{0}/second_hga_assemblies".format(args.workspace_location)) 
     make_directory("{0}/second_alignments".format(args.workspace_location)) 
 
-    # Pull HGA and SB from their own repos, note these are modified from their original implementations for this pipeline
-    hga_url = 'https://raw.githubusercontent.com/jmatsumura/Hierarchical-Genome-Assembly-HGA/master/HGA.py'
-    with urllib.request.urlopen(hga_url) as response, open("{0}/HGA.py".format(args.workspace_location), 'wb') as out_file:
-        data = response.read() # a `bytes` object
-        out_file.write(data)
-
-    sb_url = 'https://raw.githubusercontent.com/jmatsumura/Scaffold_builder/master/scaffold_builder.py'
-    with urllib.request.urlopen(sb_url) as response, open("{0}/scaffold_builder.py".format(args.workspace_location), 'wb') as out_file:
-        data = response.read() # a `bytes` object
-        out_file.write(data)
-
     # "touch" these files
     open("{0}/first_ids_v_cov.tsv".format(args.workspace_location),'w').close()
     open("{0}/second_ids_v_cov.tsv".format(args.workspace_location),'w').close()
