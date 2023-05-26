@@ -11,7 +11,7 @@ ISCA is an assembly pipeline that performs targeted assembly of individual loci 
   * [pyyaml](https://pypi.python.org/pypi/PyYAML)
 - [GSNAP](http://research-pub.gene.com/gmap/) - tested with release 2017-01-14
 - [SMALT](http://www.sanger.ac.uk/science/tools/smalt-0) - tested with v0.7.6
-- [SPAdes](http://bioinf.spbau.ru/spades) - tested with v3.10.1
+- [SPAdes](http://cab.spbu.ru/software/spades/) - tested with v3.10.1
 - [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/) - tested with v1.2.10
 - [EMBOSS](http://emboss.open-bio.org/) - tested with v6.6.0.0
 - Python Scripts (automatically pulled when running the pipeline)
