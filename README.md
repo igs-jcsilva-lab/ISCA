@@ -12,7 +12,7 @@ ISCA is an assembly pipeline that performs targeted assembly of individual loci 
 - [GSNAP](http://research-pub.gene.com/gmap/) - tested with release 2017-01-14
 - [SMALT](http://www.sanger.ac.uk/science/tools/smalt-0) - tested with v0.7.6
 - [SPAdes](http://cab.spbu.ru/software/spades/) - tested with v3.10.1
-- [Velvet](https://www.ebi.ac.uk/~zerbino/velvet/) - tested with v1.2.10
+- [Velvet](https://github.com/dzerbino/velvet) - tested with v1.2.10
 - [EMBOSS](http://emboss.open-bio.org/) - tested with v6.6.0.0
 - Python Scripts (automatically pulled when running the pipeline)
   * [Hierarchical Genome Assembly Tool (HGA)](https://github.com/jmatsumura/Hierarchical-Genome-Assembly-HGA)
