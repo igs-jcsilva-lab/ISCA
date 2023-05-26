@@ -73,4 +73,4 @@ The pipeline can be run as individual Python scripts or via a tool that can run 
 18. Repeat steps 4-18, but at step 4 use the SMALT aligner
 
 ### Workflow (all relevant files found in ./cwl)
-Please refer to the [cwl#running-the-tool-via-common-workflow-language-cwl) under the `./cwl` directory for more information on how to run this tool via CWL.
+Please refer to the [instructions](cwl#running-the-tool-via-common-workflow-language-cwl) in the [cwl/](cwl/) directory for more information on running ISCA via CWL.
