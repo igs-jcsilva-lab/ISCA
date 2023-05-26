@@ -5,9 +5,9 @@ CWL Documentation can be found [here](http://www.commonwl.org/draft-3/UserGuide.
 ## Setup
 1. Modify `conf.py` to have the correct paths for the installations of the various dependencies
 2. Run the `setup.py` script to modify the CWL files to correctly utilize these installations
-3. Setup complete, can move on to [Invoking a CWL workflow](https://github.com/jmatsumura/targeted_assembly/tree/master/cwl#invoking-a-cwl-workflow)
+3. Setup complete, can move on to [Invoking a CWL workflow](#invoking-a-cwl-workflow)
 
-TIP: If you mess up a path in the conf and need to remake your __.cwl__ files, backup files are made by default (with extension of __.bak__) to allow one to rerun the `setup.py` script. Use the following command once you are in the same directory as all of your __.bak__ files, then go back to step 1 of [Setup](https://github.com/jmatsumura/targeted_assembly/tree/master/cwl#setup).
+TIP: If you mess up a path in the conf and need to remake your __.cwl__ files, backup files are made by default (with extension of __.bak__) to allow one to rerun the `setup.py` script. Use the following command once you are in the same directory as all of your __.bak__ files, then go back to step 1 of [Setup](#setup).
 ```
 find . -iname "*.bak" -exec bash -c 'mv "$0" "${0%\.cwl\.bak}.cwl"' {} \;
 ```
