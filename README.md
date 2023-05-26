@@ -1,5 +1,6 @@
-# targeted_assembly
-A pipeline to perform targeted assembly of individual loci given WGS reads, reference genome assemblies, and a primary reference annotation (GFF3)
+# ISCA: In Silico read Capture and Assembly
+
+ISCA is an assembly pipeline that performs targeted assembly of individual loci using WGS reads, reference genome assemblies, and GFF3 reference annotation.
 
 ## Dependencies
 - Python 3.5
@@ -24,13 +25,13 @@ A pipeline to perform targeted assembly of individual loci given WGS reads, refe
 * OPTIONAL 
   * A mapped (via GMAP) annotated reference genome to any others if one wants to pool together reference loci to recruit reads for one locus' assembly across alleles
 * A TSV file noting the path of the GFF3+FASTA file(s) in the format specified in the top of [extract_alleles.py](https://github.com/jmatsumura/targeted_assembly/blob/master/bin/extract_alleles.py) -- [example](https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/ea_input.tsv)
-* A list of loci to focus the assembly on (note you will need to include all isoforms of a locus when using CWL and assembling at the locus level so ABC_123.1, ABC_123.2, etc.) -- [example](https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/subset_list.txt)
-* Two FASTQ paired reads files from the isolate to perform targeted assembly with
+* A list of loci to assemble (note you will need to include all isoforms of a locus when using CWL and assembling at the locus level so ABC_123.1, ABC_123.2, etc.) -- [example](https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/subset_list.txt)
+* Two FASTQ paired read files from the isolate on which to perform the targeted assembly
 
 Example files can be found in the [`./example_data`](https://github.com/jmatsumura/targeted_assembly/tree/master/example_data) directory.
 
 ## Usage
-The pipeline can be run as individual Python scripts or via Command Workflow Language ([CWL]((http://www.commonwl.org/draft-3/UserGuide.html#Writing_Workflows)))
+The pipeline can be run as individual Python scripts or via a tool that can run Common Workflow Language ([CWL]((http://www.commonwl.org/draft-3/UserGuide.html#Writing_Workflows))) workflows.
 
 ### Pipeline steps (all scripts found in ./bin)
 1. Build a map for the alleles extracted from GFF3
