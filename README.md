@@ -24,11 +24,11 @@ ISCA is an assembly pipeline that performs targeted assembly of individual loci 
 * Annotated GFF3+FASTA file for a genome (FASTA containing the whole chromosomes/sequence-regions that matches the positions noted in GFF3)
 * OPTIONAL 
   * A mapped (via GMAP) annotated reference genome to any others if one wants to pool together reference loci to recruit reads for one locus' assembly across alleles
-* A TSV file noting the path of the GFF3+FASTA file(s) in the format specified in the top of [extract_alleles.py](https://github.com/jmatsumura/targeted_assembly/blob/master/bin/extract_alleles.py) -- [example](https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/ea_input.tsv)
-* A list of loci to assemble (note you will need to include all isoforms of a locus when using CWL and assembling at the locus level so ABC_123.1, ABC_123.2, etc.) -- [example](https://github.com/jmatsumura/targeted_assembly/blob/master/example_data/subset_list.txt)
+* A TSV file noting the path of the GFF3+FASTA file(s) in the format specified in the top of [extract_alleles.py](bin/extract_alleles.py) -- [example](example_data/ea_input.tsv)
+* A list of loci to assemble (note you will need to include all isoforms of a locus when using CWL and assembling at the locus level so ABC_123.1, ABC_123.2, etc.) -- [example](example_data/subset_list.txt)
 * Two FASTQ paired read files from the isolate on which to perform the targeted assembly
 
-Example files can be found in the [`./example_data`](https://github.com/jmatsumura/targeted_assembly/tree/master/example_data) directory.
+Example files can be found in the [`./example_data`](example_data/) directory.
 
 ## Usage
 The pipeline can be run as individual Python scripts or via a tool that can run Common Workflow Language ([CWL]((http://www.commonwl.org/draft-3/UserGuide.html#Writing_Workflows))) workflows.
@@ -73,4 +73,4 @@ The pipeline can be run as individual Python scripts or via a tool that can run 
 18. Repeat steps 4-18, but at step 4 use the SMALT aligner
 
 ### Workflow (all relevant files found in ./cwl)
-Please refer to the [README.md](https://github.com/jmatsumura/targeted_assembly/tree/master/cwl#running-the-tool-via-common-workflow-language-cwl) under the `./cwl` directory for more information on how to run this tool via CWL.
+Please refer to the [cwl#running-the-tool-via-common-workflow-language-cwl) under the `./cwl` directory for more information on how to run this tool via CWL.
