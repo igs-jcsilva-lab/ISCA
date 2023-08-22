@@ -77,6 +77,12 @@ inputs:
     inputBinding:
       prefix: "--partitions"
 
+  kmer:
+    label: Comma separated list of numbers to use for SPAdes or HGA
+    type: string
+    inputBinding:
+      prefix: "--kmer"
+
   threads_per_job:
     label: Number of threads to use for each assembly job
     type: int?
@@ -114,4 +120,4 @@ outputs:
     type: stdout
 
 
-baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/run_parallel_assembly.py"]
+baseCommand: ["/usr/local/packages/python-3.7.7/bin/python3.7","/local/projects-t3/p_falciparum/cgandhi/workspace/ISCA/bin/run_parallel_assembly.py"]

@@ -102,6 +102,10 @@ inputs:
     label: Static string to relate to the parallel assembly and alignment steps which algorithm is being handled
     type: string
     default: "SB"
+  kmer:
+    label: Comma separated list of odd, ascending numbers lesser than 128 to be used for SPAdes and HGA step as a backup
+    type: string
+    default: "7,11,21"
   best_only:
     label: Either "yes" or "no" for whether to report stats of only the best alignment or all alignments
     type: string
@@ -343,6 +347,7 @@ steps:
       number_of_jobs: number_of_jobs
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
+      kmer: kmer
       assmb_map: first_phase_two/assmb_map
       reads_dir: phase_one/first_reads
       assmb_path: phase_one/first_spades_assemblies
@@ -391,6 +396,7 @@ steps:
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
       partitions: partitions
+      kmer: kmer
       reads_dir: phase_one/first_reads
       assmb_map: first_intermediary_phase_three/hga_assmb_map
       assmb_path: phase_one/first_hga_assemblies
@@ -409,6 +415,7 @@ steps:
       number_of_jobs: number_of_jobs
       ea_map: phase_one/ea_map
       original_fsa: phase_one/unbuffered_sequences
+      kmer: kmer
       reads_dir: phase_one/first_reads
       assmb_map: first_intermediary_phase_three/hga_assmb_map
       assmb_path: phase_one/first_hga_assemblies
@@ -490,6 +497,7 @@ steps:
       number_of_jobs: number_of_jobs
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
+      kmer: kmer
       assmb_map: second_phase_two/assmb_map
       reads_dir: phase_one/second_reads
       assmb_path: phase_one/second_spades_assemblies
@@ -538,6 +546,7 @@ steps:
       threads_per_job: threads_per_job
       memory_per_job: memory_per_job
       partitions: partitions
+      kmer: kmer
       reads_dir: phase_one/second_reads
       assmb_map: second_intermediary_phase_three/hga_assmb_map
       assmb_path: phase_one/second_hga_assemblies
@@ -556,6 +565,7 @@ steps:
       number_of_jobs: number_of_jobs
       ea_map: phase_one/ea_map
       original_fsa: phase_one/unbuffered_sequences
+      kmer: kmer
       reads_dir: phase_one/second_reads
       assmb_map: second_intermediary_phase_three/hga_assmb_map
       assmb_path: phase_one/second_hga_assemblies
