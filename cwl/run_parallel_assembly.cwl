@@ -120,4 +120,4 @@ outputs:
     type: stdout
 
 
-baseCommand: ["/usr/local/packages/python-3.7.7/bin/python3.7","/local/projects-t3/p_falciparum/cgandhi/workspace/ISCA/bin/run_parallel_assembly.py"]
+baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/run_parallel_assembly.py"]
