@@ -77,6 +77,12 @@ inputs:
     inputBinding:
       prefix: "--partitions"
 
+  kmer:
+    label: Comma separated list of numbers to use for SPAdes or HGA
+    type: string
+    inputBinding:
+      prefix: "--kmer"
+
   threads_per_job:
     label: Number of threads to use for each assembly job
     type: int?

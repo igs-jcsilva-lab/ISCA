@@ -66,6 +66,7 @@ def main():
     parser.add_argument('--SB_install', '-sbi', type=str, required=False, help='Path to the location of scaffold_builder.py.')
     parser.add_argument('--python2_install', '-pi', type=str, required=False, help='Path to the location of the Python2 executable.')
     parser.add_argument('--velvet_install', '-vi', type=str, required=False, help='Path to the location of the velvet install.')
+    parser.add_argument('--kmer', '-k', type=str, required=False, default='7,11,21', help='K-mer sizes to be used for SPAdes')
     parser.add_argument('--partitions', '-p', type=int, required=False, help='Number of partitions to split on during HGA.')
     parser.add_argument('--ea_map', '-eam', type=str, required=False, help='Path to the output from extract_alleles.py.')
     parser.add_argument('--original_fsa', '-of', type=str, required=False, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
@@ -111,11 +112,11 @@ def main():
 
             if args.assmb_step == "SPAdes":
                 reads = "{0}/{1}/reads.fastq.gz".format(args.reads_dir,locus)
-                jobs.append(pool.apply_async(spades_assemble, (args.python2_install,args.spades_install,reads,args.memory_per_job,args.threads_per_job,assembly_out)))
+                jobs.append(pool.apply_async(spades_assemble, (args.python2_install,args.spades_install,reads,args.memory_per_job,args.threads_per_job,args.kmer,assembly_out,locus_id)))
 
             elif args.assmb_step == "HGA":
                 reads = "{0}/{1}/reads.fastq".format(args.reads_dir,locus)
-                jobs.append(pool.apply_async(hga_assemble, (args.HGA_install,reads,assembly_out,args.python2_install,args.velvet_install,args.spades_install,args.threads_per_job,args.partitions,args.memory_per_job)))
+                jobs.append(pool.apply_async(hga_assemble, (args.HGA_install,reads,assembly_out,args.python2_install,args.velvet_install,args.spades_install,args.threads_per_job,args.partitions,args.memory_per_job,locus_id)))
 
     # Get all the returns from the apply_async function.
     for job in jobs:
@@ -129,7 +130,11 @@ def fatal(err):
     sys.stderr.write(err + "\n")
     sys.stderr.flush()
     sys.exit(1)
-    
+
+def print_error(err):
+    sys.stderr.write(err + "\n")
+    sys.stderr.flush()
+
 # Worker for assembling via SPAdes
 # Arguments:
 # python2 = location of python2 executable
@@ -138,16 +143,23 @@ def fatal(err):
 # memory = number of GB to reserve for SPAdes
 # threads = number of threads to reserve for SPAdes 
 # assmb_dir = where to place these assemblies
-def spades_assemble(python2,spades,reads,memory,threads,assmb_dir):
+def spades_assemble(python2,spades,reads,memory,threads,kmer,assmb_dir,locus_id):
     
     spades_exe = "{0}/bin/spades.py".format(spades)
 
     command = "{0} {1} -m {2} -t {3} --careful --pe1-12 {4} -o {5}".format(python2,spades_exe,memory,threads,reads,assmb_dir)
 
     retval = subprocess.call(command.split())
-    if retval != 0:
-        fatal("SPAdes command returned exit code " + str(retval) + ": " + command)
+    if retval == 21:
+        print_error("SPAdes command returned exit code " + str(retval) + ": " + command + ": " + locus_id + ". Using " + kmer + " kmer values" )
+        clean_up(assmb_dir,set(['']))
+        command = "{0} {1} -m {2} -t {3} --careful -k {4} --pe1-12 {5} -o {6}".format(python2,spades_exe,memory,threads,kmer,reads,assmb_dir)
+        retval = subprocess.call(command.split())
+        if retval != 0:
+            print_error("SPAdes command returned exit code " + str(retval) + ": " + command + ": " + locus_id)
     
+    elif retval != 0:
+        print_error("SPAdes command returned exit code " + str(retval) + ": " + command + ": " + locus_id)
     keep_us = set(['contigs.fasta','spades.log'])
     clean_up(assmb_dir,keep_us)
 
@@ -162,7 +174,7 @@ def spades_assemble(python2,spades,reads,memory,threads,assmb_dir):
 # threads = number of threads to run SPAdes with
 # partitions = number of partitions to randomly assign reads from 
 # memory = how much memory to limit SPAdes to 
-def hga_assemble(HGA,reads,assmb_dir,python2,velvet,spades,threads,partitions,memory):
+def hga_assemble(HGA,reads,assmb_dir,python2,velvet,spades,threads,partitions,memory, locus_id):
 
     spades_exe = "{0}/bin".format(spades)
 
@@ -192,8 +204,7 @@ def hga_assemble(HGA,reads,assmb_dir,python2,velvet,spades,threads,partitions,me
     sp_env["PATH"] = os.path.dirname(python2) + ":" + sp_env["PATH"]
     retval = subprocess.call(command.split(), env=sp_env)
     if retval != 0:
-        fatal("HGA command returned exit code " + str(retval) + ": " + command)
-    
+        print_error("HGA command returned exit code " + str(retval) + ": " + command + ": "+ locus_id)
     keep_us = set(['contigs.fasta','spades.log','HGA.log','HGA_combined','HGA_merged'])
     clean_up(assmb_dir,keep_us)
 
@@ -254,12 +265,12 @@ def sb_align(SB,assmb_dir,locus,python2,ea_map,fasta):
         command = "{0} {1} -q {2} -r {3} -p {4}".format(python2,SB,query,f_fasta,f_out)
         retval = subprocess.call(command.split())
         if retval != 0:
-            fatal("scaffold_builder returned exit code " + str(retval) + ": " + command)
+            print_error("scaffold_builder returned exit code " + str(retval) + ": " + command)
 
         command = "{0} {1} -q {2} -r {3} -p {4}".format(python2,SB,query,r_fasta,r_out)
         retval = subprocess.call(command.split())
         if retval != 0:
-            fatal("scaffold_builder returned exit code " + str(retval) + ": " + command)
+            print_error("scaffold_builder returned exit code " + str(retval) + ": " + command)
 
 # Function to delete some directories/files made during assembly that are
 # extraneous and don't need to be captured in the output. 
