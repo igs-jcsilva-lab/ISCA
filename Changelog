@@ -1,6 +1,10 @@
-v1.0.0 (9/14/2022)
- -Baseline release with outputEval-stdout workaround and local alignment option.
+v1.1.0 (9/5/2023)
+ -Add kmer parameter to provide backup set of kmers (default=7,11,21) to try when initial SPAdes assembly fails.
+ -Modify run_parallel_assembly.py to continue running pipeline to completion when individual assemblies fail.
 
 v1.0.1 (9/15/2022)
  -Fix bug in get_final_sequences.py that occurs when there's a "." in the working dir directory path. (#2)
+
+v1.0.0 (9/14/2022)
+ -Baseline release with outputEval-stdout workaround and local alignment option.
 
