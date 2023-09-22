@@ -53,23 +53,23 @@ def main():
 
             entity = ""
             if args.groupby != 'l':
-                entity = os.path.basename(elements[3]).split('.WITH')[0]
+                entity = os.path.basename(elements[4]).split('.WITH')[0]
             else:
-                entity = os.path.basename(elements[3]).split('.')[1]
+                entity = os.path.basename(elements[4]).split('.')[1]
 
             # Modify the path to where this file is found; needs some extra 
             # handholding to work both with/without CWL
             base_dir = args.align_path
             split_point = os.path.basename(base_dir)
-            tmp_path = elements[3].split(split_point)[1]
+            tmp_path = elements[4].split(split_point)[1]
             file_path = "{0}/{1}".format(base_dir,tmp_path)
 
             # Sort the %ID into bins
             id = 0.0
-            if len(elements) == 4:
+            if len(elements) == 5:
                 id = float(elements[0])
             else:
-                id = float(elements[4])
+                id = float(elements[5])
 
             if int(id) < args.threshold:
                 continue

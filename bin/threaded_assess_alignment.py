@@ -91,7 +91,7 @@ def main():
 # best_only = "yes" or "no" for whether or not to report just the best or all alignments
 # queue = queue used to send writes to the outfile
 def spades_worker(algn_dir,locus,priority,best_only,queue):
-    isos,scores,ids,files,cov = ([] for i in range(5)) # reinitialize for every locus
+    isos,scores,ids,files,cov,length = ([] for i in range(6)) # reinitialize for every locus
 
     # If the minimum threshold is set high enough, it is possible for
     # no alignments to have been performed. Print to STDOUT in case
@@ -135,6 +135,7 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
             scores.append(float(stats['score']))
             ids.append(stats['id'])
             cov.append(len(a)/len(b))
+            length.append(len(b))
             files.append(full_path)
 
     # If no trimmed_align.txt files found, no alignments were performed
@@ -160,13 +161,14 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
         best_iso = isos[best]
         best_id = ids[best]
         best_cov = cov[best]
+        best_len = length[best]
         best_file = files[best]
 
-        queue.put("{0}\t{1}\t{2}\t{3}\n".format(best_id,best_cov,best_iso,best_file))
+        queue.put("{0}\t{1}\t{2}\t{3}\t{4}\n".format(best_id,best_cov,best_len,best_iso,best_file))
     
     elif best_only == 'no':
         for x in range(0,len(files)):
-            queue.put("{0}\t{1}\t{2}\t{3}\n".format(ids[x],cov[x],isos[x],files[x]))
+            queue.put("{0}\t{1}\t{2}\t{3}\t{4}\n".format(ids[x],cov[x],length[x],isos[x],files[x]))
 
     # This block is not needed for the current set of test cases but likely
     # will be needed in the future. 
@@ -195,7 +197,7 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
 # best_only = "yes" or "no" for whether or not to report just the best or all alignments
 # queue = queue used to send writes to the outfile
 def scaffold_worker(algn_dir,locus,priority,best_only,queue):
-    isos,scores,ids,files,cov,nogap_id = ([] for i in range(6)) # reinitialize for every locus
+    isos,scores,ids,files,cov,length,nogap_id = ([] for i in range(7)) # reinitialize for every locus
 
     # If the minimum threshold is set high enough, it is possible for
     # no alignments to have been performed. Print to STDOUT in case
@@ -253,6 +255,7 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
             scores.append(float(stats['score']))
             ids.append(stats['id'])
             cov.append(len(a)/len(b))
+            length.append(len(b))
             files.append(full_path)
 
     # If no trimmed_align.txt files found, no alignments were performed
@@ -280,14 +283,15 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
         best_iso = isos[best]
         best_id = ids[best]
         best_cov = cov[best]
+        best_len = length[best]
         best_file = files[best]
         best_nogap_id = nogap_id[best]
 
-        queue.put("{0}\t{1}\t{2}\t{3}\t{4}\n".format(best_id,best_cov,best_iso,best_file,best_nogap_id))
+        queue.put("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".format(best_id,best_cov,best_len,best_iso,best_file,best_nogap_id))
 
     elif best_only == 'no':
         for x in range(0,len(files)):
-            queue.put("{0}\t{1}\t{2}\t{3}\t{4}\n".format(ids[x],cov[x],isos[x],files[x],nogap_id[x]))
+            queue.put("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".format(ids[x],cov[x],length[x],isos[x],files[x],nogap_id[x]))
 
     # This block is not needed for the current set of test cases but likely
     # will be needed in the future. 
