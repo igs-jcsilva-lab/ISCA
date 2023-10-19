@@ -88,7 +88,7 @@ kmer: 7,11,21
 recruitment_threshold: 50
 # The ratio for how long an assembled sequence must be compared to the reference
 # in order to even attempt alignment. Max 1.0
-min_align_len: 0.7
+min_align_len: 0.5
 # Cutoff for considering a sequence to be assembled or not. Max 100. 
 aligner_threshold: 90
 

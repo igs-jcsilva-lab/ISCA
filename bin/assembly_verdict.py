@@ -62,14 +62,14 @@ def main():
             line = line.rstrip()
             result = line.split('\t') 
 
-            filename = re.search(regex_for_locus,result[4]).group(1)
+            filename = re.search(regex_for_locus,result[5]).group(1)
             locus = filename.split('.')[1]
 
             percent_id = result[0]
 
             # If we are using the assessment results from scaffold builder, 
             # get the reference % ID to exclude gaps
-            if len(result) == 6:
+            if len(result) == 7:
                 percent_id = result[5]
 
             # First check if this sequence passed the minimum threshold

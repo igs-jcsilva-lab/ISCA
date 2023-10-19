@@ -32,12 +32,6 @@ inputs:
     inputBinding:
       prefix: "--cpus"
 
-  min_align_len:
-    label: Minimum alignment length to perform alignment with (RATIO)
-    type: double
-    inputBinding:
-      prefix: "--min_align_len"
-
   max_align_len:
     label: Maximum alignment length to perform alignment with (ABSOLUTE LENGTH)
     type: int?

@@ -111,7 +111,6 @@ steps:
       emboss_tool: emboss_tool
       align_path: align_path
       number_of_jobs: number_of_jobs
-      min_align_len: min_align_len
       assmb_type: assmb_type
       python3_lib: python3_lib
     out: [stdout]
@@ -150,7 +149,9 @@ steps:
       align_path: align_path
       groupby: groupby
       threshold: threshold
+      original_fsa: original_fsa
       outfile: sequences_outfile
+      min_align_len: min_align_len      
       ea_map: ea_map
       python3_lib: python3_lib
     out: [final_sequences]

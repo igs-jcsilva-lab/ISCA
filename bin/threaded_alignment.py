@@ -10,19 +10,18 @@ sequences. Also works with EMBOSS's water tool.
         2. Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py
         3. Number of cores to use
         4. Path to the unbuffered FASTA from extract_sequences.py
-        5. Optional minimum length ratio of an assembled sequence that should be aligned 
         to. For instance, enter .1 to not align constructed sequences less than 10% of 
         the original sequence length. Default 1.0
-        6. Optional maximum length of an assembled sequence that should be aligned to. 
+        5. Optional maximum length of an assembled sequence that should be aligned to. 
         This is a integer, not a ratio like the min length. Useful to prevent out of memory
-        7. Path to the the directory preceding all the ref directories 
+        6. Path to the the directory preceding all the ref directories 
         (e.g. for "/path/to/ref123" put "/path/to" as the input)
-        8. Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to
-        9. If given, the prefix of the sequence to solely align to like XYZ.11203981.1 would 
+        7. Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to
+        8. If given, the prefix of the sequence to solely align to like XYZ.11203981.1 would 
         require "XYZ" as input. Useful when trying to reconstruct a particular sequence from
         just one of the input strains
-        10. Base output directory for all these alignments
-        11. Path to install directory of EMBOSS needle/water executable 
+        9. Base output directory for all these alignments
+        10. Path to install directory of EMBOSS needle/water executable 
         (e.g. /path/to/packages/emboss/bin/[needle|water])
 
     Output:
@@ -56,8 +55,7 @@ def main():
     parser.add_argument('--assmb_map', '-am', type=str, required=True, help='Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py.')
     parser.add_argument('--cpus', '-c', type=int, required=True, help='Number of cores to use for alignments.')
     parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
-    parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=1.0, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter .1 to not align constructed sequences less than 10% of the original sequence length. Default 1.0.')
-    parser.add_argument('--max_align_len', '-maxl', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is a integer, not a ratio like the min length. Useful to prevent OOM.')
+    parser.add_argument('--max_align_len', '-maxl', type=int, required=False, default=75000, help='Optional maximum length of an assembled sequence that should be aligned to. This is an integer. Useful to prevent OOM.')
     parser.add_argument('--assmb_path', '-asp', type=str, required=True, help='Path to the the directory preceding all the ref directories (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--assmb_type', '-at', type=str, required=True, help='Either "SPAdes" or "HGA". Determines how many assembled sequences are aligned to.')
     parser.add_argument('--priority', '-p', type=str, required=False, default="", help='If given, the prefix of the sequence to solely align to like XYZ.11203981.1 would require "XYZ" as input. Useful when trying to reconstruct a particular sequence.')
@@ -101,7 +99,6 @@ def main():
 
     pool.apply_async(listener, (q,args.align_path))
 
-    min_len = args.min_align_len
     max_len = args.max_align_len
 
     # Build a jobs array to make sure these all finish. 
@@ -124,12 +121,12 @@ def main():
             contigs = ""
             if args.assmb_type == "SPAdes":
                 contigs = "{0}/{1}/contigs.fasta".format(args.assmb_path,loc_dir)
-                jobs.append(pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,args.priority,args.emboss_tool)))
+                jobs.append(pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,max_len,q,args.assmb_type,args.priority,args.emboss_tool)))
             else:
                 contigs  = "{0}/{1}/f_Scaffold.fasta".format(args.assmb_path,loc_dir)
-                jobs.append(pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,args.priority,args.emboss_tool)))
+                jobs.append(pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,max_len,q,args.assmb_type,args.priority,args.emboss_tool)))
                 contigs  = "{0}/{1}/r_Scaffold.fasta".format(args.assmb_path,loc_dir)
-                jobs.append(pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,min_len,max_len,q,args.assmb_type,args.priority,args.emboss_tool)))
+                jobs.append(pool.apply_async(worker, (locus,contigs,ref_dict[locus],seq_dict,out_dir,max_len,q,args.assmb_type,args.priority,args.emboss_tool)))
 
     # Get all the returns from the apply_async function.
     for job in jobs:
@@ -147,20 +144,27 @@ def main():
 # ref_list = list of all alleles mapped to this locus
 # seq_dict = dictionary of sequences from the reference genome
 # out_dir = where to put this output of the alignments
-# min_len = minimum length to perform an alignment
 # queue = queue used to send writes to the outfile
 # assmb_type = either "SPAdes" or "HGA"
 # priority = optional prefix for the reference set to align against, use an empty
 # string to align against all references of a particular locus. 
 # emboss_tool = path to EMBOSS needle/water executable
-def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_type,priority,emboss_tool):
+def worker(locus,contigs,ref_list,seq_dict,out_dir,max_len,queue,assmb_type,priority,emboss_tool):
     # Cannot assemble all the reads, often this seems 
     # to be due to low coverage. Output this to STDOUT. 
+    
+    record_len = []
+
     if not os.path.isfile(contigs):
         #print("{0}\tcould not assemble.".format(locus))
         return
 
     scaffold_built = False # only relevant to HGA alignments
+    
+    # Finding record with highest length to pass the length filter
+    for record in SeqIO.parse(contigs,"fasta"):
+        record_len.append(int(len(record)))
+    max_len_record = max(record_len)
 
     # Iterate over each contig assembled
     for record in SeqIO.parse(contigs,"fasta"):
@@ -205,12 +209,16 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,min_len,max_len,queue,assmb_t
 
             seq = seq_dict[ref_seq]
 
+            # Letting the longest assembled sequence pass the length filter
+            if len(record) == max_len_record:
+               pass
+
             # Some of the shorter assembled sequences hold little to no 
             # useful information. Thus, generate a FASTA for the sequence 
             # so that one can inspect or do a manual alignment but 
             # don't perform any alignments automatically. Note that short
             # is relative to a proportion of the original sequence.
-            if len(record) < int(len(seq)*min_len):
+            elif len(record) < int(len(seq)*0.3):
                 #print("{0}\twas not aligned. Assembled sequence too short.".format(record.id))
                 continue
 

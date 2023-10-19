@@ -37,6 +37,12 @@ inputs:
     inputBinding:
       prefix: "--groupby"
 
+  original_fsa:
+    label: Path to where the unbuffered FASTA file generated from extract_sequences is
+    type: File
+    inputBinding:
+      prefix: "--original_fsa"
+
   ea_map:
     label: Path to the output from extract_alleles.py
     type: File
@@ -48,6 +54,12 @@ inputs:
     type: string
     inputBinding:
       prefix: "--outfile"
+
+  min_align_len:
+    label: Minimum alignment length to perform alignment with (RATIO)
+    type: double
+    inputBinding:
+      prefix: "--min_align_len"
 
   python3_lib:
     label: Path to allow Python3 to be found in the ENV

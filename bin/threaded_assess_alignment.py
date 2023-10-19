@@ -9,7 +9,7 @@ it was capable of reaching for that locus compared to the best hit are presented
 
 The ids_v_cov.tsv file consists of the best hits for each assembled locus. 
 The columns are as follows (tab-separated):
-    %ID coverage(reference/assembled) reference path_to_best_alignment
+    %ID coverage(reference/assembled) length reference path_to_best_alignment
 
     Input:
         1. Path to *map.tsv output from format_for_assembly.py or assembly_verdict.py
@@ -91,13 +91,13 @@ def main():
 # best_only = "yes" or "no" for whether or not to report just the best or all alignments
 # queue = queue used to send writes to the outfile
 def spades_worker(algn_dir,locus,priority,best_only,queue):
-    isos,scores,ids,files,cov,length = ([] for i in range(6)) # reinitialize for every locus
+    isos,scores,ids,files,cov,length,ref_len = ([] for i in range(7)) # reinitialize for every locus
 
     # If the minimum threshold is set high enough, it is possible for
     # no alignments to have been performed. Print to STDOUT in case
     # this does happen. 
     aligned = False
-
+    a_align_seq = ''
     # Found the alignment directory for this locus, now iterate over 
     # the final alignments and pull the best score.
     for file in os.listdir(algn_dir):
@@ -123,6 +123,22 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
                     a = str(sequence.seq)
                 else:
                     b = str(sequence.seq)
+                
+                # Finding the length of reference sequence in alignment
+                if a != "" and b!= "":
+                    if a[0] != "-" and b[0] == "-":
+                        bstrip1 = b.lstrip('-')
+                        ltrim = len(b) - len(bstrip1)
+                        a_align_seq = a[ltrim:]
+                    if a[-1] != "-" and b[-1] == "-":
+                        bstrip2 = b.rstrip('-')
+                        rtrim = (len(b) - len(bstrip2)) * -1
+                        a_align_seq = a_align_seq[:rtrim]
+                    else:
+                        a_align_seq = a.replace('-', '')
+                    a_align_seq = a_align_seq.replace('-', '')
+                    ref_align_len = len(a_align_seq)
+
 
                 if a != "" and b != "":
                     a = a.replace('-','')
@@ -136,6 +152,7 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
             ids.append(stats['id'])
             cov.append(len(a)/len(b))
             length.append(len(b))
+            ref_len.append(ref_align_len)
             files.append(full_path)
 
     # If no trimmed_align.txt files found, no alignments were performed
@@ -162,13 +179,14 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
         best_id = ids[best]
         best_cov = cov[best]
         best_len = length[best]
+        best_ref_len = ref_len[best]
         best_file = files[best]
 
-        queue.put("{0}\t{1}\t{2}\t{3}\t{4}\n".format(best_id,best_cov,best_len,best_iso,best_file))
+        queue.put("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".format(best_id,best_cov,best_len,best_iso,best_ref_len,best_file))
     
     elif best_only == 'no':
         for x in range(0,len(files)):
-            queue.put("{0}\t{1}\t{2}\t{3}\t{4}\n".format(ids[x],cov[x],length[x],isos[x],files[x]))
+            queue.put("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".format(ids[x],cov[x],length[x],isos[x],ref_len[x],files[x]))
 
     # This block is not needed for the current set of test cases but likely
     # will be needed in the future. 
@@ -197,13 +215,13 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
 # best_only = "yes" or "no" for whether or not to report just the best or all alignments
 # queue = queue used to send writes to the outfile
 def scaffold_worker(algn_dir,locus,priority,best_only,queue):
-    isos,scores,ids,files,cov,length,nogap_id = ([] for i in range(7)) # reinitialize for every locus
+    isos,scores,ids,files,cov,length,ref_len,nogap_id = ([] for i in range(8)) # reinitialize for every locus
 
     # If the minimum threshold is set high enough, it is possible for
     # no alignments to have been performed. Print to STDOUT in case
     # this does happen. 
     aligned = False
-
+    a_align_seq = ''
     # Found the alignment directory for this locus, now iterate over 
     # the final alignments and pull the best score.
     for file in os.listdir(algn_dir):
@@ -235,6 +253,21 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
                     a = str(sequence.seq)
                 else:
                     b = str(sequence.seq)
+                
+
+             # Finding the length of reference sequence in alignment
+                if a != "" and b!= "":
+                    if a[0] != "-" and b[0] == "-":
+                        bstrip1 = b.lstrip('-')
+                        ltrim = len(b) - len(bstrip1)
+                        a_align_seq = a[ltrim:]
+                    if a[-1] != "-" and b[-1] == "-":
+                        bstrip2 = b.rstrip('-')
+                        rtrim = (len(b) - len(bstrip2)) * -1
+                        a_align_seq = a_align_seq[:rtrim]
+                    a_align_seq = a_align_seq.replace('-', '')
+                    ref_align_len = len(a_align_seq)
+
 
                 if a != "" and b != "":
                     # Check how many bases of A are covered by B with exact 
@@ -256,6 +289,7 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
             ids.append(stats['id'])
             cov.append(len(a)/len(b))
             length.append(len(b))
+            ref_len.append(ref_align_len)
             files.append(full_path)
 
     # If no trimmed_align.txt files found, no alignments were performed
@@ -284,14 +318,15 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
         best_id = ids[best]
         best_cov = cov[best]
         best_len = length[best]
+        best_ref_len = ref_len[best]
         best_file = files[best]
         best_nogap_id = nogap_id[best]
 
-        queue.put("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".format(best_id,best_cov,best_len,best_iso,best_file,best_nogap_id))
+        queue.put("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n".format(best_id,best_cov,best_len,best_iso,best_ref_len,best_file,best_nogap_id))
 
     elif best_only == 'no':
         for x in range(0,len(files)):
-            queue.put("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".format(ids[x],cov[x],length[x],isos[x],files[x],nogap_id[x]))
+            queue.put("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\n".format(ids[x],cov[x],length[x],isos[x],ref_len[x],files[x],nogap_id[x]))
 
     # This block is not needed for the current set of test cases but likely
     # will be needed in the future. 
