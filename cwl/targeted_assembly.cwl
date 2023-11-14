@@ -274,6 +274,9 @@ outputs:
     type: File
     outputSource: gather_sequences/all_seqs
 
+  assembled_below_threshold:
+    type: File
+    outputSource: extract_reconstructions_step/assembled_below_threshold
 
 steps:
   phase_one:
@@ -610,5 +613,20 @@ steps:
         second_final: second_final_phase_three/final_sequences
         python3_lib: python3_lib
     out: [
-      all_seqs
+        all_seqs
+    ]
+
+  extract_reconstructions_step:
+    run: extract_reconstructions.cwl
+    in:
+      python3_lib: python3_lib
+      first_align_path: phase_one/first_alignments
+      second_align_path: phase_one/second_alignments
+      first_idvc : first_intermediary_phase_three/ids_v_cov
+      first_ids_v_cov : first_final_phase_three/ids_v_cov
+      second_idvc : second_intermediary_phase_three/ids_v_cov
+      second_ids_v_cov : second_final_phase_three/ids_v_cov
+      original_fsa: phase_one/unbuffered_sequences
+    out: [
+      assembled_below_threshold
     ]
