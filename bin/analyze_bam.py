@@ -35,7 +35,7 @@ identity threshold.
         James Matsumura
 """
 
-import argparse,pysam,subprocess,sys
+import argparse,os,pysam,subprocess,sys
 from collections import defaultdict
 
 def fatal(err):
@@ -50,6 +50,7 @@ def main():
     parser.add_argument('--ea_map', '-eam', type=str, help='Path to map.tsv output from extract_alleles.py.')
     parser.add_argument('--threshold', '-t', type=int, default=80, required=False, help='Minimum %ID threshold to retain (entering 95 means %95 minimum %ID). Defaults to %80.')
     parser.add_argument('--prefix', '-p', type=str, required=True, help='Name of the prefix of where the two output TSV files should go.')
+    parser.add_argument('--samtools_install', '-si', type=str, required=True, help='Path to the directory containing the samtools executable.')
     args = parser.parse_args()
     # Collect the lengths from each reference gene
     ref_lengths = defaultdict(list)
@@ -66,12 +67,16 @@ def main():
 
     infile = args.sam
     tmp_file = "tmp.bam"
+    samtools_path = os.path.join(args.samtools_install, 'bin', 'samtools')
 
-    with open(tmp_file,'w') as tmp_sam:
-        retval = subprocess.call("samtools view -b -h -F 4 {}".format(infile).split(),stdout=tmp_sam)
-        if retval != 0:
-            fatal("samtools view failed")
-        
+    if os.path.exists(samtools_path):
+        with open(tmp_file,'w') as tmp_sam:
+            retval = subprocess.call((samtools_path + " view -b -h -F 4 {}").format(infile).split(),stdout=tmp_sam)
+            if retval != 0:
+                fatal("samtools view failed")
+    else:
+        fatal(samtools_path + " not found")
+            
     # guarantee a BAM file including the extension
     retval = subprocess.call("rm {}".format(infile).split()) # need this when SAM is the input
     if retval != 0:

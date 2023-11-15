@@ -40,6 +40,11 @@ inputs:
     label: Path to allow Python3 to be found in the ENV
     type: string?
 
+  samtools_install:
+    label: Location of samtools
+    type: Directory
+    inputBinding:
+      prefix: "--samtools_install"
 
 outputs:
   read_map:

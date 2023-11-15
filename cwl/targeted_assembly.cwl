@@ -45,6 +45,9 @@ inputs:
   velvet_install:
     label: Location of the Velvet installation
     type: Directory
+  samtools_install:
+    label: Location of samtools
+    type: Directory
 
   python3_lib:
     label: Path to allow Python3 to be found in the ENV
@@ -335,6 +338,7 @@ steps:
       assmb_path: phase_one/first_spades_assemblies
       sam: gsnap/gsnap_sam
       python3_lib: python3_lib
+      samtools_install: samtools_install
     out: [
       read_map,
       ref_map,
@@ -485,6 +489,7 @@ steps:
       assmb_path: phase_one/second_spades_assemblies
       sam: smalt/smalt_sam
       python3_lib: python3_lib
+      samtools_install: samtools_install
     out: [
       read_map,
       ref_map,

@@ -60,6 +60,10 @@ inputs:
     label: Path to allow Python3 to be found in the ENV
     type: string?
 
+  samtools_install:
+    label: Location of samtools
+    type: Directory
+
 
 outputs:
   read_map:
@@ -84,6 +88,7 @@ steps:
       threshold: threshold
       prefix: prefix
       python3_lib: python3_lib
+      samtools_install: samtools_install
     out: [
       read_map,
       ref_map

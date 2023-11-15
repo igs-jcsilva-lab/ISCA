@@ -34,6 +34,10 @@ spades_install:
 velvet_install:
     class: Directory
     path: /usr/local/packages/velvet
+# Base location of samtools install
+samtools_install:
+    class: Directory
+    path: /usr/local/packages/samtools
 # Path to the Python3 library directory
 python3_lib: "/usr/local/packages/python-3.5.2/lib"
 
