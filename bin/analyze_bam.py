@@ -71,7 +71,8 @@ def main():
 
     if os.path.exists(samtools_path):
         with open(tmp_file,'w') as tmp_sam:
-            retval = subprocess.call((samtools_path + " view -b -h -F 4 {}").format(infile).split(),stdout=tmp_sam)
+            # ad-hoc filter to remove lines with out-of-range coordinates
+            retval = subprocess.call(("perl -ne 'my @f = split(/\t/); print if (($f[3] + $f[7]) < 2000000000 );' < {} | " + samtools_path + " view -b -h -F 4").format(infile),stdout=tmp_sam,shell=True)
             if retval != 0:
                 fatal("samtools view failed")
     else:
