@@ -1,3 +1,8 @@
+v1.2.0 (11/15/2023)
+ -Check subprocess return codes in analyze_bam.py and halt if nonzero. (#6)
+ -Add sequence length to ids_v_cov.tsv
+ -Add extract_reconstructions.py to produce assembled_seqs_below_threshold.fsa containing the longest assembled sequence for each locus
+
 v1.1.0 (9/5/2023)
  -Add kmer parameter to provide backup set of kmers (default=7,11,21) to try when initial SPAdes assembly fails.
  -Modify run_parallel_assembly.py to continue running pipeline to completion when individual assemblies fail.
