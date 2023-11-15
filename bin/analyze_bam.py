@@ -35,8 +35,13 @@ identity threshold.
         James Matsumura
 """
 
-import argparse,pysam,subprocess
+import argparse,pysam,subprocess,sys
 from collections import defaultdict
+
+def fatal(err):
+    sys.stderr.write(err + "\n")
+    sys.stderr.flush()
+    sys.exit(1)
 
 def main():
 
@@ -63,12 +68,19 @@ def main():
     tmp_file = "tmp.bam"
 
     with open(tmp_file,'w') as tmp_sam:
-        subprocess.call("samtools view -b -h -F 4 {}".format(infile).split(),stdout=tmp_sam)
-
+        retval = subprocess.call("samtools view -b -h -F 4 {}".format(infile).split(),stdout=tmp_sam)
+        if retval != 0:
+            fatal("samtools view failed")
+        
     # guarantee a BAM file including the extension
-    subprocess.call("rm {}".format(infile).split()) # need this when SAM is the input
+    retval = subprocess.call("rm {}".format(infile).split()) # need this when SAM is the input
+    if retval != 0:
+        fatal("failed to rm " + infile)
+    
     infile = infile.replace(".sam",".bam")
-    subprocess.call("mv {} {}".format(tmp_file,infile).split()) 
+    retval = subprocess.call("mv {} {}".format(tmp_file,infile).split()) 
+    if retval != 0:
+        fatal("failed to rename " + tmp_file + " to " + infile)
 
     rd_map,rf_map = (defaultdict(list) for j in range(2)) # establish these dicts as holding lists
 
