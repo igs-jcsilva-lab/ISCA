@@ -12,8 +12,8 @@ or after the first iteration in cases where second iteration with SMALT isn't ne
     Input:
         1. A base directory location
         2. Path to ids_v_cov.tsv file generated from threaded_assess_alignment.py after HGA+SB step in first iteration (first_final_phase_three)
-        3. Path to the the directory preceding all the alignment directories for first iteration (e.g. for "/path/to/ref123" put "/path/to" as the input)
-        4. Path to the the directory preceding all the alignment directories for second iteration (e.g. for "/path/to/ref123" put "/path/to" as the input)
+        3. Path to the directory preceding all the alignment directories for first iteration (e.g. for "/path/to/ref123" put "/path/to" as the input)
+        4. Path to the directory preceding all the alignment directories for second iteration (e.g. for "/path/to/ref123" put "/path/to" as the input)
         5. Path to ids_v_cov.tsv file generated from threaded_assess_alignment.py after HGA+SB step in second iteration (first_final_phase_three)
         6. Path to ids_v_cov.tsv file generated from threaded_assess_alignment.py after SPAdes step in first iteration (first_intermediary_phase_three)
         7. Path to ids_v_cov.tsv file generated from threaded_assess_alignment.py after SPAdes step in second iteration (second_intermediary_phase_three)
@@ -39,8 +39,8 @@ def main():
     parser = argparse.ArgumentParser(description="Script for extracting reconstructions that don't meet threshold")
     parser.add_argument('--workspace_location', '-wl', type=str, default='.', help='Path where directories are built at.')
     parser.add_argument('--first_ids_v_cov', '-fivc', type=str,  help='Path to .tsv file generated from threaded_assess_alignment.py in first iteration after HGA+SB step')
-    parser.add_argument('--first_align_path', '-fap', type=str, required=True, help='Path to the the directory preceding all the alignment directories for first iteration (e.g. for "/path/to/ref123" put "/path/to" as the input).')
-    parser.add_argument('--second_align_path', '-sap', type=str, required=True, help='Path to the the directory preceding all the alignment directories for second iteration (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--first_align_path', '-fap', type=str, required=True, help='Path to the directory preceding all the alignment directories for first iteration (e.g. for "/path/to/ref123" put "/path/to" as the input).')
+    parser.add_argument('--second_align_path', '-sap', type=str, required=True, help='Path to the directory preceding all the alignment directories for second iteration (e.g. for "/path/to/ref123" put "/path/to" as the input).')
     parser.add_argument('--second_ids_v_cov', '-sivc', type=str, help='Path to .tsv file generated from threaded_assess_alignment.py in second iteration after HGA+SB step')
     parser.add_argument('--first_idvc', '-fidvc', type=str,  help='Path to .tsv file generated from threaded_assess_alignment.py in first iteration after SPAdes step')
     parser.add_argument('--second_idvc', '-sidvc', type=str, help='Path to .tsv file generated from threaded_assess_alignment.py in second iteration after SPAdes step')
