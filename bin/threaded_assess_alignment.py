@@ -97,7 +97,6 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
     # no alignments to have been performed. Print to STDOUT in case
     # this does happen. 
     aligned = False
-    a_align_seq = ''
     # Found the alignment directory for this locus, now iterate over 
     # the final alignments and pull the best score.
     for file in os.listdir(algn_dir):
@@ -124,6 +123,8 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
                 else:
                     b = str(sequence.seq)
                 
+                a_align_seq = a
+
                 # Finding the length of reference sequence in alignment
                 if a != "" and b!= "":
                     if a[0] != "-" and b[0] == "-":
@@ -221,7 +222,6 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
     # no alignments to have been performed. Print to STDOUT in case
     # this does happen. 
     aligned = False
-    a_align_seq = ''
     # Found the alignment directory for this locus, now iterate over 
     # the final alignments and pull the best score.
     for file in os.listdir(algn_dir):
@@ -253,7 +253,8 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
                     a = str(sequence.seq)
                 else:
                     b = str(sequence.seq)
-                
+               
+                a_align_seq = a                
 
              # Finding the length of reference sequence in alignment
                 if a != "" and b!= "":

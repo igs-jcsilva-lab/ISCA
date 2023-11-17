@@ -16,9 +16,8 @@ of reference sequence that aligned with assembled sequence.
         5. Path to ea_map.tsv output from extract_alleles.py
         6. Name of an outfile to populate with the final assemblies
         7. Path to where the unbuffered FASTA from extract_sequences.py is 
-        8. Optional minimum length ratio of an assembled sequence that should
-           be aligned to. For instance, enter 0.5 to not align constructed 
-           sequences less than 50% of the original sequence length. Default 0.5.
+        8. Optional minimum length ratio of an assembled sequence as cutoff 
+           for pulling a sequence or not. Default 0.5.
 
     Output:
         1. An outfile containing all the best assembled sequences 
@@ -46,7 +45,7 @@ def main():
     parser.add_argument('--outfile', '-o', type=str, required=True, help='Name of an outfile.')
     parser.add_argument('--ea_map', '-eam', type=str, required=True, help='Path to ea_map.tsv output from extract_alleles.py.')
     parser.add_argument('--original_fsa', '-of', type=str, required=True, help='Path to where the unbuffered FASTA from extract_sequences.py is.')
-    parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=0.5, help='Optional minimum length ratio of an assembled sequence that should be aligned to. For instance, enter 0.5 to not align constructed sequences less than 50% of the original sequence length. Default 0.5.')
+    parser.add_argument('--min_align_len', '-minl', type=float, required=False, default=0.5, help='Optional minimum length ratio of an assembled sequence as cutoff for pulling a sequence or not. Default 0.5.')
     args = parser.parse_args()
 
     best_id,cds_map = (defaultdict(list) for i in range(2)) 

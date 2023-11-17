@@ -74,7 +74,7 @@ inputs:
     type: int
 
   min_align_len:
-    label: Minimum alignment length to perform alignment with (RATIO)
+    label: Minimum alignment length ratio of assembled sequence as cutoff to pull sequence or not
     type: double
 
   assmb_stdout:
