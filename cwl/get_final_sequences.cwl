@@ -56,7 +56,7 @@ inputs:
       prefix: "--outfile"
 
   min_align_len:
-    label: Minimum alignment length to perform alignment with (RATIO)
+    label: Minimum alignment length ratio of assembled sequence as cutoff to pull sequence or not
     type: double
     inputBinding:
       prefix: "--min_align_len"
@@ -71,6 +71,5 @@ outputs:
     type: File
     outputBinding:
       glob: $(inputs.outfile)
-
 
 baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/get_final_sequences.py"]
