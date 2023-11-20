@@ -125,20 +125,8 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
                 
                 a_align_seq = a
 
-                # Finding the length of reference sequence in alignment
                 if a != "" and b!= "":
-                    if a[0] != "-" and b[0] == "-":
-                        bstrip1 = b.lstrip('-')
-                        ltrim = len(b) - len(bstrip1)
-                        a_align_seq = a[ltrim:]
-                    if a[-1] != "-" and b[-1] == "-":
-                        bstrip2 = b.rstrip('-')
-                        rtrim = (len(b) - len(bstrip2)) * -1
-                        a_align_seq = a_align_seq[:rtrim]
-                    else:
-                        a_align_seq = a.replace('-', '')
-                    a_align_seq = a_align_seq.replace('-', '')
-                    ref_align_len = len(a_align_seq)
+                    ref_align_len = find_ref_len(a,b,a_align_seq)
 
 
                 if a != "" and b != "":
@@ -254,21 +242,10 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
                 else:
                     b = str(sequence.seq)
                
-                a_align_seq = a                
+                a_align_seq = a
 
-             # Finding the length of reference sequence in alignment
                 if a != "" and b!= "":
-                    if a[0] != "-" and b[0] == "-":
-                        bstrip1 = b.lstrip('-')
-                        ltrim = len(b) - len(bstrip1)
-                        a_align_seq = a[ltrim:]
-                    if a[-1] != "-" and b[-1] == "-":
-                        bstrip2 = b.rstrip('-')
-                        rtrim = (len(b) - len(bstrip2)) * -1
-                        a_align_seq = a_align_seq[:rtrim]
-                    a_align_seq = a_align_seq.replace('-', '')
-                    ref_align_len = len(a_align_seq)
-
+                    ref_align_len = find_ref_len(a,b,a_align_seq)
 
                 if a != "" and b != "":
                     # Check how many bases of A are covered by B with exact 
@@ -397,6 +374,21 @@ def calculate_exact_alignment(aseq,bseq):
 
     return "{0:.2f}".format(perfect_match/total*100)
 
+
+# Finding the length of reference sequence in alignment
+def find_ref_len(a,b,a_align_seq):
+    if a[0] != "-" and b[0] == "-":
+        bstrip1 = b.lstrip('-')
+        ltrim = len(b) - len(bstrip1)
+        a_align_seq = a[ltrim:]
+    if a[-1] != "-" and b[-1] == "-":
+        bstrip2 = b.rstrip('-')
+        rtrim = (len(b) - len(bstrip2)) * -1
+        a_align_seq = a_align_seq[:rtrim]
+    a_align_seq = a_align_seq.replace('-', '')
+    ref_align_len = len(a_align_seq)
+
+    return ref_align_len
 
 if __name__ == '__main__':
     main()
