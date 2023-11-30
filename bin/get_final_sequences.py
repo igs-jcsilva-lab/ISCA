@@ -61,8 +61,11 @@ def main():
             entity = ""
             if args.groupby != 'l':
                 entity = os.path.basename(elements[5]).split('.WITH')[0]
+                #Check ids_v_cov.tsv to find ref.geneID; test the following line
+                #ref_seq = entity
             else:
                 entity = os.path.basename(elements[5]).split('.')[1]
+                ref_seq = os.path.basename(elements[5]).split('.WITH')[0]
 
             # Modify the path to where this file is found; needs some extra 
             # handholding to work both with/without CWL
@@ -70,8 +73,8 @@ def main():
             split_point = os.path.basename(base_dir)
             tmp_path = elements[5].split(split_point)[1]
             file_path = "{0}/{1}".format(base_dir,tmp_path)
-            ref_seq = "{0}.{1}".format(elements[3],entity)
             unbuffered_ref_seq = seq_dict[ref_seq]
+            
             # Sort the %ID into bins
             id = 0.0
             if len(elements) == 6:
