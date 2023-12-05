@@ -68,11 +68,11 @@ def main():
     for k in best_len:
         path = best_len[k][5]
         path_list = path.split('/')
+        ref_seq = path_list[-1].split('.WITH')[0]
         new_id = "assembled_{0}".format(k)
         file_ = path.replace('trimmed_align.txt', 'b.fsa')
         
         ref_len = int(best_len[k][4])
-        ref_seq = "{0}.{1}".format(best_len[k][3], path_list[-2])
         seq = seq_dict[ref_seq]
         ref_len_percent = round((ref_len/len(seq)*100), 2)
 
