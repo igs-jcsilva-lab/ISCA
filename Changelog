@@ -1,3 +1,6 @@
+v1.2.2 (2/3/2024)
+ -Fix bug handling scaffold builder results in assembly_verdict.py
+
 v1.2.1 (12/5/2023)
  -Fix input gene id extraction for gene ids that end with .1, .2, etc.
 
