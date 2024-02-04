@@ -70,7 +70,7 @@ def main():
             # If we are using the assessment results from scaffold builder, 
             # get the reference % ID to exclude gaps
             if len(result) == 7:
-                percent_id = result[5]
+                percent_id = result[6]
 
             # First check if this sequence passed the minimum threshold
             if float(percent_id) >= args.threshold:
