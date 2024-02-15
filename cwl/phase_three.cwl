@@ -137,6 +137,8 @@ steps:
       original_assmb_map: assmb_map
       prefix: prefix
       python3_lib: python3_lib
+      original_fsa: original_fsa
+      min_align_len: min_align_len
     out: [
       leftovers,
       hga_assmb_map

@@ -46,6 +46,17 @@ inputs:
     label: Path to allow Python3 to be found in the ENV
     type: string?
 
+  original_fsa:
+    label: Path to where the unbuffered FASTA file generated from extract_sequences is
+    type: File
+    inputBinding:
+      prefix: "--original_fsa"
+
+  min_align_len:
+    label: Minimum alignment length ratio of assembled sequence as cutoff to pull sequence or not
+    type: double
+    inputBinding:
+      prefix: "--min_align_len"
 
 outputs:
   leftovers:
@@ -59,4 +70,4 @@ outputs:
       glob: $("*assmb*")
 
 
-baseCommand: ["PYTHON3_EXE","TARGETED_ASSEMBLY_BIN/assembly_verdict.py"]
+baseCommand: ["/path/to/python3/bin/python","/path/to/targeted_assembly/bin/assembly_verdict.py"]
