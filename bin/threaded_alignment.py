@@ -163,6 +163,9 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,max_len,queue,assmb_type,prio
     
     # Finding record with highest length to pass the length filter
     for record in SeqIO.parse(contigs,"fasta"):
+        if assmb_type == "HGA":
+            sequence = str(record.seq)
+            record.seq = Seq(sequence.replace("N",""))
         record_len.append(int(len(record)))
     max_len_record = max(record_len)
 
