@@ -123,15 +123,11 @@ def spades_worker(algn_dir,locus,priority,best_only,queue):
                 else:
                     b = str(sequence.seq)
                 
-                a_align_seq = a
 
-                if a != "" and b!= "":
-                    ref_align_len = find_ref_len(a,b,a_align_seq)
-
-
-                if a != "" and b != "":
-                    a = a.replace('-','')
-                    b = b.replace('-','')
+            if a != "" and b!= "":
+                ref_align_len = find_ref_len(a,b)
+                a = a.replace('-','')
+                b = b.replace('-','')
 
             stats = parse_alignment(full_path)
 
@@ -242,12 +238,9 @@ def scaffold_worker(algn_dir,locus,priority,best_only,queue):
                 else:
                     b = str(sequence.seq)
                
-                a_align_seq = a
 
                 if a != "" and b!= "":
-                    ref_align_len = find_ref_len(a,b,a_align_seq)
-
-                if a != "" and b != "":
+                    ref_align_len = find_ref_len(a,b)
                     # Check how many bases of A are covered by B with exact 
                     # matches and output this percentage. Ignore gaps.
                     nogap_id.append(calculate_exact_alignment(a,b)) 
@@ -376,7 +369,8 @@ def calculate_exact_alignment(aseq,bseq):
 
 
 # Finding the length of reference sequence in alignment
-def find_ref_len(a,b,a_align_seq):
+def find_ref_len(a,b):
+    a_align_seq = a
     if a[0] != "-" and b[0] == "-":
         bstrip1 = b.lstrip('-')
         ltrim = len(b) - len(bstrip1)

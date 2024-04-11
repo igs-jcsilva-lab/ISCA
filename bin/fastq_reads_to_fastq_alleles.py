@@ -37,7 +37,7 @@ refine the FASTQ output if the filter option is used.
         James Matsumura
 """
 
-import argparse,gzip,itertools
+import argparse,gzip,itertools,os,sys
 from collections import defaultdict
 from shared_fxns import make_directory
 
@@ -181,6 +181,12 @@ def main():
     # need to filter all the FASTQ reads to just those that aligned to a gene region.
     filter_fastq(ids_to_keep,args.fastq1,args.fastq2,output)
 
+    # Exiting program if reads.fastq.gz file is not created
+    for ref in unique_refs:
+        path = "{0}/{1}/reads.fastq.gz".format(output,ref)
+        if os.path.exists(path) == False:
+            print("File reads.fastq does not exist. Check paired_suffixes parameter for possible error.")
+            sys.exit(1)
 
 # Function to compare where the two mates in a pair mapped to. Returns 
 # 'single_map' if both only map to a single locus, 'multi_map' if one
