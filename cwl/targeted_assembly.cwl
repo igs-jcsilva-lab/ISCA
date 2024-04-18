@@ -277,9 +277,13 @@ outputs:
     type: File
     outputSource: gather_sequences/all_seqs
 
-  assembled_below_threshold:
+  assembled_by_length:
     type: File
-    outputSource: extract_reconstructions_step/assembled_below_threshold
+    outputSource: extract_reconstructions_step/assembled_by_length
+
+  assembled_by_id:
+    type: File
+    outputSource: extract_reconstructions_step/assembled_by_id
 
 steps:
   phase_one:
@@ -632,6 +636,8 @@ steps:
       second_idvc : second_intermediary_phase_three/ids_v_cov
       second_ids_v_cov : second_final_phase_three/ids_v_cov
       original_fsa: phase_one/unbuffered_sequences
+      assembled_seqs: gather_sequences/all_seqs
     out: [
-      assembled_below_threshold
+      assembled_by_length,
+      assembled_by_id
     ]

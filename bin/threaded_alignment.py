@@ -167,7 +167,10 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,max_len,queue,assmb_type,prio
             sequence = str(record.seq)
             record.seq = Seq(sequence.replace("N",""))
         record_len.append(int(len(record)))
-    max_len_record = max(record_len)
+    record_len.sort()
+    third_from_max = record_len[-3]
+    second_from_max = record_len[-2]
+    max_len_record = record_len[-1]
 
     # Iterate over each contig assembled
     for record in SeqIO.parse(contigs,"fasta"):
@@ -212,8 +215,8 @@ def worker(locus,contigs,ref_list,seq_dict,out_dir,max_len,queue,assmb_type,prio
 
             seq = seq_dict[ref_seq]
 
-            # Letting the longest assembled sequence pass the length filter
-            if len(record) == max_len_record:
+            # Letting three longest assembled sequences pass the length filter
+            if len(record) == max_len_record or len(record) == second_from_max or len(record) == third_from_max:
                pass
 
             # Some of the shorter assembled sequences hold little to no 
