@@ -183,8 +183,9 @@ def main():
 
     # Exiting program if reads.fastq.gz file is not created
     for ref in unique_refs:
-        path = "{0}/{1}/reads.fastq.gz".format(output,ref)
-        if os.path.exists(path) == False:
+        path1 = "{0}/{1}/reads.fastq.gz".format(output,ref)
+        path2 = "{0}/{1}/reads.fastq".format(output,ref)
+        if os.path.exists(path1) == False or os.path.exists(path2) == False:
             print("File reads.fastq does not exist. Check paired_suffixes parameter for possible error.")
             sys.exit(1)
 
