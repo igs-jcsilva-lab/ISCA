@@ -88,7 +88,7 @@ def main():
             cov = float(elements[1])
             ref_len = int(elements[4])
             
-            if length < int(len(unbuffered_ref_seq)*min_len):
+            if ref_len < int(len(unbuffered_ref_seq)*min_len):
                 continue
 
             if int(id) < args.threshold:

@@ -97,7 +97,7 @@ def extract_list(infile, best_len, first_ap, second_ap):
             ivc_list = line.split()
             aligned = ivc_list[5].split('.WITH.')[1]
             locus = ivc_list[5].split('.')[1]
-            length = int(ivc_list[2])
+            length = int(ivc_list[4])
             align_dir = ivc_list[5].split('/')[-3]
            
            # Checks if the ids_v_cov.tsv file has paths from first/second_alignments directory
@@ -114,21 +114,21 @@ def extract_list(infile, best_len, first_ap, second_ap):
                 
            # Updating best_len dictionary with longest sequence details for each locus     
             if locus in best_len:
-                if length > int(best_len[locus][2]) and len(ivc_list) == 6:
+                if length > int(best_len[locus][4]) and len(ivc_list) == 6:
                     best_len[locus][0] = float(ivc_list[0])
                     best_len[locus][1] = float(ivc_list[1])
                     best_len[locus][2] = int(ivc_list[2])
                     best_len[locus][3] = ivc_list[3]
                     best_len[locus][4] = int(ivc_list[4])
                     best_len[locus][5] = ivc_list[5]
-                elif length > int(best_len[locus][2]) and len(ivc_list) != 6:
+                elif length > int(best_len[locus][4]) and len(ivc_list) != 6:
                     best_len[locus][0] = float(ivc_list[6])
                     best_len[locus][1] = float(ivc_list[1])
                     best_len[locus][2] = int(ivc_list[2])
                     best_len[locus][3] = ivc_list[3]
                     best_len[locus][4] = int(ivc_list[4])
                     best_len[locus][5] = ivc_list[5]
-                elif length == int(best_len[locus][2]) and len(ivc_list) == 6:
+                elif length == int(best_len[locus][4]) and len(ivc_list) == 6:
                     if float(ivc_list[0]) > best_len[locus][0]:
                         best_len[locus][0] = float(ivc_list[0])
                         best_len[locus][1] = float(ivc_list[1])
@@ -136,7 +136,7 @@ def extract_list(infile, best_len, first_ap, second_ap):
                         best_len[locus][3] = ivc_list[3]
                         best_len[locus][4] = int(ivc_list[4])
                         best_len[locus][5] = ivc_list[5]
-                elif length == int(best_len[locus][2]) and len(ivc_list) != 6:
+                elif length == int(best_len[locus][4]) and len(ivc_list) != 6:
                     if float(ivc_list[6]) > best_len[locus][0]:
                         best_len[locus][0] = float(ivc_list[0])
                         best_len[locus][1] = float(ivc_list[1])
